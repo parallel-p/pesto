@@ -5,7 +5,11 @@ from submit import Submit
 
 
 def ejudge_get_submit(file, memory_base, contest_id):
-    data = ''.join(file.readlines()[2:])
+    lines = file.readlines()
+    if type(lines[0]) == type(b''):
+        for i in range(len(lines)):
+            lines[i] = lines[i].decode()
+    data = ''.join(lines[2:])
     try:
         xml_root = ETree.fromstring(data)
     except ETree.ParseError:
