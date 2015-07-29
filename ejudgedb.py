@@ -15,3 +15,9 @@ class EjudgeDB:
     
     def get_problem_id(self, contest_id, ejudge_run_id):
         return self.data[(contest_id, ejudge_run_id)].problem_id
+    
+    def get_user_id(self, contest_id, ejudge_run_id):
+        return self.data[(contest_id, ejudge_run_id)].user_id
+    
+    def get_lang_id(self, contest_id, ejudge_run_id):
+        return self.data[(contest_id, ejudge_run_id)].lang_id    
