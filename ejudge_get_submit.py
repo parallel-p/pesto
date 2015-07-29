@@ -21,8 +21,8 @@ def ejudge_get_submit(file, memory_base, contest_id):
         if child.tag == 'testing-report':
             submit_id = child.attrib['run-id']
             submit_outcome = child.attrib['status']
-            problem_id = memory_base.database.get_problem_id(contest_id, submit_id)
-            user_id = memory_base.database.get_user_id(contest_id, submit_id)
+            problem_id = memory_base.get_problem_id(contest_id, submit_id)
+            user_id = memory_base.get_user_id(contest_id, submit_id)
             if memory_base.problem_exists(contest_id, problem_id):
                 problem = memory_base.get_problem(contest_id, problem_id)
             else:

@@ -15,6 +15,21 @@ class MemoryDatabase:
             self.database = None
         self.init_database()
 
+    def get_problem_id(self, contest_id, submit_id):
+        if self.database is not None:
+            return self.database.get_problem_id(contest_id, submit_id)
+        return None
+
+    def get_user_id(self, contest_id, submit_id):
+        if self.database is not None:
+            return self.database.get_user_id(contest_id, submit_id)
+        return None
+
+    def get_lang_id(self, contest_id, submit_id):
+        if self.database is not None:
+            return self.database.get_lang_id(contest_id, submit_id)
+        return None
+
     def init_database(self):
         try:
             contest_id = str(int(os.path.basename(self.home_dir)))  # directory name
