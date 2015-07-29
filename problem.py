@@ -10,4 +10,15 @@ class Problem:
     def __str__(self):
         return 'Contest #{0} Problem #{1}\nCases: {2}'.format(self.contest_id,
                                                               self.problem_id,
-                                                              str(self.case_ids))
+                                                              self.case_ids)
+
+
+# Testing Problem.__str__()
+def main():
+    problem = Problem(input('Contest id: '), input('Problem id: '),
+                      list(map(int, input('Case list: ').split())))
+    print(problem)
+
+
+if __name__ == '__main__':
+    main()
