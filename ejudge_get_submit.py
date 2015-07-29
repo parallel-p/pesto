@@ -9,7 +9,7 @@ def ejudge_get_submit(file, memory_base, contest_id):
     try:
         xml_root = ETree.fromstring(data)
     except ETree.ParseError:
-        return
+        return None
     runs = []
     problem, submit_id, user_id, submit_outcome = None, None, None, None
     for child in xml_root.iter():
@@ -26,4 +26,6 @@ def ejudge_get_submit(file, memory_base, contest_id):
                 memory_base.add_problem(contest_id, problem_id, problem)
         elif child.tag == 'test':
             runs.append(Run(problem, submit_id, child.attrib['num'], child.attrib['status']))
+    if None in (problem, submit_id, user_id, submit_outcome):
+        return None
     return Submit(submit_id, problem, user_id, runs, submit_outcome)
