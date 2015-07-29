@@ -17,7 +17,7 @@ class MemoryDatabase:
 
     def init_database(self):
         try:
-            contest_id = int(os.path.basename(self.home_dir))  # directory name
+            contest_id = str(int(os.path.basename(self.home_dir)))  # directory name
         except ValueError:
             contest_id = None
         for file in traverse_contest(self.home_dir):
@@ -25,8 +25,8 @@ class MemoryDatabase:
 
     # called from get_submit
     def problem_exists(self, contest_id, problem_id):
-        return (contest_id, problem_id) in self.problems
+        return (str(contest_id), str(problem_id)) in self.problems
 
     # called from get_submit
     def add_problem(self, contest_id, problem_id, problem):
-        self.problems[(contest_id, problem_id)] = problem
+        self.problems[(str(contest_id), str(problem_id))] = problem
