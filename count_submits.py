@@ -1,7 +1,7 @@
 from memory_database import MemoryDatabase
 
 
-def count_submits(base_dir):
+def count_submits(base_dir, database_filename):
     database = MemoryDatabase(base_dir, database_filename)
     problems = dict()
     print(len(database.problems.values()))
