@@ -21,7 +21,10 @@ class MemoryDatabase:
         except ValueError:
             contest_id = None
         for file in traverse_contest(self.home_dir):
-            self.submits.append(ejudge_get_submit(file, self, contest_id))
+            try:
+                self.submits.append(ejudge_get_submit(file, self, contest_id))
+            except UnicodeError:
+                pass
 
     # called from get_submit
     def problem_exists(self, contest_id, problem_id):
