@@ -9,8 +9,8 @@ def traverse_contest(first_dir):
         for f in files:
             file_name = join(root, f)
             if file_name.endswith('.gz'):
-                current_file = gzip_open(file_name, 'r')
+                current_file = gzip_open(file_name, encoding='utf-8')
             else:
-                current_file = open(file_name, 'r')
+                current_file = open(file_name, encoding='utf-8')
             yield current_file
             current_file.close()
