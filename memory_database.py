@@ -8,7 +8,7 @@ class MemoryDatabase:
     def __init__(self, home_dir, csv_filename=None):
         self.submits = []
         self.problems = dict()
-        self.home_dir = home_dir.rstrip(os.path.sep)
+        self.home_dir = home_dir.rstrip('\\').rstrip('/')
         if csv_filename is not None:
             self.database = EjudgeDB(csv_filename)
         else:
