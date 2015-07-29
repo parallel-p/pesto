@@ -4,6 +4,7 @@ class EjudgeDBEntry:
         self.user_id = user_id
         self.lang_id = lang_id
 
+
 class EjudgeDB:
     def __init__(self, csv_filename, contest_ids=None):
         self.data = {}

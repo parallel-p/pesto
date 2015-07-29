@@ -10,7 +10,7 @@ class Run:
         return _result
 
 
-def main(): # testing print and Run.__str__()
+def main():  # testing print and Run.__str__()
     n = int(input())
     runs = []
     for i in range(n):
