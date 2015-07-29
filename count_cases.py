@@ -1,7 +1,7 @@
 from memory_database import MemoryDatabase
 
 
-def count_cases(problems, contest_id): # list of problems goes here and key
+def count_cases(problems, contest_id):  # list of problems goes here and key
     _result = []
     for problem_pair in problems.items():
         if problem_pair[0][0] == contest_id:

@@ -22,4 +22,3 @@ def main():  # testing print and Run.__str__()
 
 if __name__ == "__main__":
     main()
-
