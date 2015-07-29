@@ -8,6 +8,8 @@ def traverse_contest(first_dir):
     for root, dirs, files in walk(first_dir):
         for f in files:
             file_name = join(root, f)
+            if file_name[0] == '.':
+                continue
             if file_name.endswith('.gz'):
                 current_file = gzip_open(file_name, encoding='utf-8')
             else:
