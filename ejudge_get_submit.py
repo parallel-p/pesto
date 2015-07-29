@@ -11,6 +11,7 @@ def ejudge_get_submit(file, memory_base, contest_id):
     except ETree.ParseError:
         return
     runs = []
+    problem, submit_id, user_id, submit_outcome = None, None, None, None
     for child in xml_root.iter():
         if child.tag == 'testing':
             submit_id = child.attrib['run-id']
