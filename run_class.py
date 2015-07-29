@@ -6,15 +6,15 @@ class Run:
         self.outcome = outcome
 
     def __str__(self):
-        _result = "Case #" + str(self.case_id) + " Outcome " + str(self.outcome)
+        _result = "Case #{0} Outcome {1}".format(str(self.case_id), str(self.outcome))
         return _result
 
 
-def main():
+def main(): # testing print and Run.__str__()
     n = int(input())
     runs = []
     for i in range(n):
-        single_run = [int(i) for i in input.split()]
+        single_run = [int(i) for i in input().split()]
         runs.append(Run(*single_run))
     for i in range(len(runs)):
         print(runs[i])
@@ -22,3 +22,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
