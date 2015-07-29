@@ -11,7 +11,7 @@ class EjudgeDB:
             for line in csv_file:
                 ejudge_run_id, contest_id, user_id, problem_id, lang_id, status = map(lambda x: x[1:-1], line.split(';'))
                 if contest_ids is None or contest_id in contest_ids:
-                    self.data.update({(contest_id, ejudge_run_id): EjudgeDBEntry(problem_id, user_id, lang_id)})
+                    self.data[(contest_id, ejudge_run_id)] = EjudgeDBEntry(problem_id, user_id, lang_id)
     
     def get_problem_id(self, contest_id, ejudge_run_id):
         return self.data[(contest_id, ejudge_run_id)].problem_id
