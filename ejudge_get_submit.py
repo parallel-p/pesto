@@ -23,10 +23,11 @@ def ejudge_get_submit(file, memory_base, contest_id):
             submit_outcome = child.attrib['status']
             problem_id = memory_base.get_problem_id(contest_id, submit_id)
             user_id = memory_base.get_user_id(contest_id, submit_id)
+            case_ids = [x + 1 for x in range(int(child.attrib['run-tests']))]
             if memory_base.problem_exists(contest_id, problem_id):
                 problem = memory_base.get_problem(contest_id, problem_id)
+                problem.case_ids = list(set(problem.case_ids + case_ids))
             else:
-                case_ids = [x + 1 for x in range(int(child.attrib['run-tests']))]
                 problem = Problem(contest_id, problem_id, case_ids)
                 memory_base.add_problem(contest_id, problem_id, problem)
         elif child.tag == 'test':
