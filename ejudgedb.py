@@ -4,6 +4,7 @@ class EjudgeDBEntry:
         self.user_id = user_id
         self.lang_id = lang_id
 
+
 class EjudgeDB:
     def __init__(self, csv_filename, contest_ids=None):
         self.data = {}
@@ -12,12 +13,15 @@ class EjudgeDB:
                 ejudge_run_id, contest_id, user_id, problem_id, lang_id, status = line.replace('"', '').split(';')
                 if contest_ids is None or contest_id in contest_ids:
                     self.data[(contest_id, ejudge_run_id)] = EjudgeDBEntry(problem_id, user_id, lang_id)
-    
+
     def get_problem_id(self, contest_id, ejudge_run_id):
-        return self.data[(contest_id, ejudge_run_id)].problem_id
-    
+        if (contest_id, ejudge_run_id) in self.data:
+            return self.data[(contest_id, ejudge_run_id)].problem_id
+
     def get_user_id(self, contest_id, ejudge_run_id):
-        return self.data[(contest_id, ejudge_run_id)].user_id
-    
+        if (contest_id, ejudge_run_id) in self.data:
+            return self.data[(contest_id, ejudge_run_id)].user_id
+
     def get_lang_id(self, contest_id, ejudge_run_id):
-        return self.data[(contest_id, ejudge_run_id)].lang_id    
+        if (contest_id, ejudge_run_id) in self.data:
+            return self.data[(contest_id, ejudge_run_id)].lang_id
