@@ -22,7 +22,9 @@ class MemoryDatabase:
             contest_id = None
         for file in traverse_contest(self.home_dir):
             try:
-                self.submits.append(ejudge_get_submit(file, self, contest_id))
+                submit = ejudge_get_submit(file, self, contest_id)
+                if submit is not None:
+                    self.submits.append(submit)
             except UnicodeError:
                 pass
 
