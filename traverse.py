@@ -1,15 +1,15 @@
 __author__ = 'Kriuchkov'
 from os import walk
 from os.path import join
-import gzip
+from gzip import open as gzip_open
 
 
-def traverse_contest(my_dir):
-    for root, dirs, files in walk(my_dir):
+def traverse_contest(first_dir):
+    for root, dirs, files in walk(first_dir):
         for f in files:
             file_name = join(root, f)
             if file_name.endswith('.gz'):
-                current_file = gzip.open(file_name, 'r')
+                current_file = gzip_open(file_name, 'r')
             else:
                 current_file = open(file_name, 'r')
             yield current_file
