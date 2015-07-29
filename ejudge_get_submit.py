@@ -17,7 +17,7 @@ def ejudge_get_submit(file, memory_base, contest_id):
     runs = []
     problem, submit_id, user_id, submit_outcome = None, None, None, None
     for child in xml_root.iter():
-        if child.tag == 'testing':
+        if child.tag == 'testing-report':
             submit_id = child.attrib['run-id']
             submit_outcome = child.attrib['status']
             problem_id = memory_base.database.get_problem_id(contest_id, submit_id)
