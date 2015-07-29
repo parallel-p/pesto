@@ -1,4 +1,3 @@
-__author__ = 'Kriuchkov'
 from os import walk
 from os.path import join
 from gzip import open as gzip_open
