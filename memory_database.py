@@ -30,3 +30,7 @@ class MemoryDatabase:
     # called from get_submit
     def add_problem(self, contest_id, problem_id, problem):
         self.problems[(str(contest_id), str(problem_id))] = problem
+
+    # called from get_submit
+    def get_problem(self, contest_id, problem_id):
+        return self.problems[(str(contest_id), str(problem_id))]
