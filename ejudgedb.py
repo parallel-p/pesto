@@ -15,10 +15,13 @@ class EjudgeDB:
                     self.data[(contest_id, ejudge_run_id)] = EjudgeDBEntry(problem_id, user_id, lang_id)
     
     def get_problem_id(self, contest_id, ejudge_run_id):
-        return self.data[(contest_id, ejudge_run_id)].problem_id
+        if (contest_id, ejudge_run_id) in self.data:
+            return self.data[(contest_id, ejudge_run_id)].problem_id
     
     def get_user_id(self, contest_id, ejudge_run_id):
-        return self.data[(contest_id, ejudge_run_id)].user_id
+        if (contest_id, ejudge_run_id) in self.data:
+            return self.data[(contest_id, ejudge_run_id)].user_id
     
     def get_lang_id(self, contest_id, ejudge_run_id):
-        return self.data[(contest_id, ejudge_run_id)].lang_id    
+        if (contest_id, ejudge_run_id) in self.data:
+            return self.data[(contest_id, ejudge_run_id)].lang_id    
