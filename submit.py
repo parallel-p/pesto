@@ -10,7 +10,7 @@ class Submit:
     def __str__(self):
         submit_id = "Submit:" + self. submit_id
         test_result = "; Result:" + self.outcome
-        usr_id = "; User ID:" + self.user_id
+        user_id = "; User ID:" + self.user_id
         runs_info = ";\nRuns:\n" + " \n".join(self.runs)
 
         return(submit_id + test_result + user_id + runs_info)
