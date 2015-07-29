@@ -1,4 +1,4 @@
-__author__ = 'Helium'
+__author__ = 'Daniil Konovalenko'
 
 
 class Problem:
@@ -8,6 +8,6 @@ class Problem:
         self.case_ids = case_ids
 
     def __str__(self):
-        return 'Contest #{0} Problem #{1}\nCases: {2}'.format(str(self.contest_id),
-                                                              str(self.problem_id),
+        return 'Contest #{0} Problem #{1}\nCases: {2}'.format(self.contest_id,
+                                                              self.problem_id,
                                                               str(self.case_ids))
