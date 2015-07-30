@@ -56,7 +56,6 @@ class MemoryDatabaseDataTest(unittest.TestCase):
         self.assertEqual(problem.problem_id, '2')
         self.assertEqual(len(problem.case_ids), 10)
 
-    @unittest.expectedFailure  # Bug #39
     def test_add_problem(self):
         p = Problem('1337', '256', ['179', '1'])
         self.mem_db.add_problem(1337, 256, p)
