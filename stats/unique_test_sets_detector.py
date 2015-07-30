@@ -41,5 +41,6 @@ if __name__ == '__main__':
     for problem_id, uniq_results in enumerate(uniq_test_res):
         print("Problem", problem_id)
         print("Uniq test resuls:")
+
         for result in uniq_results:
             print('    Test result:{0}, Submits count:{1}'.format(result[0], result[1]), sep="\n")
