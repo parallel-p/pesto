@@ -1,5 +1,4 @@
 from memory_database import MemoryDatabase
-import run
 
 
 def get_uniq_test_results(base_dir, database_filename):
@@ -26,7 +25,7 @@ def get_uniq_test_results(base_dir, database_filename):
     for problem_id in problems_id:
         uniq_test_results.append([])
         for runs_result in problems[problem_id]:
-            uniq_test_results[-1].append('    Test result:{0}, Submits count:{1}'.format(runs_result, problems[problem_id][runs_result]))
+            uniq_test_results[-1].append([runs_result, problems[problem_id][runs_result]])
 
     return uniq_test_results
 
@@ -39,6 +38,8 @@ if __name__ == '__main__':
 
     uniq_test_res = get_uniq_test_results(base_dir, database_filename)
 
-    for problem_id, el in enumerate(uniq_test_res):
+    for problem_id, uniq_results in enumerate(uniq_test_res):
         print("Problem", problem_id)
-        print("Uniq test resuls:", *el, sep="\n")
+        print("Uniq test resuls:")
+        for result in uniq_results:
+            print('    Test result:{0}, Submits count:{1}'.format(result[0], result[1]), sep="\n")
