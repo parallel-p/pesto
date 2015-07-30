@@ -1,0 +1,27 @@
+Content-type: text/xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<testing-report run-id="10" judge-id="4" status="OK" scoring="ACM" archive-available="yes" run-tests="10" correct-available="yes" >
+  <tests>
+    <test num="1" status="OK" time="190" real-time="195" input-digest="71c878e3c1de0c8e8c240e7c2c9721dfd1e81970" correct-digest="5d9474c0309b7ca09a182d888f73b37a8fe1362c" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="2" status="OK" time="190" real-time="198" input-digest="089897a1f1af35d7bb563222e725dda6144114a1" correct-digest="e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="3" status="OK" time="190" real-time="190" input-digest="7e992b60646eb45ad4b4984d93e7c822d7e7bbbe" correct-digest="a3db5c13ff90a36963278c6a39e4ee3c22e2a436" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="4" status="OK" time="190" real-time="198" input-digest="88e765b990bcd2ecfbc3dd86157d54170002e1ab" correct-digest="e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="5" status="OK" time="190" real-time="201" input-digest="5b7102bc9f71ff7b513c576693e061e35f0ae966" correct-digest="7448d8798a4380162d4b56f9b452e2f6f9e24e7a" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="6" status="OK" time="190" real-time="192" input-digest="4c0248928e38bb59538ca82eca470304276e0a62" correct-digest="e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="7" status="OK" time="200" real-time="196" input-digest="592d91a7b10e2bba49eceeacf0877b9063c88030" correct-digest="7448d8798a4380162d4b56f9b452e2f6f9e24e7a" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="8" status="OK" time="200" real-time="193" input-digest="37410b422823e8abb102c36723fdbcc810a06595" correct-digest="e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="9" status="OK" time="190" real-time="193" input-digest="5ad915ad814639d81f6c1085fedcbfc94c9361a9" correct-digest="d0758565fd06c37aa66b071160d156f5628cd518" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="10" status="OK" time="190" real-time="200" input-digest="311ad41baef1ca56e23b93f2c0701c7a5edf9d96" correct-digest="a3db5c13ff90a36963278c6a39e4ee3c22e2a436" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+  </tests>
+</testing-report>
