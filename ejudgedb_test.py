@@ -8,9 +8,9 @@ class TestEjudgeDB(unittest.TestCase):
         db = EjudgeDB('testdata/ejudgedb/good.csv')
         self.assertEqual(len(db.data), 6)
 
-    @unittest.expectedFailure
     def test_bad_csv(self):
-        db = EjudgeDB('testdata/ejudgedb/bad.csv')
+        with self.assertRaises(Exception):
+            db = EjudgeDB('testdata/ejudgedb/bad.csv')
 
     def test_contest_ids(self):
         db = EjudgeDB('testdata/ejudgedb/good.csv', contest_ids=["42", "43"])
