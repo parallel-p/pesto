@@ -29,7 +29,7 @@ def ejudge_get_submit(file, memory_base, contest_id):
             # if there is no our submit in base
             if None in (problem_id, user_id):
                 return None
-            case_ids = [x + 1 for x in range(int(child.attrib['run-tests']))]
+            case_ids = [str(x + 1) for x in range(int(child.attrib['run-tests']))]
             if memory_base.problem_exists(contest_id, problem_id):
                 problem = memory_base.get_problem(contest_id, problem_id)
                 problem.case_ids = list(set(problem.case_ids + case_ids))

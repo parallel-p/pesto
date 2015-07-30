@@ -38,6 +38,12 @@ class MemoryDatabaseInitTest(unittest.TestCase):
         self.assertEqual(len(mem_db.problems), 4)
         self.assertEqual(list(mem_db.problems)[0][0], '00name')
 
+    @unittest.expectedFailure  # Why mem_db.problems is empty? Bug #50
+    def test_digit_zeros(self):
+        mem_db = create_mem_db('digit_zeros', '0010')
+        self.assertEqual(len(mem_db.problems), 4)
+        self.assertEqual(list(mem_db.problems)[0][0], '10')        
+
 class MemoryDatabaseDataTest(unittest.TestCase):
     def setUp(self):
         self.mem_db = create_mem_db('good', '001')
