@@ -1,0 +1,19 @@
+Content-type: text/xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<testing-report run-id="15" judge-id="1" status="OK" scoring="ACM" archive-available="yes" run-tests="6" correct-available="yes" >
+  <tests>
+    <test num="1" status="OK" time="310" real-time="348" input-digest="71c878e3c1de0c8e8c240e7c2c9721dfd1e81970" correct-digest="5d9474c0309b7ca09a182d888f73b37a8fe1362c" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="2" status="OK" time="200" real-time="199" input-digest="089897a1f1af35d7bb563222e725dda6144114a1" correct-digest="e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="3" status="OK" time="240" real-time="327" input-digest="7e992b60646eb45ad4b4984d93e7c822d7e7bbbe" correct-digest="a3db5c13ff90a36963278c6a39e4ee3c22e2a436" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="4" status="OK" time="280" real-time="304" input-digest="88e765b990bcd2ecfbc3dd86157d54170002e1ab" correct-digest="e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="5" status="OK" time="240" real-time="327" input-digest="7e992b60646eb45ad4b4984d93e7c822d7e7bbbe" correct-digest="a3db5c13ff90a36963278c6a39e4ee3c22e2a436" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+    <test num="6" status="OK" time="280" real-time="304" input-digest="88e765b990bcd2ecfbc3dd86157d54170002e1ab" correct-digest="e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+  </tests>
+</testing-report>
