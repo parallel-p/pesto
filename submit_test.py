@@ -8,9 +8,11 @@ class PositiveTests(unittest.TestCase):
     def setUp(self):
         self.runs = []
         self.runs_results = []
+
         for i in range(2):
             self.runs_results.append(str(1))
             self.runs.append(Run(0, 0, i, 1))
+
         self.runs_results = ''.join(self.runs_results)
         
     def test_init(self):
