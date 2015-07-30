@@ -32,7 +32,7 @@ class MemoryDatabase:
 
     def init_database(self):
         try:
-            contest_id = str(int(os.path.basename(self.home_dir)))  # directory name
+            contest_id = os.path.basename(self.home_dir).lstrip('0')  # directory name
         except ValueError:
             contest_id = None
         for file in traverse_contest(self.home_dir):
