@@ -1,6 +1,7 @@
 class Submit:
 
     def __init__(self, submit_id, problem, user_id, runs, outcome):
+
         self.problem = problem
         self.submit_id = submit_id
         self.runs = runs
