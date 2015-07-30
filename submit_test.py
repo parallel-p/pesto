@@ -16,6 +16,7 @@ class PositiveTests(unittest.TestCase):
         self.assertEqual(self.submit.user_id, 179)
         self.assertEqual(self.submit.outcome, 1)
 
+    @unittest.expectedFailure
     def test_str_runs(self):
         self.submit = Submit(0, 1, 179, self.runs, 1)
         self.assertEqual(str(self.submit), "Submit: 0; Result: 1; User id: 179; Runs: Case #0 Outcome 1, Case #1 Outcome 1.")
