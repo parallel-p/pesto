@@ -10,6 +10,8 @@ class EjudgeDB:
         self.data = {}
         with open(csv_filename) as csv_file:
             for line in csv_file:
+                if line.strip() == '':
+                    continue
                 ejudge_run_id, contest_id, user_id, problem_id, lang_id, status = line.replace('"', '').split(';')
                 if contest_ids is None or contest_id in contest_ids:
                     self.data[(contest_id, ejudge_run_id)] = EjudgeDBEntry(problem_id, user_id, lang_id)
