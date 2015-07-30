@@ -11,13 +11,11 @@ class EjudgeXmlParseResult:
 def ejudge_xml_parse(file):
     try:
         lines = file.readlines()  # invalid .gz
-    except OSError:
-        return None
+        if type(lines[0]) == bytes:
+            for i in range(len(lines)):
+                lines[i] = lines[i].decode()
     except UnicodeError:
         return None
-    if type(lines[0]) == bytes:
-        for i in range(len(lines)):
-            lines[i] = lines[i].decode()
     # Removing first two lines, because they are not XML
     data = ''.join(lines[2:])
     try:

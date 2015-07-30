@@ -1,11 +1,13 @@
 class Submit:
 
     def __init__(self, submit_id, problem, user_id, runs, outcome):
+
         self.problem = problem
         self.submit_id = submit_id
         self.runs = runs
         self.outcome = outcome
         self.user_id = user_id
+        self.runs_results = ''.join([str(run.outcome) for run in self.runs])
 
     def __str__(self):
         if len(self.runs) != 0:
