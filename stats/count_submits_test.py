@@ -3,27 +3,32 @@ import unittest
 
 
 class CountMethodTest(unittest.TestCase):
-    def count_test(self):
-        #CSV contains information only about interesting contest
-        res = {"1":1, "2":1, "3":1}
-        self.assertEqual(count_submits('../testdata/count_submit_test/000017', '../testdata/count_submit_test/useful_runs_count_submit_test.csv'), res)
 
-        res = {}
-        #CSV dasn't contains information about interesting contest
-        self.assertEqual(count_submits('../testdata/count_submit_test/000017', '../testdata/count_submit_test/unuseful_runs_count_submit_test.csv'), res)
+    def __init__(self):
+        self.base_path = '../testdata/count_submit_test/000017'
+        self.data_path = '../testdata/count_submit_test/'
 
-        res = {"1":1, "3":1}
-        #CSV contains information not only about interesting contest
-        self.assertEqual(count_submits('../testdata/count_submit_test/000017', '../testdata/count_submit_test/mixed_runs_count_submit_test.csv'), res)
+    def count_with_full_information_abount_submits_test(self):
+        #CSV contains information only about interesting contest, problems 1 through 3 in contest 17 contain one submit
+        good_result = {"1": 1, "2": 1, "3": 1}
+        self.assertEqual(count_submits(self.base_path, self.data_path + 'useful_runs_count_submit_test.csv'), good_result)
+    def count_without_some_information_abount_submits_test(self):
+        #lines of csv dont corresponds submit in base, no information about contest 17 in csv
+        good_result = {}
+        self.assertEqual(count_submits(self.base_path, self.data_path + 'unuseful_runs_count_submit_test.csv'), good_result)
+    def count_without_full_information_abount_submits_test(self):
+        good_result = {"1": 1, "3": 1}
+        #not every line of csv corresponds submit in base, no information about problem 2 in contest 1 in base
+        self.assertEqual(count_submits(self.base_path, self.data_path + 'mixed_runs_count_submit_test.csv'), good_result)
 
     def without_csv(self):
-        #CSV is empty
-        res = dict()
-        self.assertEqual(count_submits('../testdata/count_submit_test/000017', '../testdata/count_submit_test/empty_runs_count_submit_test.csv'), res)
+        #CSV is empty, result is empty dictionary
+        good_result = dict()
+        self.assertEqual(count_submits(self.base_path, self.data_path + 'empty_runs_count_submit_test.csv'), good_result)
 
-        #without CSV
-        res = dict()
-        self.assertEqual(count_submits('../testdata/count_submit_test/000017_count_submit_test', None), res)
+        #Start without CSV
+        good_result = dict()
+        self.assertEqual(count_submits(self.base_path, None), good_result)
 
     def bad_base_path_test(self):
         with self.assertRaises(Exception):
