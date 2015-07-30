@@ -6,9 +6,8 @@ import unittest
 class CountMethodTest(unittest.TestCase):
 
     def setUp(self):
-        self.base_path = join('..', 'testdata', 'count_submit_test', '000017')
-        self.data_path = join('..', 'testdata', 'count_submit_test')
-
+        self.base_path = join('testdata', 'count_submit_test', '000017')
+        self.data_path = join('testdata', 'count_submit_test')
 
     def test_count_with_full_information_abount_submits(self):
         #CSV contains information only about interesting contest, problems 1 through 3 in contest 17 contain one submit
