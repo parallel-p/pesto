@@ -2,7 +2,6 @@ from memory_database import MemoryDatabase
 
 
 def get_uniq_test_results(base_dir, database_filename):
-
     database = MemoryDatabase(base_dir, database_filename)
     problems = dict()
     problems_id = []

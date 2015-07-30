@@ -27,7 +27,6 @@ class CountMethodTest(unittest.TestCase):
         #CSV is empty, result is empty dictionary
         good_result = dict()
         self.assertEqual(count_submits(self.base_path, self.data_path + 'empty_runs_count_submit_test.csv'), good_result)
-
         #Start without CSV
         good_result = dict()
         self.assertEqual(count_submits(self.base_path, None), good_result)
