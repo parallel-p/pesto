@@ -23,7 +23,7 @@ class MemoryDatabaseInitTest(unittest.TestCase):
         self.assertEqual(len(mem_db.submits), 7)
         self.assertEqual(len(mem_db.problems), 4)
 
-    def test_bad_gz(self):  # Now it raises OSError, must skip wrong .gz.
+    def test_bad_gz(self):
         mem_db = create_mem_db('gz', '001')
         self.assertEqual(len(mem_db.submits), 7)
         self.assertEqual(len(mem_db.problems), 3)
