@@ -2,6 +2,7 @@ import unittest
 from submit import Submit
 from run import Run
 
+
 class PositiveTests(unittest.TestCase):
 
     def setUp(self):

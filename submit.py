@@ -6,7 +6,6 @@ class Submit:
         self.runs = runs
         self.outcome = outcome
         self.user_id = user_id
-
         self.runs_results = ''.join([str(run.outcome) for run in self.runs])
 
     def __str__(self):
