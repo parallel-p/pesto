@@ -4,39 +4,43 @@ import os.path
 import unittest
 
 
+def create_mem_db(version, contest):
+    return MemoryDatabase(os.path.join('testdata', 'memory_database', version, contest), os.path.join('testdata', 'memory_database', version, 'db.csv'))
+
+
 class MemoryDatabaseInitTest(unittest.TestCase):
     def test_good(self):
-        mem_db = MemoryDatabase(os.path.join('testdata', 'memory_database', 'good', '001'), os.path.join('testdata', 'memory_database', 'good', 'db.csv'))
+        mem_db = create_mem_db('good', '001')
         self.assertEqual(len(mem_db.submits), 8)
         self.assertEqual(len(mem_db.problems), 4)
 
     def test_bad_csv(self):
         with self.assertRaises(ValueError):
-            mem_db = MemoryDatabase(os.path.join('testdata', 'memory_database', 'csv', '001'), os.path.join('testdata', 'memory_database', 'csv', 'db.csv'))
+            create_mem_db('csv', '001')
 
     def test_bad_xml(self):
-        mem_db = MemoryDatabase(os.path.join('testdata', 'memory_database', 'xml', '001'), os.path.join('testdata', 'memory_database', 'xml', 'db.csv'))
+        mem_db = create_mem_db('xml', '001')
         self.assertEqual(len(mem_db.submits), 7)
         self.assertEqual(len(mem_db.problems), 4)
 
     def test_bad_gz(self):  # Now it raises OSError, must skip wrong .gz.
-        mem_db = MemoryDatabase(os.path.join('testdata', 'memory_database', 'gz', '001'), os.path.join('testdata', 'memory_database', 'gz', 'db.csv'))
+        mem_db = create_mem_db('gz', '001')
         self.assertEqual(len(mem_db.submits), 7)
         self.assertEqual(len(mem_db.problems), 3)
 
     def test_empty_folders(self):
-        mem_db = MemoryDatabase(os.path.join('testdata', 'memory_database', 'empty_folders', '001'), os.path.join('testdata', 'memory_database', 'empty_folders', 'db.csv'))
+        mem_db = create_mem_db('empty_folders', '001')
         self.assertEqual(len(mem_db.submits), 6)
         self.assertEqual(len(mem_db.problems), 3)
 
     def test_name_zeros(self):
-        mem_db = MemoryDatabase(os.path.join('testdata', 'memory_database', 'name_zeros', '00name'), os.path.join('testdata', 'memory_database', 'name_zeros', 'db.csv'))
+        mem_db = create_mem_db('name_zeros', '00name')
         self.assertEqual(len(mem_db.problems), 4)
         self.assertEqual(list(mem_db.problems)[0][0], '00name')
 
 class MemoryDatabaseDataTest(unittest.TestCase):
     def setUp(self):
-        self.mem_db = MemoryDatabase(os.path.join('testdata', 'memory_database', 'good', '001'), os.path.join('testdata', 'memory_database', 'good', 'db.csv'))
+        self.mem_db = create_mem_db('good', '001')
 
     def tearDown(self):
         del self.mem_db
@@ -56,7 +60,6 @@ class MemoryDatabaseDataTest(unittest.TestCase):
         self.assertEqual(problem.problem_id, '2')
         self.assertEqual(len(problem.case_ids), 10)
 
-    @unittest.expectedFailure  # Bug #39
     def test_add_problem(self):
         p = Problem('1337', '256', ['179', '1'])
         self.mem_db.add_problem(1337, 256, p)

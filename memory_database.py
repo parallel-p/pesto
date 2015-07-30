@@ -2,6 +2,7 @@ import os.path
 from traverse import traverse_contest
 from ejudge_get_submit import ejudge_get_submit
 from ejudgedb import EjudgeDB
+from problem import Problem
 
 
 class MemoryDatabase:
@@ -51,6 +52,8 @@ class MemoryDatabase:
 
     # called from get_submit
     def add_problem(self, contest_id, problem_id, problem):
+        if type(problem) != Problem:
+            raise ValueError("add_problem can only accept problems")
         self.problems[(str(contest_id), str(problem_id))] = problem
 
     # called from get_submit
