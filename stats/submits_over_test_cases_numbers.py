@@ -1,6 +1,7 @@
 from memory_database import MemoryDatabase
 import os.path
 
+
 # Returns a dictionary of dictionaries of submit count by number of cases by problem id
 def submits_over_numbers_histogram(home_dir, database_filename):
     database = MemoryDatabase(home_dir, database_filename)
@@ -20,10 +21,31 @@ def submits_over_numbers_histogram(home_dir, database_filename):
     return result
 
 
-if __name__ == '__main__':
-
-    data = submits_over_numbers_histogram(os.path.join('..', '000017'),
-                                          os.path.join('..', 'runs.csv'))
+def pretty_printer(data): # Takes data from submits_over_number_histogram()
     fout = open('histogram.txt', 'w')
-    print(data[data.keys()[0]], file=fout)
+    for problem in data.keys():
+
+        cases_numbers = []
+        submit_numbers = []
+        for case_number in data[problem].keys():
+            cases_numbers.append(case_number)
+            submit_numbers.append(data[problem][case_number])
+        bar_length_multiplier = int(80 / max(submit_numbers))
+        print('------------\n'
+              'Problem #{0}\n'
+              '------------'.format(problem), file=fout)
+        for i in range(len(cases_numbers)):
+
+            print('{0:{width}}'.format(cases_numbers[i], width=5),
+                  '#' * submit_numbers[i] * bar_length_multiplier,
+                  submit_numbers[i], file=fout)
     fout.close()
+
+
+if __name__ == '__main__':
+    hist_data = submits_over_numbers_histogram(os.path.join('..', 'testdata',
+                                                            'count_submit_test', '000017'),
+                                               os.path.join('..', 'testdata',
+                                                            'count_submit_test',
+                                                            'mixed_runs_count_submit_test.csv'))
+    pretty_printer(hist_data)
