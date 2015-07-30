@@ -22,7 +22,7 @@ class PositiveTests(unittest.TestCase):
 
     def test_str_0runs(self):   
         self.submit = Submit(0, 1, 179, [], 1)
-        self.assertEqual(str(self.submit), "Submit: 0; Result: 1; User id: 179; Runs: .")
+        self.assertEqual(str(self.submit), "Submit: 0; Result: 1; User id: 179; No Runs.")
 
 if __name__ == "__main__":
     unittest.main() 

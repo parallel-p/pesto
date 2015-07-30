@@ -8,4 +8,8 @@ class Submit:
         self.user_id = user_id
 
     def __str__(self):
-        return 'Submit: {0}; Result: {1}; User id: {2}; Runs: {3}.'.format(self. submit_id, self.outcome, self.user_id, (", ").join(str(self.runs)))
+        if len(self.runs) != 0:
+            _result = "Submit: {0}; Result: {1}; User id: {2}; Runs: {3}.".format(self.submit_id, self.outcome, self.user_id, (", ").join([str(run) for run in self.runs]))
+        else:
+            _result = "Submit: {0}; Result: {1}; User id: {2}; No Runs.".format(self.submit_id, self.outcome, self.user_id)
+        return _result
