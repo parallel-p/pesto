@@ -5,7 +5,10 @@ from submit import Submit
 
 
 def ejudge_get_submit(file, memory_base, contest_id):
-    lines = file.readlines()
+    try:
+        lines = file.readlines()  # invalid .gz
+    except OSError:
+        return None
     if type(lines[0]) == bytes:
         for i in range(len(lines)):
             lines[i] = lines[i].decode()
