@@ -38,7 +38,6 @@ class MemoryDatabaseInitTest(unittest.TestCase):
         self.assertEqual(len(mem_db.problems), 4)
         self.assertEqual(list(mem_db.problems)[0][0], '00name')
 
-    @unittest.expectedFailure
     def test_digit_zeros(self):
         mem_db = create_mem_db('digit_zeros', '0010')
         self.assertEqual(len(mem_db.problems), 4)
