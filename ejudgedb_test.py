@@ -13,11 +13,6 @@ class TestEjudgeDB(unittest.TestCase):
         db = EjudgeDB('testdata/ejudgedb/good_empty_lines.csv')
         self.assertEqual(len(db.data), 6)
 
-    @unittest.expectedFailure
-    def test_comment(self):
-        db = EjudgeDB('testdata/ejudgedb/good_comment.csv')
-        self.assertEqual(len(db.data), 6)
-
     def test_bad_csv(self):
         with self.assertRaises(Exception):
             db = EjudgeDB('testdata/ejudgedb/bad.csv')
