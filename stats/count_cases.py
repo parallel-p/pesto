@@ -1,15 +1,14 @@
 from memory_database import MemoryDatabase
 
 
-def count_cases(problems, contest_id):  # list of problems goes here and key
+def count_cases(problems, contest_id): # dict of problems goes here with key
     _result = []
-    for problem_pair in problems.items():
-        if problem_pair[0][0] == contest_id:
-            problem = problem_pair[1]
+    for problem_pair in problems.items():    # problem_pair[0] - key of dict item
+        if problem_pair[0][0] == contest_id: # problem_pair[0][0] - contest_id in key
+            problem = problem_pair[1]        # problem_pair[1] - value of dict item
             _result.append((problem.contest_id, problem.problem_id, len(problem.case_ids)))
     _result.sort()
     return _result
-
 
 def main():
     print('Enter contests base dir name:')
@@ -25,4 +24,4 @@ def main():
 if __name__ == "__main__":
     problems, contest_id = main()
     for result in count_cases(problems, contest_id):
-        print("Contest ID #{0}, Problem ID#{1}\tCases amount: {2}".format(*result))
+        print("Contest ID #{0}, Problem ID #{1}\tCases amount: {2}".format(*result))
