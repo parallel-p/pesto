@@ -8,7 +8,6 @@ class TestEjudgeDB(unittest.TestCase):
         db = EjudgeDB('testdata/ejudgedb/good.csv')
         self.assertEqual(len(db.data), 6)
 
-    @unittest.expectedFailure
     def test_empty_lines(self):
         db = EjudgeDB('testdata/ejudgedb/good_empty_lines.csv')
         self.assertEqual(len(db.data), 6)
