@@ -10,7 +10,10 @@ def traverse_contest(first_dir):
                 continue
             file_name = join(root, file)
             if file_name.endswith('.gz'):
-                current_file = gzip_open(file_name)
+                try:
+                    current_file = gzip_open(file_name)
+                except OSError:  # invalid .gz
+                    continue
             else:
                 current_file = open(file_name, encoding='utf-8')
             yield current_file
