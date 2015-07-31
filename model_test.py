@@ -25,7 +25,7 @@ class TestProblemMethods(unittest.TestCase):
         for submit in database.submits:
             if submit.problem.problem_id == temp.problem_id:
                 standard.append(submit)
-        self.assertEqual(temp.get_submits(database), standard)
+        self.assertEqual([submit for submit in temp.get_submits(database)], standard)
 
 
 class TestRun(unittest.TestCase):

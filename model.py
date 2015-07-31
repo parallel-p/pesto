@@ -15,11 +15,10 @@ class Problem:
                                                               self.case_ids)
 
     def get_submits(self, database):  # Returns all submits for particular problem
-        result = list()
         for submit in database.submits:
             if submit.problem.problem_id == self.problem_id:
-                result.append(submit)
-        return result
+                yield submit
+
 
 
 class Submit:
