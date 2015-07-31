@@ -8,9 +8,9 @@ class SubmitsCounter(Visitor):
 
     def update_submit(self, submit):
         if str(submit.problem_id) not in self.result:
-            self.result[str(submit.problem_id)] = 1
+            self.result[submit.problem_id] = 1
         else:
-            self.result[str(submit.problem_id)] += 1
+            self.result[submit.problem_id] += 1
 
     def get_stat_data(self):
         result = ''
