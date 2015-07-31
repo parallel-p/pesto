@@ -2,6 +2,7 @@ import sys
 from ejudge_parse import ejudge_parse
 from compositor_visitor import CompositorVisitor
 from importlib import import_module
+import stats
 
 
 def get_param(num, query):
