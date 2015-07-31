@@ -65,6 +65,10 @@ class TestEjudgeParser(unittest.TestCase):
         do_parse('digit_zeros', '0010', self.visitor)
         self.assertEqual(self.visitor.submit_list[0].runs[0].case_id, 1)
 
+    def test_not_all_in_csv(self):
+        do_parse('not_all_in_csv', '001', self.visitor)
+        self.assertEqual(self.visitor.submits, 4)
+
     def test_double_contest(self):
         contest_dirs = list()
         contest_dirs.append(os.path.join('testdata', 'memory_database', 'good', '001'))
