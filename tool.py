@@ -36,10 +36,16 @@ def suppose_statistics():
 
 
 def main():
-    home_dir = get_param(1, 'Enter contests base dir name: ')
-    while not os.path.isdir(home_dir):
-        home_dir = input('Please, enter correct directory name: ')
-    csv_filename = get_param(2, 'Enter csv database filename. ' + suppose_csv())
+    base_dir = get_param(1, 'Enter contests base dir name (if this directory contains several contests, add "%" before its name): ').strip()
+    while not os.path.isdir(base_dir.lstrip('%')):
+        base_dir = input('Please, enter correct directory names: ').split()
+    base_dir = base_dir.rstrip('/').rstrip('\\')
+    if base_dir.strip()[0] == '%':
+        base_dir = base_dir[1:].strip()
+        home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
+    else:
+        home_dirs = [base_dir]
+    csv_filename = get_param(2, 'Enter csv database filename: ' + suppose_csv())
     while not (os.path.isfile(csv_filename) and os.access(csv_filename, os.R_OK)):
         csv_filename = input('Please, enter correct filename: ')
     stats_names = get_stats_names(3, 'Enter statistics names (separate by spaces). ' + suppose_statistics())
@@ -50,7 +56,7 @@ def main():
             stats_modules.append(import_module('stats.' + stats_name))
     stats_counters = [eval(i.__name__ + '.' + i.classname)() for i in stats_modules]  # creates stats objects
     compositor = CompositorVisitor(*stats_counters)
-    ejudge_parse([home_dir], csv_filename, compositor)
+    ejudge_parse(home_dirs, csv_filename, compositor)
     print()
     print(compositor.pretty_print())
 
