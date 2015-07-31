@@ -10,7 +10,7 @@ class CasesCounter(Visitor):
         if str(submit.problem_id) not in self.result or len(submit.runs) > self.result[str(submit.problem_id)]:
             self.result[str(submit.problem_id)] = len(submit.runs)
     
-    def get_stat_data(self):
+    def pretty_print(self):
         result = ''
         for k, v in sorted(self.result.items()):
             result += 'Problem #{}: {} cases.\n'.format(k, v)        

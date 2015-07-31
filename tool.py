@@ -21,7 +21,7 @@ def main():
     stats_counters = [eval(i.__name__ + '.' + i.classname)() for i in stats_modules]  # creates stats objects
     compositor = CompositorVisitor(*stats_counters)
     ejudge_parse([home_dir], csv_filename, compositor)
-    print(compositor.get_stat_data())
+    print(compositor.pretty_print())
 
 
 if __name__ == "__main__":

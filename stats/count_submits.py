@@ -12,7 +12,7 @@ class SubmitsCounter(Visitor):
         else:
             self.result[submit.problem_id] += 1
 
-    def get_stat_data(self):
+    def pretty_print(self):
         result = ''
         for k, v in sorted(self.result.items()):
             result += 'Problem #{}: {} submits.\n'.format(k, v)

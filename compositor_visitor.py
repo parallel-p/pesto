@@ -9,8 +9,8 @@ class CompositorVisitor(Visitor):
         for visitor in self.visitors:
             visitor.update_submit(update_submit)
 
-    def get_stat_data(self):
+    def pretty_print(self):
         if len(self.visitors) == 0:
             return ""
         else:
-            return "\n\n".join([visitor.get_stat_data() for visitor in self.visitors])
+            return "\n\n".join([visitor.pretty_print() for visitor in self.visitors])

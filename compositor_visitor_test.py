@@ -10,20 +10,20 @@ class FakeVisitor(Visitor):
         self.result += submit
 
     #Returns ready for print string of result data
-    def get_stat_data(self):
+    def pretty_print(self):
         return str(self.result)
 
 
 class FunctionTesting(unittest.TestCase):
     def test_empty_output(self):
         comp_visitor = CompositorVisitor()
-        self.assertEqual(comp_visitor.get_stat_data(), "")
+        self.assertEqual(comp_visitor.pretty_print(), "")
 
     def test_one_visitors(self):
         visitor = FakeVisitor()
         comp_visitor = CompositorVisitor(visitor)
         comp_visitor.update_submit(10)
-        self.assertEqual(comp_visitor.get_stat_data(), "10")
+        self.assertEqual(comp_visitor.pretty_print(), "10")
 
     def test_two_visitors(self):
         visitors = []
@@ -33,7 +33,7 @@ class FunctionTesting(unittest.TestCase):
         comp_visitor = CompositorVisitor(*visitors)
         visitors[0].update_submit(10)
         comp_visitor.update_submit(10)
-        self.assertEqual(comp_visitor.get_stat_data(), "20\n\n10")
+        self.assertEqual(comp_visitor.pretty_print(), "20\n\n10")
 
 
 if __name__ == "__main__":

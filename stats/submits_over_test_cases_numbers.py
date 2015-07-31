@@ -16,7 +16,7 @@ class SubmitsOverTestCasesNumbers(Visitor):
         else:
             self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id] = {}
 
-    def get_stat_data(self):
+    def pretty_print(self):
         return str(self.number_of_submits_by_number_of_runs_by_problem_id)
 
 classname = "SubmitsOverTestCasesNumbers"
