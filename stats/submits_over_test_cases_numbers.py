@@ -3,6 +3,7 @@ from visitor import Visitor
 
 class SubmitsOverTestCasesNumbers(Visitor):
     def __init__(self):
+        super().__init__()
         self.number_of_submits_by_number_of_runs_by_problem_id = {}
 
     def update_submit(self, submit):

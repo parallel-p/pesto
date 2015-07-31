@@ -2,14 +2,16 @@ import unittest
 from compositor_visitor import CompositorVisitor
 from visitor import Visitor
 
+
 class FakeVisitor(Visitor):
     def __init__(self):
+        super().__init__()
         self.result = 0
 
     def update_submit(self, submit):
         self.result += submit
 
-    #Returns ready for print string of result data
+    # Returns ready for print string of result data
     def pretty_print(self):
         return str(self.result)
 

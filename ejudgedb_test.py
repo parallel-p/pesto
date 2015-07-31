@@ -6,6 +6,7 @@ from ejudgedb import EjudgeDB, EjudgeDBEntry
 def make_path(csv_filename):
     return os.path.join('testdata', 'ejudgedb', csv_filename)
 
+
 class TestEjudgeDB(unittest.TestCase):
 
     def test_ejudgedb_init(self):
@@ -18,7 +19,7 @@ class TestEjudgeDB(unittest.TestCase):
 
     def test_bad_csv(self):
         with self.assertRaises(Exception):
-            db = EjudgeDB(make_path('bad.csv'))
+            EjudgeDB(make_path('bad.csv'))
 
     def test_contest_ids(self):
         db = EjudgeDB(make_path('good.csv'), contest_ids=["42", "43"])

@@ -6,6 +6,7 @@ from ejudge_parse import ejudge_parse
 
 class FakeVisitor(Visitor):
     def __init__(self):
+        super().__init__()
         self.submits = 0
         self.submit_list = []
 

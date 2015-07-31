@@ -1,5 +1,6 @@
 from visitor import Visitor
 
+
 class CompositorVisitor(Visitor):
     def __init__(self, *visitors):
         super().__init__()
