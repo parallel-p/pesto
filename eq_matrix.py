@@ -1,20 +1,34 @@
-def get_eq_matrix(submits):
-    case_amount = len(submits[0].problem.case_ids) # as submits refer to same problem, which knows max cases amount
-    
-    matrix = [[0] * case_amount for i in range(case_amount)]
+from visitor import Visitor
 
-    for submit in submits:
-        for first in range(len(submit.runs)):
-            for second in range(len(submit.runs)): 
+class EqMatrix(Visitor):
+    def __init__(self):
+        self.result = []
+
+    def update_submit(self, submit):
+        case_amount = len(submit.runs) # amount of cases in this submit
+
+        if case_amount > len(self.result): # extending matrix in case we found more cases
+            for i in range(len(self.result)):
+                self.result[i].extend([0] * (case_amount - len(self.result)))
+            self.result.extend([[0] * case_amount for i in range(case_amount - len(self.result))])
+
+        for i in range(case_amount):
+            for j in range(case_amount):
                 comp_list = [] # this is needed in order to unite "WA", "ML" etc
-                if submit.runs[first].outcome == "OK":
+                if submit.runs[i].outcome == "OK":
                     comp_list.append(1)
                 else:
                     comp_list.append(0)
-                if submit.runs[second].outcome == "OK":
+                if submit.runs[j].outcome == "OK":
                     comp_list.append(1)
                 else:
                     comp_list.append(0)
                 if comp_list[0] == comp_list[1]:
-                    matrix[first][second] += 1
-    return matrix
+                    self.result[i][j] += 1
+
+    def pretty_print(self):
+        print_data = ""
+        for line in self.result:
+            results = " ".join(map(str, line)) + "\n"
+            print_data += results
+        return print_data

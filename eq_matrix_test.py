@@ -1,89 +1,98 @@
 import unittest
-from eq_matrix import get_eq_matrix
+from eq_matrix import EqMatrix
 from model import Submit
 from model import Run
 
 
 class PositiveTests(unittest.TestCase):
+    def setUp(self):
+        self.matrix = EqMatrix()
 
-    @unittest.skip # Eq_matrix use submit.problem which isn't exists anymore
     def test_allsame(self):
         runs = []
         for i in range(4):
-            runs.append(Run(0, 0, i, "OK"))
-        
-        problem = Problem(0, 0, [0, 1, 2, 3])
+            runs.append(Run(17, 0, 0, i, "OK"))
+
         submits = []
         for i in range(10):
             submits.append(Submit(i, 0, 0, runs, 0))
 
-        sample = [[10] * 4 for i in range(4)]
+        for submit in submits:
+            self.matrix.update_submit(submit)
 
-        self.assertEqual(get_eq_matrix(submits), sample)
+        sample = ("10 10 10 10\n" +
+                  "10 10 10 10\n" +
+                  "10 10 10 10\n" +
+                  "10 10 10 10\n")
 
-    @unittest.skip # Eq_matrix use submit.problem which isn't exists anymore
+        self.assertEqual(self.matrix.pretty_print(), sample)
+
     def test_mixed(self):
         runs = []
-        runs.append(Run(0, 0, 0, "OK"))
-        runs.append(Run(0, 0, 1, "WA"))
-        runs.append(Run(0, 0, 2, "WA"))
-        runs.append(Run(0, 0, 3, "WA"))
+        runs.append(Run(17, 0, 0, 0, "OK"))
+        runs.append(Run(17, 0, 0, 1, "WA"))
+        runs.append(Run(17, 0, 0, 2, "WA"))
+        runs.append(Run(17, 0, 0, 3, "WA"))
 
-        problem = Problem(0, 0, [0, 1, 2, 3])
         submits = []
         for i in range(10):
             submits.append(Submit(i, 0, 0, runs, 0))
 
-        sample = [[10, 0, 0, 0], 
-                  [0, 10, 10, 10],
-                  [0, 10, 10, 10],
-                  [0, 10, 10, 10]]
+        sample = ("10 0 0 0\n"   +
+                  "0 10 10 10\n" +
+                  "0 10 10 10\n" +
+                  "0 10 10 10\n")
 
-        self.assertEqual(get_eq_matrix(submits), sample)
+        for submit in submits:
+            self.matrix.update_submit(submit)
 
-    @unittest.skip # Eq_matrix use submit.problem which isn't exists anymore
+        self.assertEqual(self.matrix.pretty_print(), sample)
+
     def test_different(self):
         runs = []
-        runs.append(Run(0, 0, 0, "OK"))
-        runs.append(Run(0, 0, 1, "WA"))
-        runs.append(Run(0, 0, 2, "OK"))
-        runs.append(Run(0, 0, 3, "WA"))
+        runs.append(Run(17, 0, 0, 0, "OK"))
+        runs.append(Run(17, 0, 0, 1, "WA"))
+        runs.append(Run(17, 0, 0, 2, "OK"))
+        runs.append(Run(17, 0, 0, 3, "WA"))
 
-        problem = Problem(0, 0, [0, 1, 2, 3])
         submits = []
         for i in range(10):
             submits.append(Submit(i, 0, 0, runs, 0))
 
-        sample = [[10, 0, 10, 0], 
-                  [0, 10, 0, 10],
-                  [10, 0, 10, 0],
-                  [0, 10, 0, 10]]
+        for submit in submits:
+            self.matrix.update_submit(submit)
 
-        self.assertEqual(get_eq_matrix(submits), sample)
+        sample = ("10 0 10 0\n" +
+                  "0 10 0 10\n" +
+                  "10 0 10 0\n" +
+                  "0 10 0 10\n")
 
-    @unittest.skip # Eq_matrix use submit.problem which isn't exists anymore
+        self.assertEqual(self.matrix.pretty_print(), sample)
+
     def test_difruns(self):
         runs = []
-        runs.append(Run(0, 0, 0, "OK"))
-        runs.append(Run(0, 0, 1, "WA"))
-        runs.append(Run(0, 0, 2, "OK"))
-        runs.append(Run(0, 0, 3, "WA"))
+        runs.append(Run(17, 0, 0, 0, "OK"))
+        runs.append(Run(17, 0, 0, 1, "WA"))
+        runs.append(Run(17, 0, 0, 2, "OK"))
+        runs.append(Run(17, 0, 0, 3, "WA"))
 
-        problem = Problem(0, 0, [0, 1, 2, 3])
         submits = []
         for i in range(4):
-            submits.append(Submit(i, 0, 0, runs, 0))
             submits.append(Submit(i, 0, 0, runs[:2], 0))
+            submits.append(Submit(i, 0, 0, runs, 0))
         submits.append(Submit(i, 0, 0, runs[:1], 0))
         submits.append(Submit(i, 0, 0, runs[:1], 0))
 
-        sample = [[10, 0, 4, 0], 
-                  [0, 8, 0, 4],
-                  [4, 0, 4, 0],
-                  [0, 4, 0, 4]]
+        for submit in submits:
+            self.matrix.update_submit(submit)
 
-        self.assertEqual(get_eq_matrix(submits), sample)
+        sample = ("10 0 4 0\n" +
+                  "0 8 0 4\n"  +
+                  "4 0 4 0\n"  +
+                  "0 4 0 4\n")
+
+        self.assertEqual(self.matrix.pretty_print(), sample)
 
 
 if __name__ == "__main__":
-    unittest.main() 
+    unittest.main()
