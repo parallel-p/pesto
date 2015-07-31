@@ -25,7 +25,7 @@ def ejudge_parse(contest_dirs, csv_filename, visitor):
             run_outcomes = result.run_outcomes
             problem_id = database.get_problem_id(contest_id, submit_id)
             user_id = database.get_user_id(contest_id, submit_id)
-            if problem_id is None or user_id is None:
+            if None in (problem_id, user_id):
                 continue
             runs = [Run(contest_id, problem_id, submit_id, i + 1, run_outcomes[i]) for i in range(len(run_outcomes))]
             submit = Submit(submit_id, contest_id, problem_id, user_id, runs, submit_outcome)
