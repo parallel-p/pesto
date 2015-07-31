@@ -1,46 +1,62 @@
 import os.path
 import unittest
+from visitor import Visitor
 from ejudge_parse import ejudge_parse
 
 
-def do_parse(version, contest):
-    return ejudge_parse([os.path.join('testdata', 'memory_database', version, contest)], os.path.join('testdata', 'memory_database', version, 'db.csv'))
+class FakeVisitor(Visitor):
+    def __init__(self):
+        self.submits = 0
+
+    def update_submit(self, submit):
+        self.submits += 1
+
+
+def do_parse(version, contest, visitor):
+    contest_dirs = [os.path.join('testdata', 'memory_database', version, contest)]
+    csv_filename = os.path.join('testdata', 'memory_database', version, 'db.csv')
+    ejudge_parse(contest_dirs, csv_filename, visitor)
 
 
 class TestEjudgeParser(unittest.TestCase):
+    def setUp(self):
+        self.visitor = FakeVisitor()
+
     def test_good(self):
-        problems, submits = do_parse('good', '001')
-        self.assertEqual(len(submits), 8)
-        self.assertEqual(len(problems), 4)
+        do_parse('good', '001', self.visitor)
+        self.assertEqual(self.visitor.submits, 8)
 
     def test_bad_csv(self):
         with self.assertRaises(ValueError):
-            do_parse('csv', '001')
+            do_parse('csv', '001', self.visitor)
 
     def test_bad_xml(self):
-        problems, submits = do_parse('xml', '001')
-        self.assertEqual(len(submits), 7)
-        self.assertEqual(len(problems), 4)
+        do_parse('xml', '001', self.visitor)
+        self.assertEqual(self.visitor.submits, 7)
 
     def test_bad_gz(self):
-        problems, submits = do_parse('gz', '001')
-        self.assertEqual(len(submits), 7)
-        self.assertEqual(len(problems), 3)
+        do_parse('gz', '001', self.visitor)
+        self.assertEqual(self.visitor.submits, 7)
 
     def test_empty_folders(self):
-        problems, submits = do_parse('empty_folders', '001')
-        self.assertEqual(len(submits), 6)
-        self.assertEqual(len(problems), 3)
+        do_parse('empty_folders', '001', self.visitor)
+        self.assertEqual(self.visitor.submits, 6)
 
     def test_name_zeros(self):
-        problems, submits = do_parse('name_zeros', '00name')
-        self.assertEqual(len(problems), 4)
-        self.assertEqual(list(problems)[0][0], '00name')
+        do_parse('name_zeros', '00name', self.visitor)
+        self.assertEqual(self.visitor.submits, 8)
 
     def test_digit_zeros(self):
-        problems, submits = do_parse('digit_zeros', '0010')
-        self.assertEqual(len(problems), 4)
-        self.assertEqual(list(problems)[0][0], '10')
+        do_parse('digit_zeros', '0010', self.visitor)
+        self.assertEqual(self.visitor.submits, 8)
+
+    def test_double_contest(self):
+        contest_dirs = list()
+        contest_dirs.append(os.path.join('testdata', 'memory_database', 'good', '001'))
+        contest_dirs.append(os.path.join('testdata', 'memory_database', 'gz', '001'))
+        csv_filename = os.path.join('testdata', 'memory_database', 'good', 'db.csv')
+        ejudge_parse(contest_dirs, csv_filename, self.visitor)
+        self.assertEqual(self.visitor.submits, 15)
 
 if __name__ == '__main__':
     unittest.main()
