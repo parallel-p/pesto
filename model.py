@@ -22,9 +22,9 @@ class Problem:
 
 
 class Submit:
-    def __init__(self, submit_id, problem, user_id, runs, outcome):
+    def __init__(self, submit_id, problem_id, user_id, runs, outcome):
 
-        self.problem = problem
+        self.problem_id = problem_id
         self.submit_id = submit_id
         self.runs = runs
         self.outcome = outcome
