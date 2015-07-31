@@ -1,7 +1,6 @@
 import unittest
 from model import Submit
 from model import Run
-import os.path
 
 
 class TestRun(unittest.TestCase):
@@ -19,8 +18,11 @@ class TestRun(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(self.run), "Contest #17 Case #2 Outcome OK")
 
+    def test_repr(self):
+        self.assertEqual(str(self.run), repr(self.run))
 
-class PositiveTests(unittest.TestCase):
+
+class TestSubmit(unittest.TestCase):
 
     def setUp(self):
         self.runs = []
