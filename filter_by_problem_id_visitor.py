@@ -6,3 +6,6 @@ class FilterByProblemIdVisitor():
     def update_submit(self, submit):
         if submit.problem_id == self.problem_id:
             self.target_visitor.update_submit(submit)
+
+    def get_stat_data(self):
+        return self.target_visitor.get_stat_data

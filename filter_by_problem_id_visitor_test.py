@@ -1,19 +1,12 @@
 import unittest
 from filter_by_problem_id_visitor import FilterByProblemIdVisitor
 from model import Submit
-
-
-class VisitorForTesting():
-    def __init__(self):
-        self.mathcing = False
-
-    def update_submit(self, submit):
-        self.mathcing = True
+from visitor import Visitor
 
 
 class FilterVisitorTest(unittest.TestCase):
     def setUp(self):
-        self.visitor = VisitorForTesting()
+        self.visitor = Visitor()
 
         self.good_problem_id = "666"
         self.bad_problem_id = "333"
@@ -29,12 +22,12 @@ class FilterVisitorTest(unittest.TestCase):
     def test_matching_problem_id(self):
         testing_visitor = FilterByProblemIdVisitor(self.good_problem_id, self.visitor)
         testing_visitor.update_submit(self.good_submit)
-        self.assertTrue(self.visitor.mathcing)
+        self.assertEqual(self.visitor.the_number_of_transmitted_submits, 1)
 
     def test_mismatching_problem_id(self):
         testing_visitor = FilterByProblemIdVisitor(self.good_problem_id, self.visitor)
         testing_visitor.update_submit(self.bad_submit)
-        self.assertFalse(self.visitor.mathcing)
+        self.assertEqual(self.visitor.the_number_of_transmitted_submits, 0)
 
 
 if __name__ == "__main__":
