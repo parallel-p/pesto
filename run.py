@@ -8,3 +8,6 @@ class Run:
     def __str__(self):
         result = "Case #{0} Outcome {1}".format(str(self.case_id), str(self.outcome))
         return result
+
+    def __repr__(self):
+        return str(self)
