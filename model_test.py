@@ -2,7 +2,6 @@ import unittest
 from model import Problem
 from model import Submit
 from model import Run
-from memory_database import MemoryDatabase
 import os.path
 
 

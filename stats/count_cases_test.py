@@ -4,6 +4,7 @@ from model import Problem
 
 
 class TestCountCases(unittest.TestCase):
+
     @unittest.skip #remove CountCases
     def test_common(self):
         problems = {}
@@ -13,10 +14,12 @@ class TestCountCases(unittest.TestCase):
         self.assertEqual(count_cases(problems, "42"), [('42', '1', 10), ('42', '2', 15)])
         self.assertEqual(count_cases(problems, "43"), [('43', '1', 20)])
         self.assertEqual(count_cases(problems, "azazaz"), [])
+
     @unittest.skip #remove CountCases
     def test_empty(self):
         problems = {}
         self.assertEqual(count_cases(problems, "42"), [])
+
     @unittest.skip #remove CountCases
     def test_no_case_ids(self):
         problems = {}

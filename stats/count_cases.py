@@ -1,4 +1,3 @@
-from memory_database import MemoryDatabase
 
 
 def count_cases(problems, contest_id): # dict of problems goes here with key
