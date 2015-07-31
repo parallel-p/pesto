@@ -1,5 +1,5 @@
 import unittest
-from stats.unique_test_sets_detector import get_uniq_test_results
+from stats.unique_set_tests_detector import UniqueSetTestsDetector
 
 
 class UniqueSetTestsTest(unittest.TestCase):
@@ -26,7 +26,7 @@ class UniqueSetTestsTest(unittest.TestCase):
     @unittest.skip #We don't use MemoryDatabase anymore
     def test_not_all_submits(self):
         res = get_uniq_test_results('testdata/unique_set_test/1', 'testdata/unique_set_test/not_all_submits.csv')
-        self.assertEqual('OK OK OK OK OK', ' '.join([el.outcome for el in res[0][0][0]]))
+        self.assertEqual('OK OK OK OK OK)', ' '.join([el.outcome for el in res[0][0][0]]))
         self.assertEqual(1, res[0][0][1])
 
 if __name__ == "__main__":
