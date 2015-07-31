@@ -8,3 +8,7 @@ class Visitor:
 
     def update(self):
         pass
+
+    #Returns ready for print string of result data
+    def get_stat_data(self):
+        return ""
