@@ -1,0 +1,9 @@
+Content-type: text/xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<testing-report run-id="2" judge-id="28" status="WA" scoring="ACM" archive-available="yes" run-tests="1" correct-available="yes" failed-test="1" >
+  <tests>
+    <test num="1" status="WA" time="190" real-time="192" input-digest="089897a1f1af35d7bb563222e725dda6144114a1" correct-digest="5d9474c0309b7ca09a182d888f73b37a8fe1362c" output-available="yes" stderr-available="yes" checker-output-available="yes" >
+    </test>
+  </tests>
+</testing-report>

@@ -17,6 +17,12 @@ class CountMethodTest(unittest.TestCase):
         ejudge_parse([self.base_path], join(self.data_path, 'useful_runs_count_submit_test.csv'), self.submits_counter)
         self.assertEqual(self.submits_counter.pretty_print(), good_result)
 
+    def test_count_with_multiple_submits_for_one_problem(self):
+        # CSV contains information about two submits for one problem
+        good_result = 'Problem #1: 2 submits.\n'
+        ejudge_parse([join('testdata', 'count_submit_test', '000018')], join(self.data_path, 'multiple_submits_count_submit_test.csv'), self.submits_counter)
+        self.assertEqual(self.submits_counter.pretty_print(), good_result)
+
     def test_count_without_some_information_abount_submits(self):
         # lines of csv dont corresponds submit in base, no information about contest 17 in csv
         good_result = ''
