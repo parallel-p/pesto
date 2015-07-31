@@ -4,5 +4,5 @@ class FilterByProblemIdVisitor():
         self.problem_id = problem_id
 
     def update_submit(self, submit):
-        if submit.problem == self.problem_id:
+        if submit.problem_id == self.problem_id:
             self.target_visitor.update_submit(submit)
