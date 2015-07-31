@@ -17,4 +17,3 @@ if base.errors:
     print('\nERRORS:\n')
     for error in base.errors:
         print('\n'.join(map(str, error)))
-

@@ -2,12 +2,13 @@ import unittest
 from os.path import join
 from traverse import traverse_contest
 
+
 class PositiveTests(unittest.TestCase):
     def setUp(self):
         self.path = join('.', 'testdata', 'traverse')
 
     def test_find_all_files(self):
-        sample = set() # set of all files in test directory
+        sample = set()  # set of all files in test directory
         sample.add(join('.', 'testdata', 'traverse', '0', '0', 'second'))
         sample.add(join('.', 'testdata', 'traverse', '0', '1', '0', 'first'))
         sample.add(join('.', 'testdata', 'traverse', '0', '0', 'forth.gz'))
@@ -17,4 +18,4 @@ class PositiveTests(unittest.TestCase):
         self.assertEqual(set([file.name for file in traverse_contest(self.path)]), sample)
 
 if __name__ == "__main__":
-    unittest.main() 
+    unittest.main()

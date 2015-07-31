@@ -1,20 +1,22 @@
 from visitor import Visitor
 
+
 class EqMatrix(Visitor):
     def __init__(self):
+        super().__init__()
         self.result = []
 
     def update_submit(self, submit):
-        case_amount = len(submit.runs) # amount of cases in this submit
+        case_amount = len(submit.runs)  # amount of cases in this submit
 
-        if case_amount > len(self.result): # extending matrix in case we found more cases
+        if case_amount > len(self.result):  # extending matrix in case we found more cases
             for i in range(len(self.result)):
                 self.result[i].extend([0] * (case_amount - len(self.result)))
             self.result.extend([[0] * case_amount for i in range(case_amount - len(self.result))])
 
         for i in range(case_amount):
             for j in range(case_amount):
-                comp_list = [] # this is needed in order to unite "WA", "ML" etc
+                comp_list = []  # this is needed in order to unite "WA", "ML" etc
                 if submit.runs[i].outcome == "OK":
                     comp_list.append(1)
                 else:

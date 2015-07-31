@@ -1,4 +1,4 @@
-class FilterByProblemIdVisitor():
+class FilterByProblemIdVisitor:
     def __init__(self, problem_id, visitor):
         self.target_visitor = visitor
         self.problem_id = problem_id

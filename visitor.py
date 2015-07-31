@@ -6,7 +6,7 @@ class Visitor:
     def update_submit(self, submit):
         self.the_number_of_transmitted_submits += 1
 
-    #Returns ready for print string of result data
+    # Returns ready for print string of result data
     def pretty_print(self):
         return ""
 

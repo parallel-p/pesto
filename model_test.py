@@ -28,7 +28,7 @@ class PositiveTests(unittest.TestCase):
 
         for i in range(2):
             self.runs_results.append(str(1))
-            self.runs.append(Run('17',0, 0, i, 1))
+            self.runs.append(Run('17', 0, 0, i, 1))
 
         self.runs_results = ''.join(self.runs_results)
 
