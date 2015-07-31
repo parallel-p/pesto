@@ -1,6 +1,7 @@
 import sys
 from ejudge_parse import ejudge_parse
 from compositor_visitor import CompositorVisitor
+import stats
 
 
 def get_param(num, query):
@@ -15,7 +16,7 @@ def main():
     stats_names = [get_param(3, 'Enter statistics name: ')]
     if len(sys.argv) > 4:
         stats_names.extend(sys.argv[4:])
-    stats_modules = [__import__('stats.' + i) for i in stats_names]
+    stats_modules = [getattr(stats, i) for i in stats_names]
     stats_counters = [eval(i.classname)() for i in stats_modules]  # creates stats objects
     compositor = CompositorVisitor(*stats_counters)
     ejudge_parse(home_dir, csv_filename, compositor)
