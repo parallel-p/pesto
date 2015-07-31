@@ -6,7 +6,7 @@ class CompositorVisitor(Visitor):
         self.visitors = visitors
 
     def update(self):
-        for visitor in self.visitors
+        for visitor in self.visitors:
             visitor.add_submit(self.current_submit)
             visitor.Update()    
         
