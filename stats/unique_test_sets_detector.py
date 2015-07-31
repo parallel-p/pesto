@@ -1,4 +1,3 @@
-from memory_database import MemoryDatabase
 
 
 def get_uniq_test_results(base_dir, database_filename):
