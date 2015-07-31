@@ -23,12 +23,16 @@ def get_stats_names(num, query):
 
 def suppose_csv():
     csv_filenames = [filename for filename in os.listdir() if filename.endswith('.csv')]
-    return 'Supposed filenames:\n---\n{}\n---\n'.format('\n'.join(csv_filenames))
+    if csv_filenames != []:
+        return 'Supposed filenames:\n---\n{}\n---\n'.format('\n'.join(csv_filenames))
+    return ''
 
 
 def suppose_statistics():
     stat_names = [filename[:-3] for filename in os.listdir('stats') if filename.endswith('.py') and not filename.endswith('_test.py') and not filename == '__init__.py']
-    return 'Supposed names:\n---\n{}\n---\n'.format('\n'.join(stat_names))
+    if stat_names != []:
+        return 'Supposed names:\n---\n{}\n---\n'.format('\n'.join(stat_names))
+    return ''
 
 
 def main():
