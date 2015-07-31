@@ -69,6 +69,9 @@ class PositiveTests(unittest.TestCase):
 
         self.assertEqual(self.matrix.pretty_print(), sample)
 
+    def test_zero_submits(self):
+        self.assertEqual(self.matrix.pretty_print(), "")
+
     def test_difruns(self):
         runs = []
         runs.append(Run(17, 0, 0, 0, "OK"))
