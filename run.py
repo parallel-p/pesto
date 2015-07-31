@@ -6,5 +6,5 @@ class Run:
         self.outcome = outcome
 
     def __str__(self):
-        _result = "Case #{0} Outcome {1}".format(str(self.case_id), str(self.outcome))
-        return _result
+        result = "Case #{0} Outcome {1}".format(str(self.case_id), str(self.outcome))
+        return result
