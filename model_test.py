@@ -57,7 +57,7 @@ class PositiveTests(unittest.TestCase):
 
     def test_init(self):
         self.submit = Submit(0, 1, 179, self.runs, 1)
-        self.assertEqual(self.submit.problem, 1)
+        self.assertEqual(self.submit.problem_id, 1)
         self.assertEqual(self.submit.submit_id, 0)
         self.assertEqual(self.submit.runs, self.runs)
         self.assertEqual(self.submit.user_id, 179)
