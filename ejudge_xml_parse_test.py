@@ -25,6 +25,13 @@ class TestEjudgeXmlParse(unittest.TestCase):
         file.close()
         self.assertEqual(res, None)
 
+    def test_non_unicode(self):
+        file = open('testdata/xml/non_unicode.xml', encoding='utf-8')
+        res = ejudge_xml_parse(file)
+        file.close()
+        self.assertEqual(res, None)
+
+
     def test_wrong_xml(self):
         file = open('testdata/xml/wrong.xml', encoding='utf-8')
         res = ejudge_xml_parse(file)
