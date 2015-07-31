@@ -16,6 +16,7 @@ class TestProblemMethods(unittest.TestCase):
         temp = Problem('luck', 'duck', [0, 0])
         self.assertEqual(str(temp), 'Contest #luck Problem #duck\nCases: [0, 0]')\
 
+    @unittest.skip #We don't use MemoryDatabase anymore
     def test_get_submits(self):
         database = MemoryDatabase(os.path.join('testdata', 'problem_test', '000017'),
                                   os.path.join('testdata', 'problem_test',

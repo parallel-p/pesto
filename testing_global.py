@@ -10,13 +10,11 @@ print('RUN - {0}\nERRORS - {1}\nFAILURES - {2}\n'.format(base.testsRun, len(base
 
 if base.failures:
     print('\nFAILURES:\n')
-    for fail in base.failures:
-        for s in fail:
-            print(s)
+    for failure in base.failures:
+        print('\n'.join(map(str, failure)))
 
 if base.errors:
     print('\nERRORS:\n')
     for error in base.errors:
-        for s in error:
-            print(s)
+        print('\n'.join(map(str, error)))
 
