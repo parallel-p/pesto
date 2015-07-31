@@ -8,4 +8,4 @@ class FilterByProblemIdVisitor:
             self.target_visitor.update_submit(submit)
 
     def get_stat_data(self):
-        return self.target_visitor.pretty_print
+        return self.target_visitor.pretty_print()
