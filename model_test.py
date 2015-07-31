@@ -32,16 +32,17 @@ class TestProblemMethods(unittest.TestCase):
 class TestRun(unittest.TestCase):
 
     def setUp(self):
-        self.run = Run(None, '1', '2', 'OK')
+        self.run = Run(None, '1', '2', 'OK', '17')
 
     def test_init(self):
-        self.assertEqual(self.run.problem, None)
+        self.assertEqual(self.run.problem_id, None)
         self.assertEqual(self.run.submit_id, '1')
         self.assertEqual(self.run.case_id, '2')
         self.assertEqual(self.run.outcome, 'OK')
+        self.assertEqual(self.run.contest_id, '17')
 
     def test_str(self):
-        self.assertEqual(str(self.run), "Case #2 Outcome OK")
+        self.assertEqual(str(self.run), "Contest #17 Case #2 Outcome OK")
 
 
 class PositiveTests(unittest.TestCase):
@@ -52,7 +53,7 @@ class PositiveTests(unittest.TestCase):
 
         for i in range(2):
             self.runs_results.append(str(1))
-            self.runs.append(Run(0, 0, i, 1))
+            self.runs.append(Run(0, 0, i, 1, 17))
 
         self.runs_results = ''.join(self.runs_results)
 
@@ -66,8 +67,8 @@ class PositiveTests(unittest.TestCase):
 
     def test_str_runs(self):
         self.submit = Submit(0, 1, 179, self.runs, 1)
-        self.assertEqual(str(self.submit), "Submit: 0; Result: 1; User id: 179; Runs: Case #0 Outcome 1, "
-                                           "Case #1 Outcome 1.")
+        self.assertEqual(str(self.submit), "Submit: 0; Result: 1; User id: 179; Runs: Contest #17 Case #0 Outcome 1, "
+                                           "Contest #17 Case #1 Outcome 1.")
 
     def test_results_of_runs(self):
         self.submit = Submit(0, 1, 179, self.runs, 1)
