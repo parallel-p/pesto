@@ -7,12 +7,14 @@ class CasesCounter(Visitor):
         self.result = {}
     
     def update_submit(self, submit):
-        if str(submit.problem_id) not in self.result or len(submit.case_ids) > self.result[str(submit.problem_id)]:
-            self.result[str(submit.problem_id)] = len(submit.case_ids)
+        if str(submit.problem_id) not in self.result or len(submit.runs) > self.result[str(submit.problem_id)]:
+            self.result[str(submit.problem_id)] = len(submit.runs)
     
     def get_stat_data(self):
+        result = ''
         for k, v in sorted(self.result.items()):
             result += 'Problem #{}: {} cases.\n'.format(k, v)        
         return result
+
 
 classname = 'CasesCounter'
