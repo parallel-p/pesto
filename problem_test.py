@@ -1,5 +1,5 @@
 import unittest
-from problem import Problem
+from model import Problem
 from memory_database import MemoryDatabase
 import os.path
 import sys

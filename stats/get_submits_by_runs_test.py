@@ -1,7 +1,7 @@
 import unittest
 from stats.get_submits_by_runs import get_submits_by_runs
-from submit import Submit
-from run import Run
+from model import Submit
+from model import Run
 
 
 class SubmitsByRunsTest(unittest.TestCase):

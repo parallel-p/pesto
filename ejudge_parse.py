@@ -1,7 +1,7 @@
 import os.path
-from run import Run
-from submit import Submit
-from problem import Problem
+from model import Run
+from model import Submit
+from model import Problem
 from ejudgedb import EjudgeDB
 from traverse import traverse_contest
 from ejudge_xml_parse import ejudge_xml_parse

@@ -1,8 +1,9 @@
 import unittest
 from eq_matrix import get_eq_matrix
-from submit import Submit
-from problem import Problem
-from run import Run
+from model import Submit
+from model import Problem
+from model import Run
+
 
 class PositiveTests(unittest.TestCase):
     def test_allsame(self):

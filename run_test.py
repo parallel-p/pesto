@@ -1,5 +1,5 @@
 import unittest
-from run import Run
+from model import Run
 
 
 class TestRun(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
 from stats.count_cases import count_cases
-from problem import Problem
+from model import Problem
 
 
 class TestCountCases(unittest.TestCase):

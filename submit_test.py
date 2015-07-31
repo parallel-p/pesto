@@ -1,6 +1,6 @@
 import unittest
-from submit import Submit
-from run import Run
+from model import Submit
+from model import Run
 
 
 class PositiveTests(unittest.TestCase):
