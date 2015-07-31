@@ -1,45 +1,41 @@
+from visitor import Visitor
+import operator
 
 
-def get_uniq_test_results(base_dir, database_filename):
-    database = MemoryDatabase(base_dir, database_filename)
-    problems = dict()
-    problems_id = []
+class UniqueSetTestsDetector(Visitor):
+    def __init__(self):
+        self.submits_number_by_uniqum_runs_results_by_contest_problem_id = dict()
 
-    for problem in database.problems.values():
-        problems[problem.problem_id] = dict()
-        problems_id.append(problem.problem_id)
-    runs_by_runs_result = dict()
-    for submit in database.submits:
-        problem_id = submit.problem.problem_id
-        runs_results = submit.runs_results
-
-        if runs_results in problems[problem_id]:
-            problems[problem_id][runs_results] += 1
+    def update_submit(self, submit):
+        probl_id = submit.problem_id
+        cont_id = submit.contest_id
+        id = cont_id + "_" + probl_id
+        if id in self.submits_number_by_uniqum_runs_results_by_contest_problem_id:
+            if submit.runs_results in self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id]:
+                self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id][submit.runs_results][1] += 1
+            else:
+                self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id][submit.runs_results] = [[run.outcome for run in submit.runs], 1]
         else:
-            problems[problem_id][runs_results] = 1
-            runs_by_runs_result[runs_results] = submit.runs
+            self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id] = dict()
 
-    uniq_test_results = []
+    def get_sort_result(self):
+        return sorted(self.submits_number_by_uniqum_runs_results_by_contest_problem_id.items(), key=operator.itemgetter(0))
 
-    for problem_id in problems_id:
-        uniq_test_results.append([])
-        for runs_result in problems[problem_id]:
-            uniq_test_results[-1].append([runs_by_runs_result[runs_result], problems[problem_id][runs_result]])
+    def get_stat_data(self):
+        return self.submits_number_by_uniqum_runs_results_by_contest_problem_id
 
-    return uniq_test_results
+    def pretty_print(self):
+        sorted_result = self.get_sort_result()
+        prettty_result = []
+        for problem_id_and_runs in sorted_result:
+            prettty_result.append("***")
+            prettty_result.append("contest_problem #" + problem_id_and_runs[0])
+            for uniqum_result in problem_id_and_runs[1]:
+                runs_res_in_string = ' '.join(self.submits_number_by_uniqum_runs_results_by_contest_problem_id[problem_id_and_runs[0]][uniqum_result][0])
+                submits_number = self.submits_number_by_uniqum_runs_results_by_contest_problem_id[problem_id_and_runs[0]][uniqum_result][1]
+                prettty_result.append("  Run result:{0}\n   Submits count:{1}\n".format(runs_res_in_string, submits_number))
+        return '\n'.join(prettty_result)
 
 
-if __name__ == '__main__':
-    print('Enter contests base dir name:')
-    base_dir = input()
-    print('Enter database filename:')
-    database_filename = input()
 
-    uniq_test_res = get_uniq_test_results(base_dir, database_filename)
-
-    for problem_id, uniq_results in enumerate(uniq_test_res):
-        print("Problem", problem_id)
-        print("Uniq test resuls:")
-
-        for result in uniq_results:
-            print('    Testing result:{0}, Submits count:{1}'.format(' '.join([el.outcome for el in result[0]]), result[1]), sep="\n")
+classname = 'UniqueSetTestsDetector'

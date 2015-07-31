@@ -1,5 +1,5 @@
 import unittest
-#from stats.unique_set_tests_detector import UniqueSetTestsDetector
+from stats.unique_set_tests_detector import UniqueSetTestsDetector
 
 
 class UniqueSetTestsTest(unittest.TestCase):
