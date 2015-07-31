@@ -34,14 +34,17 @@ class Submit:
 
 
 class Run:
-    def __init__(self, problem, submit_id, case_id, outcome):
-        self.problem = problem
+    def __init__(self, problem_id, submit_id, case_id, outcome, contest_id):
+        self.problem_id = problem_id
+        self.contest_id = contest_id
         self.submit_id = submit_id
         self.case_id = case_id
         self.outcome = outcome
 
     def __str__(self):
-        result = "Case #{0} Outcome {1}".format(str(self.case_id), str(self.outcome))
+        result = "Contest #{0} Case #{1} Outcome {2}".format(self.contest_id,
+                                                             str(self.case_id),
+                                                             str(self.outcome))
         return result
 
     def __repr__(self):
