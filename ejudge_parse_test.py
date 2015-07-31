@@ -7,9 +7,11 @@ from ejudge_parse import ejudge_parse
 class FakeVisitor(Visitor):
     def __init__(self):
         self.submits = 0
+        self.submit_list = []
 
     def update_submit(self, submit):
         self.submits += 1
+        self.submit_list.append(submit)
 
 
 def do_parse(version, contest, visitor):
@@ -24,6 +26,13 @@ class TestEjudgeParser(unittest.TestCase):
 
     def test_good(self):
         do_parse('good', '001', self.visitor)
+        self.assertEqual(self.visitor.submits, 8)
+
+    def test_trailing_slash(self):
+        do_parse('good', '001/', self.visitor)
+        self.assertEqual(self.visitor.submits, 8)
+        self.setUp()
+        do_parse('good', '001\\', self.visitor)
         self.assertEqual(self.visitor.submits, 8)
 
     def test_bad_csv(self):
@@ -49,6 +58,10 @@ class TestEjudgeParser(unittest.TestCase):
     def test_digit_zeros(self):
         do_parse('digit_zeros', '0010', self.visitor)
         self.assertEqual(self.visitor.submits, 8)
+
+    def test_run_number(self):
+        do_parse('digit_zeros', '0010', self.visitor)
+        self.assertEqual(self.visitor.submit_list[0].runs[0].case_id, 1)
 
     def test_double_contest(self):
         contest_dirs = list()
