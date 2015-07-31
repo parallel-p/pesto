@@ -1,19 +1,21 @@
-from memory_database import MemoryDatabase
+from visitor import Visitor
 
 
-def count_submits(base_dir, database_filename):
-    database = MemoryDatabase(base_dir, database_filename)
-    problems = dict()
-    for problem in database.problems.values():
-        problems[problem.problem_id] = 0
-    for submit in database.submits:
-        problems[submit.problem.problem_id] += 1
-    return problems
+class SubmitsCounter(Visitor):
+    def __init__(self):
+        super().__init__()
+        self.result = dict()
 
+    def update_submit(self, submit):
+        if str(submit.problem_id) not in self.result:
+            self.result[str(submit.problem_id)] = 1
+        else:
+            self.result[str(submit.problem_id)] += 1
 
-if __name__ == '__main__':
-    print('Enter contests base dir name:')
-    base_dir = input()
-    print('Enter database filename:')
-    database_filename = input()
-    print(count_submits(base_dir, database_filename))
+    def get_stat_data(self):
+        result = ''
+        for k, v in sorted(self.result.items()):
+            result += 'Problem #{}: {} submits.\n'.format(k, v)
+        return result
+
+classname = 'SubmitsCounter'
