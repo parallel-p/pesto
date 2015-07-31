@@ -19,7 +19,13 @@ class FunctionTesting(unittest.TestCase):
         comp_visitor = CompositorVisitor()
         self.assertEqual(comp_visitor.get_stat_data(), "")
 
-    def test_2visitors(self):
+    def test_one_visitors(self):
+        visitor = FakeVisitor()
+        comp_visitor = CompositorVisitor(visitor)
+        comp_visitor.update_submit(10)
+        self.assertEqual(comp_visitor.get_stat_data(), "10")
+
+    def test_two_visitors(self):
         visitors = []
         for i in range(2):
             visitors.append(FakeVisitor())
