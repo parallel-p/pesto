@@ -1,7 +1,6 @@
 import unittest
 from filter_by_problem_id_visitor import FilterByProblemIdVisitor
 from model import Submit
-from model import Problem
 
 
 class VisitorForTesting():

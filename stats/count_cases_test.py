@@ -1,31 +1,25 @@
 import unittest
-from stats.count_cases import count_cases
-from model import Problem
+from stats.count_cases import CasesCounter
+from model import Submit, Run
 
 
 class TestCountCases(unittest.TestCase):
+    def setUp(self):
+        self.counter = CasesCounter()
 
-    @unittest.skip #remove CountCases
     def test_common(self):
-        problems = {}
-        problems[("42", "1")] = Problem("42", "1", [None] * 10)
-        problems[("42", "2")] = Problem("42", "2", [None] * 15)
-        problems[("43", "1")] = Problem("43", "1", [None] * 20)
-        self.assertEqual(count_cases(problems, "42"), [('42', '1', 10), ('42', '2', 15)])
-        self.assertEqual(count_cases(problems, "43"), [('43', '1', 20)])
-        self.assertEqual(count_cases(problems, "azazaz"), [])
-
-    @unittest.skip #remove CountCases
+        self.counter.update_submit(Submit('1', '1', '0', [Run('1', '1', '-', 'OK', '0')] * 10, 'OK'))
+        self.counter.update_submit(Submit('2', '2', '0', [Run('2', '2', '-', 'OK', '0')] * 20, 'OK'))
+        self.counter.update_submit(Submit('3', '3', '0', [Run('3', '3', '-', 'OK', '0')] * 50, 'OK'))
+        self.counter.update_submit(Submit('4', '2', '0', [Run('3', '4', '-', 'OK', '0')] * 30, 'OK'))
+        self.assertEqual(self.counter.get_stat_data(), 'Problem #1: 10 cases.\nProblem #2: 30 cases.\nProblem #3: 50 cases.\n')
+        
     def test_empty(self):
-        problems = {}
-        self.assertEqual(count_cases(problems, "42"), [])
+        self.assertEqual(self.counter.get_stat_data(), '')
 
-    @unittest.skip #remove CountCases
-    def test_no_case_ids(self):
-        problems = {}
-        problems[("42", "1")] = Problem("42", "1", None)
+    def test_bad_submit(self):
         with self.assertRaises(Exception):
-            count_cases(problems, "42")
+            self.submits_counter.update_submit(None)    
 
 if __name__ == "__main__":
     unittest.main()
