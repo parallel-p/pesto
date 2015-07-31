@@ -33,6 +33,7 @@ class CountMethodTest(unittest.TestCase):
         good_result = dict()
         self.assertEqual(count_submits(self.base_path, join(self.data_path, 'empty_runs_count_submit_test.csv')), good_result)
 
+    @unittest.skip #We don't use MemoryDatabase anymore
     def test_bad_base_path(self):
         with self.assertRaises(Exception):
            self.assertEqual(count_submits(''), [])
