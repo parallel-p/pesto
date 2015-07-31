@@ -31,7 +31,8 @@ class TestEjudgeParser(unittest.TestCase):
     def test_trailing_slash(self):
         do_parse('good', '001/', self.visitor)
         self.assertEqual(self.visitor.submits, 8)
-        self.setUp()
+
+    def test_trailing_backslash(self):
         do_parse('good', '001\\', self.visitor)
         self.assertEqual(self.visitor.submits, 8)
 
