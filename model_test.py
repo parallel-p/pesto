@@ -1,25 +1,13 @@
 import unittest
-from model import Problem
 from model import Submit
 from model import Run
 import os.path
 
 
-class TestProblemMethods(unittest.TestCase):
-
-    def test_init_white(self):
-        temp = Problem(0, 0, [0, 0])
-        self.assertTrue(temp.contest_id == 0 and temp.problem_id == 0 and temp.case_ids == [0, 0])
-
-    def test_str_white(self):
-        temp = Problem('luck', 'duck', [0, 0])
-        self.assertEqual(str(temp), 'Contest #luck Problem #duck\nCases: [0, 0]')\
-
-
 class TestRun(unittest.TestCase):
 
     def setUp(self):
-        self.run = Run(None, '1', '2', 'OK', '17')
+        self.run = Run('17', None, '1', '2', 'OK')
 
     def test_init(self):
         self.assertEqual(self.run.problem_id, None)
@@ -40,7 +28,7 @@ class PositiveTests(unittest.TestCase):
 
         for i in range(2):
             self.runs_results.append(str(1))
-            self.runs.append(Run(0, 0, i, 1, 17))
+            self.runs.append(Run('17',0, 0, i, 1))
 
         self.runs_results = ''.join(self.runs_results)
 

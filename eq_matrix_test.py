@@ -1,7 +1,6 @@
 import unittest
 from eq_matrix import get_eq_matrix
 from model import Submit
-from model import Problem
 from model import Run
 
 

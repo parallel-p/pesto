@@ -1,21 +1,3 @@
-class Problem:
-    def __init__(self, contest_id, problem_id, case_ids):
-        """
-        :type contest_id: str or int
-        :type problem_id: str or int
-        :type case_ids: list
-        """
-        self.contest_id = contest_id
-        self.problem_id = problem_id
-        self.case_ids = case_ids
-
-    def __str__(self):
-        return 'Contest #{0} Problem #{1}\nCases: {2}'.format(self.contest_id,
-                                                              self.problem_id,
-                                                              self.case_ids)
-
-
-
 class Submit:
     def __init__(self, submit_id, problem_id, user_id, runs, outcome):
 
@@ -34,7 +16,7 @@ class Submit:
 
 
 class Run:
-    def __init__(self, problem_id, submit_id, case_id, outcome, contest_id):
+    def __init__(self, contest_id, problem_id, submit_id, case_id, outcome):
         self.problem_id = problem_id
         self.contest_id = contest_id
         self.submit_id = submit_id
