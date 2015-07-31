@@ -14,11 +14,6 @@ class Problem:
                                                               self.problem_id,
                                                               self.case_ids)
 
-    def get_submits(self, database):  # Returns all submits for particular problem
-        for submit in database.submits:
-            if submit.problem.problem_id == self.problem_id:
-                yield submit
-
 
 
 class Submit:
