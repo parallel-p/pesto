@@ -27,3 +27,18 @@ class ShardingVisitor(Visitor):
 
     def build_key(self, submit):
         return str(submit)
+
+
+class ShardingByProblemVisitor(ShardingVisitor):
+    def build_key(self, submit):
+        return submit.problem_id
+
+
+class ShardingByContestVisitor(ShardingVisitor):
+    def build_key(self, submit):
+        return submit.problem_id[0]
+
+
+class ShardingByUserVisitor(ShardingVisitor):
+    def build_key(self, submit):
+        return submit.user_id
