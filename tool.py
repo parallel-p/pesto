@@ -51,10 +51,21 @@ def main():
     stats_names = get_stats_names(3, 'Enter statistics names (separate by spaces). ' + suppose_statistics())
     stats_modules = [import_module('stats.' + i) for i in stats_names if find_spec('stats.' + i) is not None]
     while len(stats_modules) == 0:
-        stats_name = input('Please, enter correct stats name: ')
-        if find_spec('stats.' + stats_name) is not None:
-            stats_modules.append(import_module('stats.' + stats_name))
-    stats_counters = [eval(i.__name__ + '.' + i.classname)() for i in stats_modules]  # creates stats objects
+        stats_names = input('Please, enter correct stats name: ').split()
+        for stats_name in stats_names:
+            if find_spec('stats.' + stats_name) is not None:
+                stats_modules.append(import_module('stats.' + stats_name))
+            else:
+                print(stats_name, 'not found')
+    stats_counters = []
+    for i in stats_modules:
+        try:
+            stats_counters.append(eval(i.__name__ + '.' + i.classname)())
+        except AttributeError:
+            print(i.__name__.split('.')[1], 'is broken, skipping')
+    if not stats_counters:
+        print('No statistics selected')
+        exit()
     compositor = CompositorVisitor(*stats_counters)
     ejudge_parse(home_dirs, csv_filename, compositor)
     print()
