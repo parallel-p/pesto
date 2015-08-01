@@ -18,6 +18,6 @@ class CompositorVisitor(Visitor):
 
     def get_stat_data(self):
         result = []
-        for visitor in self.visitors.values():
+        for visitor in self.visitors:
             result.append(visitor.get_stat_data())
         return result

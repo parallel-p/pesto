@@ -8,6 +8,13 @@ class FunctionTesting(unittest.TestCase):
         comp_visitor = CompositorVisitor()
         self.assertEqual(comp_visitor.pretty_print(), "")
 
+    def test_raw_data(self):
+        visitor = FakeVisitor()
+        comp_visitor = CompositorVisitor(visitor)
+        comp_visitor.visit(10)
+        self.assertEqual(comp_visitor.get_stat_data(), [1])
+
+
     def test_one_visitors(self):
         visitor = FakeVisitor()
         comp_visitor = CompositorVisitor(visitor)
