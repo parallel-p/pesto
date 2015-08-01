@@ -1,14 +1,16 @@
 from visitor import Visitor
 
+
 class ShardingVisitor(Visitor):
     def __init__(self, factory):
         self.visitors = dict()
         self.factory = factory
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         key = build_key(submit)
         if key not in self.visitors() :
             self.visitors[key] = self.factory.create(key)
+        self.visitors[key].visit(submit)
 
     def get_stat_data(self):
         result = []
@@ -20,7 +22,7 @@ class ShardingVisitor(Visitor):
         if len(self.visitors) == 0:
             return ""
         else:
-            return "\n\n".join([visitor.pretty_print() for visitor in self.visitors])
+            return "\n\n".join([visitor.pretty_print() for visitor in self.visitors.values()])
 
     def build_key(self, submit):
-        return None
+        return ""
