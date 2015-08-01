@@ -5,29 +5,30 @@ from visitor_factory import VisitorFactory
 from composite_factory import CompositeVisitorFactory
 
 class FakeFactory(VisitorFactory):
-    @staticmethod
-    def create(key):
+    def create(self, key):
         return FakeVisitor()
 
-
 class FunctionTesting(unittest.TestCase):
-    def test_empty_output(self):
+    def test_type_of_return(self):
         comp_visitor = CompositorVisitor()
-        self.assertEqual(CompositeVisitorFactory.create(0).get_stat_data(), comp_visitor.get_stat_data())
+        comp_factory = CompositeVisitorFactory()
+        self.assertEqual(comp_factory.create(0).__class__, comp_visitor.__class__)
 
-    def test_one_visitor_factory(self):
-        visitor = FakeVisitor()
-        comp_visitor = CompositorVisitor(visitor)
-        self.assertEqual(CompositeVisitorFactory.create(0, FakeFactory).pretty_print(), comp_visitor.pretty_print())
+    def test_containing_factories(self):
+        factory = FakeFactory()
+        comp_factory = CompositeVisitorFactory(FakeFactory())
+        self.assertEqual(comp_factory.factories[0].__class__, factory.__class__)
 
-    def test_two_visitor_factories(self):
+    def test_two_visitor(self):
         visitors = []
         factories = []
         for i in range(2):
             visitors.append(FakeVisitor())
-            factories.append(FakeFactory)
+            factories.append(FakeFactory())
+
         comp_visitor = CompositorVisitor(*visitors)
-        self.assertEqual(CompositeVisitorFactory.create(0, *factories).get_stat_data(), comp_visitor.get_stat_data())
+        comp_factory = CompositeVisitorFactory(*factories)
+        self.assertEqual(comp_factory.create(0).get_stat_data(), comp_visitor.get_stat_data())
 
 
 if __name__ == "__main__":

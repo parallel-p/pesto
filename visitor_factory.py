@@ -2,6 +2,5 @@ from visitor import Visitor
 
 
 class VisitorFactory:
-    @staticmethod
-    def create(key):
+    def create(self, key):
         return Visitor()

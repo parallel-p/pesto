@@ -5,12 +5,14 @@ from visitor import Visitor
 
 class VisitorFactoryTest(unittest.TestCase):
     def test_keys(self):
-        VisitorFactory.create(None)
-        VisitorFactory.create(0)
-        VisitorFactory.create('-')
-        VisitorFactory.create([1, 2])
-        VisitorFactory.create((1, 2))
-        VisitorFactory.create({1: 2})
+        factory = VisitorFactory()
+        factory.create(None)
+        factory.create(0)
+        factory.create('-')
+        factory.create([1, 2])
+        factory.create((1, 2))
+        factory.create({1: 2})
     
     def test_result(self):
-        self.assertTrue(isinstance(VisitorFactory.create(0), Visitor))
+        factory = VisitorFactory()
+        self.assertTrue(isinstance(factory.create(0), Visitor))
