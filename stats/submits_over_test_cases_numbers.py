@@ -5,22 +5,25 @@ import operator
 class SubmitsOverTestCasesNumbers(Visitor):
     def __init__(self):
         super().__init__()
-        self.number_of_submits_by_number_of_runs_by_problem_id = {}
+        self.result = {}
 
     def visit(self, submit):
         runs_number = len(submit.runs)
-        if submit.problem_id in self.number_of_submits_by_number_of_runs_by_problem_id:
-            if runs_number in self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id]:
-                self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id][runs_number] += 1
+        if submit.problem_id in self.result:
+            if runs_number in self.result[submit.problem_id]:
+                self.result[submit.problem_id][runs_number] += 1
             else:
-                self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id][runs_number] = 1
+                self.result[submit.problem_id][runs_number] = 1
 
         else:
-            self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id] = {}
-            self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id][runs_number] = 1
+            self.result[submit.problem_id] = {}
+            self.result[submit.problem_id][runs_number] = 1
+
+    def get_stat_data(self):
+        return self.result
 
     def pretty_print(self):
-        data_dict = self.number_of_submits_by_number_of_runs_by_problem_id
+        data_dict = self.result
         data_list = sorted(data_dict.items())
         result = ''
         for problem in data_list:
