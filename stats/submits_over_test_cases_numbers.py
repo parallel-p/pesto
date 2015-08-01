@@ -27,9 +27,9 @@ class SubmitsOverTestCasesNumbers(Visitor):
         data_list = sorted(data_dict.items())
         result = ''
         for problem in data_list:
-            problem_id = problem[0]
-            test_cases = list(problem[1].keys())
-            submit_numbers = list(problem[1].values())
+            problem_id, data = problem
+            test_cases, submit_numbers = list(data.keys()), list(data.values())
+
             line_multiplier = 100 / max(submit_numbers)
             result += ('-------------\n'
                        'Problem #{0}\n'
