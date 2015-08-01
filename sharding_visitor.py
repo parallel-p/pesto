@@ -15,15 +15,15 @@ class ShardingVisitor(Visitor):
 
     def get_stat_data(self):
         result = []
-        for visitor in self.visitors.values():
-            result.append(visitor.get_stat_data())
+        for key_visitor in sorted(self.visitors.items()):
+            result.append((key_visitor[0], key_visitor[1].get_stat_data()))
         return result
 
     def pretty_print(self):
         if len(self.visitors) == 0:
             return ""
         else:
-            return "\n\n".join([visitor.pretty_print() for visitor in self.visitors.values()])
+            return "\n\n".join([" ".join(["Key:", str(key_visitor[0]), key_visitor[1].pretty_print()]) for key_visitor in sorted(self.visitors.items())])
 
     def build_key(self, submit):
-        return submit
+        return str(submit)
