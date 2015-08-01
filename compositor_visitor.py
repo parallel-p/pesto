@@ -15,3 +15,9 @@ class CompositorVisitor(Visitor):
             return ""
         else:
             return "\n\n".join([visitor.pretty_print() for visitor in self.visitors])
+
+    def get_stat_data(self):
+        result = []
+        for visitor in self.visitors.values():
+            result.append(visitor.get_stat_data())
+        return result
