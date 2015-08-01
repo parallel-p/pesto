@@ -1,33 +1,24 @@
 import unittest
 from stats.unique_set_tests_detector import UniqueSetTestsDetector
+from ejudge_parse import ejudge_parse
 
 
 class UniqueSetTestsTest(unittest.TestCase):
-    @unittest.skip #We don't use MemoryDatabase anymore
+    def setUp(self):
+        self.detector = UniqueSetTestsDetector()
+
     def test_common(self):
-        res = get_uniq_test_results('testdata/unique_set_test/1', 'testdata/unique_set_test/common.csv')
-        for i in res:
-            i.sort(key=str)
-        res.sort(key=str)
-        self.assertEqual('OK OK OK OK OK OK OK OK OK OK', ' '.join([el.outcome for el in res[0][0][0]]))
-        self.assertEqual(1, res[0][0][1])
-        self.assertEqual('OK OK OK OK OK', ' '.join([el.outcome for el in res[0][1][0]]))
-        self.assertEqual(2, res[0][1][1])
-        self.assertEqual('OK OK OK OK WA', ' '.join([el.outcome for el in res[0][2][0]]))
-        self.assertEqual(1, res[0][2][1])
-        self.assertEqual('OK OK OK OK WA', ' '.join([el.outcome for el in res[1][0][0]]))
-        self.assertEqual(2, res[1][0][1])
+        ejudge_parse(['testdata/unique_set_test/1'], 'testdata/unique_set_test/common.csv', self.detector)
+        res = self.detector.get_stat_data()
+        self.assertEqual(res['1_1']['OKOKOKOKOKOKOKOKOKOK'][1], 1)
+        self.assertEqual(res['1_1']['OKOKOKOKOK'][1], 2)
+        self.assertEqual(res['1_1']['OKOKOKOKWA'][1], 1)
+        self.assertEqual(res['1_2']['OKOKOKOKWA'][1], 2)
 
-    @unittest.skip #We don't use MemoryDatabase anymore
     def test_empty(self):
-        res = get_uniq_test_results('testdata/unique_set_test/2', 'testdata/unique_set_test/common.csv')
-        self.assertEqual(res, [])
-
-    @unittest.skip #We don't use MemoryDatabase anymore
-    def test_not_all_submits(self):
-        res = get_uniq_test_results('testdata/unique_set_test/1', 'testdata/unique_set_test/not_all_submits.csv')
-        self.assertEqual('OK OK OK OK OK)', ' '.join([el.outcome for el in res[0][0][0]]))
-        self.assertEqual(1, res[0][0][1])
+        ejudge_parse(['testdata/unique_set_test/2'], 'testdata/unique_set_test/common.csv', self.detector)
+        res = self.detector.get_stat_data()
+        self.assertEqual(res, {})
 
 if __name__ == "__main__":
     unittest.main()
