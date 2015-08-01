@@ -6,7 +6,7 @@ class SubmitsCounter(Visitor):
         super().__init__()
         self.result = dict()
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         if str(submit.problem_id) not in self.result:
             self.result[submit.problem_id] = 1
         else:

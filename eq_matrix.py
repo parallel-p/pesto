@@ -6,7 +6,7 @@ class EqMatrix(Visitor):
         super().__init__()
         self.result = []
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         case_amount = len(submit.runs)  # amount of cases in this submit
 
         if case_amount > len(self.result):  # extending matrix in case we found more cases
