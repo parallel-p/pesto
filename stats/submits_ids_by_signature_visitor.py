@@ -16,8 +16,8 @@ class SubmitsIdsBySignatueVisitor(Visitor):
 
     def pretty_print(self):
         answer = []
-        for singnature in self.result:
-            answer.append("Signature: " + str(singnature) + " Submits ids: " + ''.join(self.result))
+        for signature in self.result:
+            answer.append('{}: {} submits found.'.format(signature, len(self.result[signature])))
         return '\n'.join(answer)
 
 
