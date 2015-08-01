@@ -17,6 +17,7 @@ class SubmitsOverTestCasesNumbers(Visitor):
 
         else:
             self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id] = {}
+            self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id][runs_number] = 1
 
     def pretty_print(self):
         data_dict = self.number_of_submits_by_number_of_runs_by_problem_id
