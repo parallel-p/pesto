@@ -1,10 +1,10 @@
 import unittest
 from sharding_visitor import ShardingVisitor
 from visitor import FakeVisitor
-from factory import Factory
+from visitor_factory import VisitorFactory
 
 
-class FakeFactory(Factory):
+class FakeFactory(VisitorFactory):
     def create(key):
         return FakeVisitor()
 
