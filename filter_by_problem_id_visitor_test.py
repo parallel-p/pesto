@@ -11,8 +11,8 @@ class FilterVisitorTest(unittest.TestCase):
         self.good_problem_id = "666"
         self.bad_problem_id = "333"
 
-        self.good_submit = Submit("666", "69", self.good_problem_id, "666", [], "666")
-        self.bad_submit = Submit("666", "69", self.bad_problem_id, "666", [], "666")
+        self.good_submit = Submit("666", ("69", self.good_problem_id), "666", [], "666")
+        self.bad_submit = Submit("666", ("69", self.bad_problem_id), "666", [], "666")
         
     def test_init(self):
         testing_visitor = FilterByProblemIdVisitor(self.good_problem_id, self.visitor)

@@ -7,7 +7,7 @@ class FilterByProblemIdVisitor(Visitor):
         self.problem_id = problem_id
 
     def visit(self, submit):
-        if submit.problem_id == self.problem_id:
+        if submit.problem_id[1] == self.problem_id:
             self.target_visitor.visit(submit)
 
     def get_stat_data(self):

@@ -1,10 +1,9 @@
 class Submit:
-    def __init__(self, submit_id, contest_id, problem_id, user_id, runs, outcome):
+    def __init__(self, submit_id, problem_id, user_id, runs, outcome):
 
         self.problem_id = problem_id
         self.submit_id = submit_id
         self.runs = runs
-        self.contest_id = contest_id
         self.outcome = outcome
         self.user_id = user_id
         self.runs_results = ''.join([str(run.outcome) for run in self.runs])

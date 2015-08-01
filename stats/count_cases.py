@@ -7,8 +7,8 @@ class CasesCounter(Visitor):
         self.result = {}
     
     def visit(self, submit):
-        if str(submit.problem_id) not in self.result or len(submit.runs) > self.result[str(submit.problem_id)]:
-            self.result[str(submit.problem_id)] = len(submit.runs)
+        if str(submit.problem_id[1]) not in self.result or len(submit.runs) > self.result[str(submit.problem_id[1])]:
+            self.result[str(submit.problem_id[1])] = len(submit.runs)
     
     def pretty_print(self):
         result = ''
