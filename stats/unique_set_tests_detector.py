@@ -16,7 +16,7 @@ class UniqueSetTestsDetector(Visitor):
             else:
                 self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id][submit.runs_results] = [[run.outcome for run in submit.runs], 1]
         else:
-            self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id] = dict()
+            self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id][submit.runs_results] = [[run.outcome for run in submit.runs], 1]
 
     def get_sort_result(self):
         return sorted(self.submits_number_by_uniqum_runs_results_by_contest_problem_id.items(), key=operator.itemgetter(0))
