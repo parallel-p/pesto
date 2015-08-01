@@ -1,9 +1,12 @@
-class FilterByProblemIdVisitor:
+from visitor import Visitor
+
+
+class FilterByProblemIdVisitor(Visitor):
     def __init__(self, problem_id, visitor):
         self.target_visitor = visitor
         self.problem_id = problem_id
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         if submit.problem_id == self.problem_id:
             self.target_visitor.visit(submit)
 

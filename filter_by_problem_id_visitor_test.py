@@ -21,12 +21,12 @@ class FilterVisitorTest(unittest.TestCase):
 
     def test_matching_problem_id(self):
         testing_visitor = FilterByProblemIdVisitor(self.good_problem_id, self.visitor)
-        testing_visitor.update_submit(self.good_submit)
+        testing_visitor.visit(self.good_submit)
         self.assertEqual(self.visitor.the_number_of_transmitted_submits, 1)
 
     def test_mismatching_problem_id(self):
         testing_visitor = FilterByProblemIdVisitor(self.good_problem_id, self.visitor)
-        testing_visitor.update_submit(self.bad_submit)
+        testing_visitor.visit(self.bad_submit)
         self.assertEqual(self.visitor.the_number_of_transmitted_submits, 0)
 
 
