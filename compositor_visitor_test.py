@@ -1,19 +1,6 @@
 import unittest
 from compositor_visitor import CompositorVisitor
-from visitor import Visitor
-
-
-class FakeVisitor(Visitor):
-    def __init__(self):
-        super().__init__()
-        self.result = 0
-
-    def visit(self, submit):
-        self.result += submit
-
-    # Returns ready for print string of result data
-    def pretty_print(self):
-        return str(self.result)
+from visitor import FakeVisitor
 
 
 class FunctionTesting(unittest.TestCase):
@@ -25,7 +12,7 @@ class FunctionTesting(unittest.TestCase):
         visitor = FakeVisitor()
         comp_visitor = CompositorVisitor(visitor)
         comp_visitor.visit(10)
-        self.assertEqual(comp_visitor.pretty_print(), "10")
+        self.assertEqual(comp_visitor.pretty_print(), "1")
 
     def test_two_visitors(self):
         visitors = []
@@ -35,7 +22,7 @@ class FunctionTesting(unittest.TestCase):
         comp_visitor = CompositorVisitor(*visitors)
         visitors[0].visit(10)
         comp_visitor.visit(10)
-        self.assertEqual(comp_visitor.pretty_print(), "20\n\n10")
+        self.assertEqual(comp_visitor.pretty_print(), "2\n\n1")
 
 
 if __name__ == "__main__":
