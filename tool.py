@@ -23,14 +23,14 @@ def get_stats_names(num, query):
 
 def suppose_csv():
     csv_filenames = [filename for filename in os.listdir() if filename.endswith('.csv')]
-    if csv_filenames != []:
+    if csv_filenames:
         return 'Supposed filenames:\n---\n{}\n---\n'.format('\n'.join(csv_filenames))
     return ''
 
 
 def suppose_statistics():
     stat_names = [filename[:-3] for filename in os.listdir('stats') if filename.endswith('.py') and not filename.endswith('_test.py') and not filename == '__init__.py']
-    if stat_names != []:
+    if stat_names:
         return 'Supposed names:\n---\n{}\n---\n'.format('\n'.join(stat_names))
     return ''
 
@@ -48,24 +48,25 @@ def main():
     csv_filename = get_param(2, 'Enter csv database filename: ' + suppose_csv())
     while not (os.path.isfile(csv_filename) and os.access(csv_filename, os.R_OK)):
         csv_filename = input('Please, enter correct filename: ')
-    stats_names = get_stats_names(3, 'Enter statistics names (separate by spaces). ' + suppose_statistics())
-    stats_modules = [import_module('stats.' + i) for i in stats_names if find_spec('stats.' + i) is not None]
-    while len(stats_modules) == 0:
-        stats_names = input('Please, enter correct stats name: ').split()
+    stats_counters = []
+    while not stats_counters:
+        stats_names = get_stats_names(3, 'Enter statistics names (separate by spaces). ' + suppose_statistics())
+        stats_modules = []
         for stats_name in stats_names:
             if find_spec('stats.' + stats_name) is not None:
                 stats_modules.append(import_module('stats.' + stats_name))
             else:
                 print(stats_name, 'not found')
-    stats_counters = []
-    for i in stats_modules:
-        try:
-            stats_counters.append(eval(i.__name__ + '.' + i.classname)())
-        except AttributeError:
-            print(i.__name__.split('.')[1], 'is broken, skipping')
-    if not stats_counters:
-        print('No statistics selected')
-        exit()
+        if not stats_modules:
+            print('No statistics selected')
+            continue
+        for i in stats_modules:
+            try:
+                stats_counters.append(eval(i.__name__ + '.' + i.classname)())
+            except AttributeError:
+                print(i.__name__.split('.')[1], 'is broken, skipping')
+        if not stats_counters:
+            print('No statistics selected')
     compositor = CompositorVisitor(*stats_counters)
     ejudge_parse(home_dirs, csv_filename, compositor)
     print()
