@@ -5,13 +5,12 @@ class EqMatrix(Visitor):
     def __init__(self):
         super().__init__()
         self.result = []
-        self.runs_id = []
+        self.runs_num = 0
 
     def visit(self, submit):
         case_amount = len(submit.runs)  # amount of cases in this submit
 
-        for run in submit.runs:
-            self.runs_id.append(run.case_id)
+        self.runs_num += len(submit.runs)  # for same_runs.py
 
         if case_amount > len(self.result):  # extending matrix in case we found more cases
             for i in range(len(self.result)):

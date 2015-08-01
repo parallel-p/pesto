@@ -25,7 +25,7 @@ class PositiveTests(unittest.TestCase):
         #           "10 10 10 10\n" +
         #           "10 10 10 10\n")
 
-        self.assertEqual(self.same.pretty_print(), "0 1 2 3\n")
+        self.assertEqual(self.same.pretty_print(), "0 0:\n0 1 2 3\n")
 
     def test_mixed(self):
         runs = []
@@ -46,7 +46,7 @@ class PositiveTests(unittest.TestCase):
         for submit in submits:
             self.same.visit(submit)
 
-        self.assertEqual(self.same.pretty_print(), "1 2 3\n")
+        self.assertEqual(self.same.pretty_print(), "0 0:\n1 2 3\n")
 
     def test_different(self):
         runs = []
@@ -67,7 +67,7 @@ class PositiveTests(unittest.TestCase):
         #           "10 0 10 0\n" +
         #           "0 10 0 10\n")
 
-        self.assertEqual(self.same.pretty_print(), "0 2\n1 3\n")
+        self.assertEqual(self.same.pretty_print(), "0 0:\n0 2\n1 3\n")
 
     def test_difruns(self):
         runs = []
@@ -91,7 +91,7 @@ class PositiveTests(unittest.TestCase):
         #           "4 0 4 0\n"  +
         #           "0 4 0 4\n")
 
-        self.assertEqual(self.same.pretty_print(), "")
+        self.assertEqual(self.same.pretty_print(), "0 0:\n")
 
 
 if __name__ == "__main__":

@@ -8,19 +8,6 @@ from importlib.util import find_spec
 import argparse
 
 
-def get_param(num, query):
-    if len(sys.argv) > num:
-        return sys.argv[num]
-    return input(query)
-
-
-def get_stats_names(num, query):
-    if len(sys.argv) > num:
-        return sys.argv[num:]
-    else:
-        return input(query).split()
-
-
 def suppose_csv():
     csv_filenames = [filename for filename in os.listdir() if filename.endswith('.csv')]
     if csv_filenames:
