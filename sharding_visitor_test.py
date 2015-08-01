@@ -1,23 +1,12 @@
 import unittest
 from sharding_visitor import ShardingVisitor
-from visitor import Visitor
+from visitor import FakeVisitor
 from factory import Factory
+
 
 class FakeFactory(Factory):
     def create(key):
         return FakeVisitor()
-
-class FakeVisitor(Visitor):
-    def __init__(self):
-        super().__init__()
-        self.result = 0
-
-    def visit(self, submit):
-        self.result += 1
-
-    # Returns ready for print string of result data
-    def pretty_print(self):
-        return str(self.result)
 
 
 class FunctionTesting(unittest.TestCase):
