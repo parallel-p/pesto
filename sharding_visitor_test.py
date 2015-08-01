@@ -21,19 +21,19 @@ class FunctionTesting(unittest.TestCase):
 
     def test_one_visitors(self):
         self.shard_visitor.visit(10)
-        self.assertEqual(self.shard_visitor.pretty_print(), "1")
+        self.assertEqual(self.shard_visitor.pretty_print(), "10 1")
 
     def test_two_visitors(self):
         for i in range(2):
             self.shard_visitor.visit(10)
         self.shard_visitor.visit(20)
-        self.assertEqual(self.shard_visitor.pretty_print(), "2\n\n1")
+        self.assertEqual(self.shard_visitor.pretty_print(), "10 2\n\n20 1")
 
     def test_raw_stats(self):
         for i in range(2):
-            self.shard_visitor.visit(10)
-        self.shard_visitor.visit(20)
-        self.assertEqual(self.shard_visitor.get_stat_data(), [2, 1])
+            self.shard_visitor.visit(20)
+        self.shard_visitor.visit(10)
+        self.assertEqual(self.shard_visitor.get_stat_data(), [('10', 1), ('20', 2)])
 
 
 if __name__ == "__main__":
