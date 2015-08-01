@@ -8,21 +8,21 @@ class SubmitsByRunsTest(unittest.TestCase):
     def test_eq_good(self):
         submits = []
         for i in range(5):
-            submits.append(Submit(i, (i, i), i, [Run('17',  0, 0, 0, 0)] * 1, 'OK'))
-        submits.append(Submit(i, (i, i), i, [Run('17', 0, 0, 0, 0)] * 2, 'OK'))
+            submits.append(Submit(i, (i, i), i, [Run( 0, 0, 0, 0)] * 1, 'OK'))
+        submits.append(Submit(i, (i, i), i, [Run(0, 0, 0, 0)] * 2, 'OK'))
         self.assertEqual(len(get_submits_by_runs(submits, 1, 'eq')), 5)
         self.assertEqual(len(get_submits_by_runs(submits, 1)), 5)
 
     def test_gt_good(self):
         submits = []
         for i in range(5):
-            submits.append(Submit(i, (i, i), i, [Run('17', 0, 0, 0, 0)] * i, 'OK'))
+            submits.append(Submit(i, (i, i), i, [Run( 0, 0, 0, 0)] * i, 'OK'))
         self.assertEqual(len(get_submits_by_runs(submits, 3, 'gt')), 1)
 
     def test_lt_good(self):
         submits = []
         for i in range(5):
-            submits.append(Submit(i, (i, i), i, [Run('17', 0, 0, 0, 0)] * i, 'OK'))
+            submits.append(Submit(i, (i, i), i, [Run(0, 0, 0, 0)] * i, 'OK'))
         self.assertEqual(len(get_submits_by_runs(submits, 3, 'lt')), 3)    
 
     def test_bad_mode(self):

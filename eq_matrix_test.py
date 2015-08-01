@@ -11,7 +11,7 @@ class PositiveTests(unittest.TestCase):
     def test_allsame(self):
         runs = []
         for i in range(4):
-            runs.append(Run(17, 0, 0, i, "OK"))
+            runs.append(Run(0, 0, i, "OK"))
 
         submits = []
         for i in range(10):
@@ -29,10 +29,10 @@ class PositiveTests(unittest.TestCase):
 
     def test_mixed(self):
         runs = []
-        runs.append(Run(17, 0, 0, 0, "OK"))
-        runs.append(Run(17, 0, 0, 1, "WA"))
-        runs.append(Run(17, 0, 0, 2, "WA"))
-        runs.append(Run(17, 0, 0, 3, "WA"))
+        runs.append(Run(0, 0, 0, "OK"))
+        runs.append(Run(0, 0, 1, "WA"))
+        runs.append(Run(0, 0, 2, "WA"))
+        runs.append(Run(0, 0, 3, "WA"))
 
         submits = []
         for i in range(10):
@@ -50,10 +50,10 @@ class PositiveTests(unittest.TestCase):
 
     def test_different(self):
         runs = []
-        runs.append(Run(17, 0, 0, 0, "OK"))
-        runs.append(Run(17, 0, 0, 1, "WA"))
-        runs.append(Run(17, 0, 0, 2, "OK"))
-        runs.append(Run(17, 0, 0, 3, "WA"))
+        runs.append(Run(0, 0, 0, "OK"))
+        runs.append(Run(0, 0, 1, "WA"))
+        runs.append(Run(0, 0, 2, "OK"))
+        runs.append(Run(0, 0, 3, "WA"))
 
         submits = []
         for i in range(10):
@@ -74,10 +74,10 @@ class PositiveTests(unittest.TestCase):
 
     def test_difruns(self):
         runs = []
-        runs.append(Run(17, 0, 0, 0, "OK"))
-        runs.append(Run(17, 0, 0, 1, "WA"))
-        runs.append(Run(17, 0, 0, 2, "OK"))
-        runs.append(Run(17, 0, 0, 3, "WA"))
+        runs.append(Run(0, 0, 0, "OK"))
+        runs.append(Run(0, 0, 1, "WA"))
+        runs.append(Run(0, 0, 2, "OK"))
+        runs.append(Run(0, 0, 3, "WA"))
 
         submits = []
         for i in range(4):
