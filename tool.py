@@ -49,7 +49,6 @@ def get_arguments_from_keyboard():
                 print(stats_name, 'not found')  # TODO something more noticeable
         for i in stats_modules:
             try:
-                # stats_counters.append(eval(i.__name__ + '.' + i.classname)())
                 stats_counters.append(getattr(i, i.classname)())
             except AttributeError:
                 print(i.__name__.split('.')[1], 'is broken, skipping')  # TODO something more noticeable
@@ -77,7 +76,6 @@ def get_arguments_from_cmdline():
     stats_counters = []
     for i in stats_modules:
         try:
-            # stats_counters.append(eval(i.__name__ + '.' + i.classname)())
             stats_counters.append(getattr(i, i.classname)())
         except AttributeError:
             print(i.__name__.split('.')[1], 'is broken, skipping')
