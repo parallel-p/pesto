@@ -41,29 +41,38 @@ class FunctionTesting(unittest.TestCase):
         self.assertEqual(self.shard_visitor.get_stat_data(), [('10', 1), ('20', 2)])
 
 
+def doVisits(visitor):
+    visitor.visit(Submit("0", ("1", "2"), "3", [], 'OK'))
+    visitor.visit(Submit("0", ("1", "5"), "1", [], 'OK'))
+    visitor.visit(Submit("0", ("1", "2"), "2", [], 'OK'))
+    visitor.visit(Submit("0", ("5", "2"), "2", [], 'OK'))
+    visitor.visit(Submit("0", ("1", "2"), "1", [], 'OK'))
+
 class TestByProblem(unittest.TestCase):
     def test_submits(self):
         visitor = ShardingByProblemVisitor(FakeFactory)
-        visitor.visit(Submit(0, (1, 228), 0, [], 'OK'))
-        visitor.visit(Submit(0, (2007, 322), 0, [], 'OK'))
-        visitor.visit(Submit(0, (1, 228), 0, [], 'OK'))
-        self.assertEqual(len(visitor.visitors.keys()), 2)
+        doVisits(visitor)
+        self.assertEqual(set(visitor.visitors.keys()), {("1", "2"), ("1", "5"), ("5", "2")})
+        self.assertEqual(len(visitor.visitors[("1", "2")].submits), 3)
+        self.assertEqual(len(visitor.visitors[("1", "5")].submits), 1)
+        self.assertEqual(len(visitor.visitors[("5", "2")].submits), 1)
 
 class TestByContest(unittest.TestCase):
     def test_submits(self):
         visitor = ShardingByContestVisitor(FakeFactory)
-        visitor.visit(Submit(0, (1, 0), 0, [], 'OK'))
-        visitor.visit(Submit(0, (2, 0), 0, [], 'OK'))
-        visitor.visit(Submit(0, (1, 0), 0, [], 'OK'))
-        self.assertEqual(len(visitor.visitors.keys()), 2)
+        doVisits(visitor)
+        self.assertEqual(set(visitor.visitors.keys()), {"1", "5"})
+        self.assertEqual(len(visitor.visitors["1"].submits), 4)
+        self.assertEqual(len(visitor.visitors["5"].submits), 1)
 
 class TestByUser(unittest.TestCase):
     def test_submits(self):
         visitor = ShardingByUserVisitor(FakeFactory)
-        visitor.visit(Submit(0, (0, 0), 1, [], 'OK'))
-        visitor.visit(Submit(0, (0, 0), 2, [], 'OK'))
-        visitor.visit(Submit(0, (0, 0), 1, [], 'OK'))
-        self.assertEqual(len(visitor.visitors.keys()), 2)
+        doVisits(visitor)
+        self.assertEqual(set(visitor.visitors.keys()), {"3", "1", "2"})
+        self.assertEqual(len(visitor.visitors["3"].submits), 1)
+        self.assertEqual(len(visitor.visitors["1"].submits), 2)
+        self.assertEqual(len(visitor.visitors["2"].submits), 2)
 
 
 if __name__ == "__main__":
