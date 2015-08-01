@@ -15,9 +15,12 @@ class SubmitsIdsBySignatueVisitor(Visitor):
         return self.result
 
     def pretty_print(self):
+        temp_data = list(self.result.items())
+        for i in range(len(temp_data)):
+            temp_data[i] = tuple(reversed(temp_data[i]))
         answer = []
-        for signature in self.result:
-            answer.append('{}: {} submits found.'.format(signature, len(self.result[signature])))
+        for submits, signature in sorted(temp_data):
+            answer.append('{}: {} submits found.'.format(signature, len(submits)))
         return '\n'.join(answer)
 
 

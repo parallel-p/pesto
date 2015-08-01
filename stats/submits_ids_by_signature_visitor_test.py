@@ -36,7 +36,7 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
         self.visitor.visit(self.submit2)
         self.visitor.visit(self.submit3)
         self.visitor.visit(self.submit4)
-        self.assertEqual(sorted(self.visitor.pretty_print().split('\n')), sorted(['OKOKOK: 1 submits found.', 'WAWAWA: 1 submits found.', 'OKWAOK: 2 submits found.']))
+        self.assertEqual(self.visitor.pretty_print(), 'OKOKOK: 1 submits found.\nWAWAWA: 1 submits found.\nOKWAOK: 2 submits found.')
 
 if __name__ == 'main':
     unittest.main()
