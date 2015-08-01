@@ -1,5 +1,5 @@
 import unittest
-from eq_matrix import EqMatrix
+from stats.eq_matrix import EqMatrix
 from model import Submit
 from model import Run
 

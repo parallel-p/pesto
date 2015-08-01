@@ -1,5 +1,5 @@
 from visitor import Visitor
-from eq_matrix import EqMatrix
+from stats.eq_matrix import EqMatrix
 
 
 class SameRuns(Visitor):
