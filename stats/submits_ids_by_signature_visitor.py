@@ -15,9 +15,10 @@ class SubmitsIdsBySignatueVisitor(Visitor):
         return self.result
 
     def pretty_print(self):
-        result = []
+        answer = []
         for singnature in self.result:
             result.append("Signature:", str(singnature), "Submits ids:",  ''.join(self.result))
+        return '\n'.join(answer)
 
 
 classname = 'SubmitsIdsBySignatueVisitor'
