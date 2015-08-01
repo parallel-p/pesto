@@ -96,6 +96,31 @@ class PositiveTests(unittest.TestCase):
 
         self.assertEqual(self.matrix.pretty_print(), sample)
 
+    def test_raw_data(self):
+        runs = []
+        runs.append(Run(0, 0, 0, "OK"))
+        runs.append(Run(0, 0, 1, "WA"))
+        runs.append(Run(0, 0, 2, "OK"))
+        runs.append(Run(0, 0, 3, "WA"))
+
+        submits = []
+        for i in range(4):
+            submits.append(Submit(i, (0, 0), 0, runs[:2], 0))
+            submits.append(Submit(i, (0, 0), 0, runs, 0))
+        submits.append(Submit(i, (0, 0), 0, runs[:1], 0))
+        submits.append(Submit(i, (0, 0), 0, runs[:1], 0))
+
+        for submit in submits:
+            self.matrix.visit(submit)
+
+        sample = [[10, 0, 4, 0],
+                  [0, 8, 0, 4],  
+                  [4, 0, 4, 0], 
+                  [0, 4, 0, 4]]
+
+        self.assertEqual(self.matrix.get_stat_data(), sample)
+
+
 
 if __name__ == "__main__":
     unittest.main()
