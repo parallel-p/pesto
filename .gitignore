@@ -60,3 +60,4 @@ target/
 .idea/
 
 /coverage/*
+/my_data/*
