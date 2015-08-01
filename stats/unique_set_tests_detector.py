@@ -8,7 +8,6 @@ class UniqueSetTestsDetector(Visitor):
 
     def visit(self, submit):
         id = '_'.join(submit.problem_id)
-        print(id, submit.runs_results, submit.runs)
         if id in self.submits_number_by_uniqum_runs_results_by_contest_problem_id:
             if submit.runs_results in self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id]:
                 self.submits_number_by_uniqum_runs_results_by_contest_problem_id[id][submit.runs_results][1] += 1
@@ -34,7 +33,6 @@ class UniqueSetTestsDetector(Visitor):
                 submits_number = self.submits_number_by_uniqum_runs_results_by_contest_problem_id[problem_id_and_runs[0]][uniqum_result][1]
                 prettty_result.append("  Run result:{0}\n   Submits count:{1}\n".format(runs_res_in_string, submits_number))
         return '\n'.join(prettty_result)
-
 
 
 classname = 'UniqueSetTestsDetector'
