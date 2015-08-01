@@ -7,9 +7,9 @@ class SubmitsIdsBySignatueVisitor(Visitor):
 
     def visit(self, submit):
         if submit.runs_results not in self.result:
-            self.result[submit.runs_results] = [submit.problem_id]
+            self.result[submit.runs_results] = [submit.submit_id]
         else:
-            self.result[submit.runs_results].append(submit.problem_id)
+            self.result[submit.runs_results].append(submit.submit_id)
 
     def get_stat_data(self):
         return self.result
