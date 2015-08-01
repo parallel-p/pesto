@@ -5,6 +5,7 @@ from visitor_factory import VisitorFactory
 
 
 class FakeFactory(VisitorFactory):
+    @staticmethod
     def create(key):
         return FakeVisitor()
 
