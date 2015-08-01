@@ -19,6 +19,12 @@ class TestEjudgeXmlParse(unittest.TestCase):
         self.assertEqual(len(res.run_outcomes), 4)
         self.assertEqual(res.run_outcomes, ['OK', 'OK', 'OK', 'OK'])
 
+    def test_empty_xml(self):
+        file = open('testdata/xml/empty_xml.xml', encoding='utf-8')
+        res = ejudge_xml_parse(file)
+        file.close()
+        self.assertEqual(res, None)
+        
     def test_non_xml(self):
         file = open('testdata/xml/non_xml.xml', encoding='utf-8')
         res = ejudge_xml_parse(file)

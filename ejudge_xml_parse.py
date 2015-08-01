@@ -11,6 +11,8 @@ class EjudgeXmlParseResult:
 def ejudge_xml_parse(file):
     try:
         lines = file.readlines()  # invalid .gz
+        if not lines:
+            return None
         if type(lines[0]) == bytes:
             for i in range(len(lines)):
                 lines[i] = lines[i].decode()
