@@ -43,7 +43,7 @@ class CountMethodTest(unittest.TestCase):
 
     def test_bad_submit(self):
         with self.assertRaises(Exception):
-            self.submits_counter.update_submit(None)
+            self.submits_counter.visit(None)
 
 if __name__ == 'main':
     unittest.main()

@@ -8,7 +8,7 @@ class FakeVisitor(Visitor):
         super().__init__()
         self.result = 0
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         self.result += submit
 
     # Returns ready for print string of result data
@@ -24,7 +24,7 @@ class FunctionTesting(unittest.TestCase):
     def test_one_visitors(self):
         visitor = FakeVisitor()
         comp_visitor = CompositorVisitor(visitor)
-        comp_visitor.update_submit(10)
+        comp_visitor.visit(10)
         self.assertEqual(comp_visitor.pretty_print(), "10")
 
     def test_two_visitors(self):
@@ -33,8 +33,8 @@ class FunctionTesting(unittest.TestCase):
             visitors.append(FakeVisitor())
 
         comp_visitor = CompositorVisitor(*visitors)
-        visitors[0].update_submit(10)
-        comp_visitor.update_submit(10)
+        visitors[0].visit(10)
+        comp_visitor.visit(10)
         self.assertEqual(comp_visitor.pretty_print(), "20\n\n10")
 
 

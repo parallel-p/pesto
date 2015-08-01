@@ -6,9 +6,9 @@ class CompositorVisitor(Visitor):
         super().__init__()
         self.visitors = list(visitors)
 
-    def update_submit(self, update_submit):
+    def visit(self, update_submit):
         for visitor in self.visitors:
-            visitor.update_submit(update_submit)
+            visitor.visit(update_submit)
 
     def pretty_print(self):
         if len(self.visitors) == 0:
