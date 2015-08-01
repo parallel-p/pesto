@@ -18,6 +18,7 @@ class SubmitsIdsBySignatueVisitor(Visitor):
         temp_data = list(self.result.items())
         for i in range(len(temp_data)):
             temp_data[i] = tuple(reversed(temp_data[i]))
+            temp_data[i][0] = len(temp_data[i][0])
         answer = []
         for submits, signature in sorted(temp_data):
             answer.append('{}: {} submits found.'.format(signature, len(submits)))
