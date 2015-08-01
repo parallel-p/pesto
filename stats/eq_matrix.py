@@ -38,3 +38,5 @@ class EqMatrix(Visitor):
             results = " ".join(map(str, line)) + "\n"
             print_data += results
         return print_data
+
+classname = "eq_matrix"
