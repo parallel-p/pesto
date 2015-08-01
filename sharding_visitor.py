@@ -3,12 +3,13 @@ from visitor import Visitor
 
 class ShardingVisitor(Visitor):
     def __init__(self, factory):
+        super().__init__()
         self.visitors = dict()
         self.factory = factory
 
     def visit(self, submit):
-        key = build_key(submit)
-        if key not in self.visitors() :
+        key = self.build_key(submit)
+        if key not in self.visitors:
             self.visitors[key] = self.factory.create(key)
         self.visitors[key].visit(submit)
 
@@ -25,4 +26,4 @@ class ShardingVisitor(Visitor):
             return "\n\n".join([visitor.pretty_print() for visitor in self.visitors.values()])
 
     def build_key(self, submit):
-        return ""
+        return submit
