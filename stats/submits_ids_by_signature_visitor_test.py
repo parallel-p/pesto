@@ -21,7 +21,7 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
 
         self.visitor = SubmitsIdsBySignatueVisitor()
 
-    def test_dadta_get(self):
+    def test_data_get(self):
         self.visitor.visit(self.submit1)
         self.visitor.visit(self.submit2)
         self.visitor.visit(self.submit3)
@@ -30,6 +30,13 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
         self.assertEqual(res["OKWAOK"], ['3', '4'])
         self.assertEqual(res["OKOKOK"], ['1'])
         self.assertEqual(res["WAWAWA"], ['2'])
+
+    def test_pretty(self):
+        self.visitor.visit(self.submit1)
+        self.visitor.visit(self.submit2)
+        self.visitor.visit(self.submit3)
+        self.visitor.visit(self.submit4)
+        self.assertEqual(self.visitor.pretty_print(), 'OKOKOK: 1 submits found.\nWAWAWA: 1 submits found.\nOKWAOK: 2 submits found.')
 
 if __name__ == 'main':
     unittest.main()
