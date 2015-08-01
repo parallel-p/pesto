@@ -1,4 +1,5 @@
 from visitor import Visitor
+from eq_matrix import EqMatrix
 
 
 class SameRuns(Visitor):
@@ -6,23 +7,26 @@ class SameRuns(Visitor):
     def __init__(self):
         super().__init__()
         self.connected_components = []
+        self.matrix = EqMatrix()
     
-    def visit(self, matrix):
-        for i in range(len(matrix.result)):
-            for j in range(len(matrix.result)):
+    def visit(self, submit):
+        self.matrix.visit(submit)
+
+        for i in range(len(self.matrix.result)):
+            for j in range(len(self.matrix.result)):
                 if i == j:
                     continue
-                if matrix.result[i][j] == len(matrix.runs_id) / len(matrix.result):
+                if self.matrix.result[i][j] == len(self.matrix.runs_id) / len(self.matrix.result):
                     f = False
                     for component in self.connected_components:
                         if i in component:
-                            component.add(matrix.runs_id[j])
+                            component.add(self.matrix.runs_id[j])
                             f = True
                         if j in component:
-                            component.add(matrix.runs_id[i])
+                            component.add(self.matrix.runs_id[i])
                             f = True
                     if not f:
-                        self.connected_components.append(set([matrix.runs_id[i], matrix.runs_id[j]]))
+                        self.connected_components.append(set([self.matrix.runs_id[i], self.matrix.runs_id[j]]))
         
     #self.result = connected_components
     
