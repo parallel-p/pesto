@@ -69,12 +69,13 @@ def get_arguments_from_keyboard():
         if not stats_counters:
             print('No statistics selected')  # TODO something more noticeable
 
-    return base_dir, is_multicontest, csv_filename, stats_counters
+    return base_dir, is_multicontest, csv_filename, stats_counters, {}
 
 
 def get_arguments_from_cmdline():
     parser = argparse.ArgumentParser(description="Calculate some statistics")
     parser.add_argument('-m', '--multicontest', help='base_dir contains several contests', action='store_true')
+    parser.add_argument('-o', '--outfile', help='output file')
     parser.add_argument('base_dir', help="directory containing xml's")
     parser.add_argument('csv_filename', help="csv file")
     parser.add_argument('stats_names', help="names of statistics modules", nargs='+')
@@ -96,14 +97,17 @@ def get_arguments_from_cmdline():
     if not stats_counters:
         print('No statistics selected')
         exit()
-    return args['base_dir'], args['multicontest'], args['csv_filename'], stats_counters
+    optional = {}
+    if args['outfile']:
+        optional['outfile'] = args['outfile']
+    return args['base_dir'], args['multicontest'], args['csv_filename'], stats_counters, optional
 
 
 def main():
     if len(sys.argv) < 2:
-        base_dir, is_multicontest, csv_filename, stats_counters = get_arguments_from_keyboard()
+        base_dir, is_multicontest, csv_filename, stats_counters, optional = get_arguments_from_keyboard()
     else:
-        base_dir, is_multicontest, csv_filename, stats_counters = get_arguments_from_cmdline()
+        base_dir, is_multicontest, csv_filename, stats_counters, optional = get_arguments_from_cmdline()
     base_dir = base_dir.rstrip('/').rstrip('\\')
     if is_multicontest:
         home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
@@ -111,8 +115,13 @@ def main():
         home_dirs = [base_dir]
     compositor = CompositorVisitor(*stats_counters)
     ejudge_parse(home_dirs, csv_filename, compositor)
-    print()
-    print(compositor.pretty_print())
+    result = compositor.pretty_print()
+    if 'outfile' in optional:
+        with open(optional['outfile'], 'w') as outfile:
+            outfile.write(result)
+    else:
+        print()
+        print(result)
 
 
 if __name__ == "__main__":
