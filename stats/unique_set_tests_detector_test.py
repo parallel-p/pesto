@@ -20,5 +20,26 @@ class UniqueSetTestsTest(unittest.TestCase):
         res = self.detector.get_stat_data()
         self.assertEqual(res, {})
 
+    def test_pretty_print(self):
+        ejudge_parse(['testdata/unique_set_test/1'], 'testdata/unique_set_test/common.csv', self.detector)
+        res = self.detector.pretty_print()
+        good = '''***
+contest_problem #1_1
+  Run result:OK OK OK OK OK
+   Submits count:2
+
+  Run result:OK OK OK OK OK OK OK OK OK OK
+   Submits count:1
+
+  Run result:OK OK OK OK WA
+   Submits count:1
+
+***
+contest_problem #1_2
+  Run result:OK OK OK OK WA
+   Submits count:2
+'''
+        self.assertEqual(res, good)
+
 if __name__ == "__main__":
     unittest.main()
