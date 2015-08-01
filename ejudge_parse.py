@@ -29,4 +29,4 @@ def ejudge_parse(contest_dirs, csv_filename, visitor):
                 continue
             runs = [Run(contest_id, problem_id, submit_id, i + 1, run_outcomes[i]) for i in range(len(run_outcomes))]
             submit = Submit(submit_id, contest_id, problem_id, user_id, runs, submit_outcome)
-            visitor.update_submit(submit)
+            visitor.visit(submit)

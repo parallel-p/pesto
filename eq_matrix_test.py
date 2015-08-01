@@ -18,7 +18,7 @@ class PositiveTests(unittest.TestCase):
             submits.append(Submit(i, 0, 0, 0, runs, 0))
 
         for submit in submits:
-            self.matrix.update_submit(submit)
+            self.matrix.visit(submit)
 
         sample = ("10 10 10 10\n" +
                   "10 10 10 10\n" +
@@ -44,7 +44,7 @@ class PositiveTests(unittest.TestCase):
                   "0 10 10 10\n")
 
         for submit in submits:
-            self.matrix.update_submit(submit)
+            self.matrix.visit(submit)
 
         self.assertEqual(self.matrix.pretty_print(), sample)
 
@@ -60,7 +60,7 @@ class PositiveTests(unittest.TestCase):
             submits.append(Submit(i, 0, 0, 0, runs, 0))
 
         for submit in submits:
-            self.matrix.update_submit(submit)
+            self.matrix.visit(submit)
 
         sample = ("10 0 10 0\n" +
                   "0 10 0 10\n" +
@@ -87,7 +87,7 @@ class PositiveTests(unittest.TestCase):
         submits.append(Submit(i, 0, 0, 0, runs[:1], 0))
 
         for submit in submits:
-            self.matrix.update_submit(submit)
+            self.matrix.visit(submit)
 
         sample = ("10 0 4 0\n" +
                   "0 8 0 4\n"  +

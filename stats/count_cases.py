@@ -6,7 +6,7 @@ class CasesCounter(Visitor):
         super().__init__()
         self.result = {}
     
-    def update_submit(self, submit):
+    def visit(self, submit):
         if str(submit.problem_id) not in self.result or len(submit.runs) > self.result[str(submit.problem_id)]:
             self.result[str(submit.problem_id)] = len(submit.runs)
     

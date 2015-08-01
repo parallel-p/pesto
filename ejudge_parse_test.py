@@ -10,7 +10,7 @@ class FakeVisitor(Visitor):
         self.submits = 0
         self.submit_list = []
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         self.submits += 1
         self.submit_list.append(submit)
 

@@ -6,7 +6,7 @@ class UniqueSetTestsDetector(Visitor):
     def __init__(self):
         self.submits_number_by_uniqum_runs_results_by_contest_problem_id = dict()
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         probl_id = submit.problem_id
         cont_id = submit.contest_id
         id = cont_id + "_" + probl_id

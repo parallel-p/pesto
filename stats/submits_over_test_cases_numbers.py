@@ -7,7 +7,7 @@ class SubmitsOverTestCasesNumbers(Visitor):
         super().__init__()
         self.number_of_submits_by_number_of_runs_by_problem_id = {}
 
-    def update_submit(self, submit):
+    def visit(self, submit):
         runs_number = len(submit.runs)
         if submit.problem_id in self.number_of_submits_by_number_of_runs_by_problem_id:
             if runs_number in self.number_of_submits_by_number_of_runs_by_problem_id[submit.problem_id]:
