@@ -19,3 +19,5 @@ class SubmitsIdsBySignatueVisitor(Visitor):
         for singnature in self.result:
             result.append("Signatue:", str(singnature), "Submits ids:",  ''.join(self.result))
 
+
+classname = 'SubmitsIdsBySignatueVisitor'
