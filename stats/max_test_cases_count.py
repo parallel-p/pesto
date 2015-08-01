@@ -19,3 +19,5 @@ class MaxTestCasesCount(Visitor):
             print("\"{0}\";\"{1}\";\"{2}\"".format(problem_id[0], problem_id[1], self.max_test_cases_number_by_problem_id[problem_id]), file=csv_file, sep=";")
 
         return self.max_test_cases_number_by_problem_id
+
+classname = "MaxTestCasesCount"

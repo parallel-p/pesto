@@ -37,12 +37,12 @@ class SameRuns(Visitor):
     
     def pretty_print(self):
         print_data = ""
-        for name in self.base_connected_components.keys():
+        for name in sorted(self.base_connected_components.keys()):
             print_data += str(name) + ':\n'
 
-            for component in self.base_connected_components[name]:
+            for component in sorted(self.base_connected_components[name]):
                 print_data += " ".join(map(str, component)) + "\n"
-            return print_data
+        return print_data
 
     def get_stat_data(self):
         return self.base_connected_components

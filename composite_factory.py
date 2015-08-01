@@ -3,9 +3,12 @@ from visitor_factory import VisitorFactory
 
 
 class CompositeVisitorFactory(VisitorFactory):
-    @staticmethod
-    def create(key, *factories):
+    def __init__(self,  *factories):
+        super().__init__()
+        self.factories = list(factories)
+        
+    def create(self, key):
         visitors = []
-        for factory in factories:
+        for factory in self.factories:
             visitors.append(factory.create(key))
         return CompositorVisitor(*visitors)
