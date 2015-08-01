@@ -1,5 +1,5 @@
-# Функция вызывается от того же filename, что и функция, создающая csv-файл,
-# поэтому нет смысла проверять файл на существование
+# This function and the function creating the csv file is called from the same filename
+# so there is no need to check the file for existence
 
 
 def max_test_cases(filename):
