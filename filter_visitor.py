@@ -12,10 +12,11 @@ class FilterVisitor(Visitor):
            self.next_visitor.visit(submit)
 
     def get_stat_data(self):
-        return {'key':self.key, "next_visitor_stat":self.get_stat_data()}
+        res = {'key':self.key, "next_visitor_stat":self.next_visitor.get_stat_data()}
+        return res
 
     def pretty_print(self):
-        return "Key:{0}; Next visitor stat:{1}".format(str(self.key), self.next_visitor.pretty_print)
+        return "Key:{0}; Next visitor stat:{1}".format(str(self.key), self.next_visitor.pretty_print())
 
     def good_submit(self, submit):
         return True
@@ -23,15 +24,21 @@ class FilterVisitor(Visitor):
 
 class FilterByProblemVisitor(FilterVisitor):
     def good_submit(self, submit):
-        return self.key == submit.problem_id[1]
+        if self.key == submit.problem_id[1]:
+            return True
+        return False
 
 
 class FilterByContestVisitor(FilterVisitor):
     def good_submit(self, submit):
-        return self.key == submit.problem_id[0]
+        if self.key == submit.problem_id[0]:
+            return True
+        return False
 
 
 class FilterByUserVisitor(FilterVisitor):
     def good_submit(self, submit):
-        return self.key == submit.user_id
+        if self.key == submit.user_id:
+            return True
+        return False
 
