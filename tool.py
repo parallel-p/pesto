@@ -57,7 +57,7 @@ def get_arguments():
         is_multicontest = is_multicontest[0] == 'n'
 
     if not is_pickle:
-        is_pickle = input('Does this directory contain only one contest? (y/n) ').lower()
+        is_pickle = input('Does this directory contain pickle files? (y/n) ').lower()
         while is_pickle[0] not in 'yn':
             is_pickle = input('Enter "y" or "n": ').lower()
         is_pickle = is_pickle[0] == 'y'
