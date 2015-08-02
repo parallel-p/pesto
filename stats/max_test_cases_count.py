@@ -15,4 +15,3 @@ class MaxTestCasesCount(Visitor):
     def get_stat_data(self):
         return self.max_test_cases_number_by_problem_id
 
-classname = "MaxTestCasesCount"

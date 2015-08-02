@@ -18,4 +18,3 @@ class SubmitsCounter(Visitor):
             result += 'Problem #{}: {} submits.\n'.format(k, v)
         return result
 
-classname = 'SubmitsCounter'

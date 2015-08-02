@@ -36,7 +36,3 @@ class SubmitsIdsBySignatureVisitor(Visitor):
 
     def _sortByTestCassesCount(element):
         return (len(element))
-
-
-
-classname = 'SubmitsIdsBySignatureVisitor'

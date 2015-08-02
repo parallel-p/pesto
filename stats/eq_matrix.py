@@ -38,4 +38,3 @@ class EqMatrix(Visitor):
             print_data += results
         return print_data
 
-classname = "EqMatrix"

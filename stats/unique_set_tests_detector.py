@@ -37,5 +37,3 @@ class UniqueSetTestsDetector(Visitor):
                 prettty_result.append("  Run result:{0}\n   Submits count:{1}\n".format(runs_res_in_string, submits_number))
         return '\n'.join(prettty_result)
 
-
-classname = 'UniqueSetTestsDetector'
