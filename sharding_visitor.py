@@ -23,7 +23,7 @@ class ShardingVisitor(Visitor):
         if len(self.visitors) == 0:
             return ""
         else:
-            return "\n\n".join(["\n".join(["Key: ", str(key_visitor[0]), key_visitor[1].pretty_print()]) for key_visitor in sorted(self.visitors.items())])
+            return "\n\n".join(["\n".join(["Key: " + str(key_visitor[0]), key_visitor[1].pretty_print()]) for key_visitor in sorted(self.visitors.items())])
 
     def build_key(self, submit):
         return str(submit)
