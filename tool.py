@@ -7,6 +7,7 @@ from importlib import import_module
 from importlib.util import find_spec
 import argparse
 import filter_visitor
+from pickle_walker import pickle_walker
 
 
 def suppose_csv():
@@ -32,6 +33,7 @@ def get_arguments():
     parser.add_argument('--filter-problem', metavar='ID', help='process only submits for the problem selected')
     parser.add_argument('--filter-user', metavar='ID', help='process only submits by the selected user')
     parser.add_argument('--filter-contest', metavar='ID', help='process only submits in the selected contest')
+    parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
     parser.add_argument('base_dir', nargs='?', default=None, help="directory containing xml's")
     parser.add_argument('csv_filename', nargs='?', default=None, help="csv file")
     parser.add_argument('stats_names', default=None, help="names of statistics modules", nargs='*')
@@ -39,6 +41,7 @@ def get_arguments():
 
     base_dir = args['base_dir']
     is_multicontest = args['multicontest']
+    is_pickle = args['pickle']
     request_multicontest = 0
 
     if base_dir is None:
@@ -52,6 +55,12 @@ def get_arguments():
         while is_multicontest[0] not in 'yn':
             is_multicontest = input('Enter "y" or "n": ').lower()
         is_multicontest = is_multicontest[0] == 'n'
+
+    if not is_pickle:
+        is_pickle = input('Does this directory contain only one contest? (y/n) ').lower()
+        while is_pickle[0] not in 'yn':
+            is_pickle = input('Enter "y" or "n": ').lower()
+        is_pickle = is_pickle[0] == 'y'
 
     csv_filename = args['csv_filename']
     if csv_filename is None:
@@ -96,11 +105,11 @@ def get_arguments():
     if args.get('filter_contest'):
         optional['filter_contest'] = args['filter_contest']
 
-    return base_dir, is_multicontest, csv_filename, stats_counters, optional
+    return base_dir, is_multicontest, is_pickle, csv_filename, stats_counters, optional
 
 
 def main():
-    base_dir, is_multicontest, csv_filename, stats_counters, optional = get_arguments()
+    base_dir, is_multicontest, is_pickle, csv_filename, stats_counters, optional = get_arguments()
     if is_multicontest:
         home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
     else:
@@ -112,7 +121,13 @@ def main():
         visitor = filter_visitor.FilterByProblemVisitor(visitor, optional['filter_problem'])
     if 'filter_contest' in optional:
         visitor = filter_visitor.FilterByContestVisitor(visitor, optional['filter_contest'])
-    ejudge_parse(home_dirs, csv_filename, visitor)
+    if is_pickle:
+        print('!!!')
+        for home_dir in home_dirs:
+            for submit in pickle_walker(home_dir):
+                visitor.visit(submit)
+    else:
+        ejudge_parse(home_dirs, csv_filename, visitor)
     result = visitor.pretty_print()
     if 'outfile' in optional:
         with open(optional['outfile'], 'w') as outfile:
