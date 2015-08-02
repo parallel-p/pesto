@@ -12,11 +12,10 @@ class FilterVisitor(Visitor):
            self.next_visitor.visit(submit)
 
     def get_stat_data(self):
-        res = {'key':self.key, "next_visitor_stat":self.next_visitor.get_stat_data()}
-        return res
+        return self.next_visitor.get_stat_data()
 
     def pretty_print(self):
-        return "Key:{0}; Next visitor stat:{1}".format(str(self.key), self.next_visitor.pretty_print())
+        return self.next_visitor.pretty_print()
 
     def good_submit(self, submit):
         return True

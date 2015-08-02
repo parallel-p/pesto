@@ -15,8 +15,7 @@ class TestFilterVisitor(unittest.TestCase):
         visitor.get_stat_data = Mock(return_value="mock_info")
         filter = filter_visitor.FilterVisitor(visitor, 2)
         stat = filter.get_stat_data()
-        self.assertEqual(stat['key'], filter.key)
-        self.assertEqual(stat['next_visitor_stat'], 'mock_info')
+        self.assertEqual(stat, 'mock_info')
 
 class TestFilterByContestVisitor(unittest.TestCase):
     def setUp(self):
