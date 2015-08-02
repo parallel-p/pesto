@@ -1,5 +1,5 @@
 import unittest
-from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatueVisitor
+from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from model import Submit
 from model import Run
 
@@ -19,7 +19,7 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
         self.submit3 = Submit('3', '2', '3', self.runs_mixed, '1')
         self.submit4 = Submit('4', '2', '3', self.runs_mixed, '1')
 
-        self.visitor = SubmitsIdsBySignatueVisitor()
+        self.visitor = SubmitsIdsBySignatureVisitor()
 
     def test_data_get(self):
         self.visitor.visit(self.submit1)
@@ -27,16 +27,19 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
         self.visitor.visit(self.submit3)
         self.visitor.visit(self.submit4)
         res = self.visitor.get_stat_data()
-        self.assertEqual(res["OKWAOK"], ['3', '4'])
-        self.assertEqual(res["OKOKOK"], ['1'])
-        self.assertEqual(res["WAWAWA"], ['2'])
+        self.assertEqual(res["OKWAOK"], [2, ['3', '4']])
+        self.assertEqual(res["OKOKOK"], [1, ['1']])
+        self.assertEqual(res["WAWAWA"], [1, ['2']])
 
     def test_pretty(self):
         self.visitor.visit(self.submit1)
         self.visitor.visit(self.submit2)
         self.visitor.visit(self.submit3)
         self.visitor.visit(self.submit4)
-        self.assertEqual(self.visitor.pretty_print(), 'OKOKOK: 1 submits found.\nSubmits ids samples:[\'1\']\nWAWAWA: 1 submits found.\nSubmits ids samples:[\'2\']\nOKWAOK: 2 submits found.\nSubmits ids samples:[\'3\', \'4\']')
+        good_res = "OKOKOK: 1 submits found.\nSubmits ids samples:['1']\nOKWAOK: 2 submits found.\nSubmits ids samples:['3', '4']\nWAWAWA: 1 submits found.\nSubmits ids samples:['2']"
+
+        self.assertEqual(self.visitor.pretty_print(), good_res)
+
 
 if __name__ == 'main':
     unittest.main()
