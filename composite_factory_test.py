@@ -19,7 +19,7 @@ class FunctionTesting(unittest.TestCase):
         comp_factory = CompositeVisitorFactory(FakeFactory())
         self.assertEqual(comp_factory.factories[0].__class__, factory.__class__)
 
-    def test_two_visitor(self):
+    def test_correct_visitors_given(self):
         visitors = []
         factories = []
         for i in range(2):
@@ -28,7 +28,11 @@ class FunctionTesting(unittest.TestCase):
 
         comp_visitor = CompositorVisitor(*visitors)
         comp_factory = CompositeVisitorFactory(*factories)
-        self.assertEqual(comp_factory.create(0).get_stat_data(), comp_visitor.get_stat_data())
+        target_comp_visitor = comp_factory.create(0)
+        for i in range(2):
+            target_comp_visitor.visit(10)
+            comp_visitor.visit(10)
+        self.assertEqual(target_comp_visitor.get_stat_data(), comp_visitor.get_stat_data())
 
 
 if __name__ == "__main__":
