@@ -1,18 +1,30 @@
 from visitor import Visitor
-import csv
 
 
 class MaxTestCasesCount(Visitor):
     def __init__(self):
-        self.max_test_cases_number_by_problem_id = dict()
+        #max_test_cases_number by problem_id
+        self.result = dict()
 
     def visit(self, submit):
-        if submit.problem_id in self.max_test_cases_number_by_problem_id:
-            self.max_test_cases_number_by_problem_id[submit.problem_id] = max(self.max_test_cases_number_by_problem_id[submit.problem_id], len(submit.runs))
+        if submit.problem_id in self.result:
+            self.result[submit.problem_id] = max(self.result[submit.problem_id], len(submit.runs))
         else:
-            self.max_test_cases_number_by_problem_id[submit.problem_id] = len(submit.runs)
+            self.result[submit.problem_id] = len(submit.runs)
 
     def get_stat_data(self):
-        return self.max_test_cases_number_by_problem_id
+        return self.result
+
+    def pretty_print(self):
+        sorted_res = sorted(list(self.result.items()))
+        answer = ["***"]
+
+        for problem_id, submits_num in sorted_res:
+            answer.append("\nContest:{}; Problem {}; Test cases number:{}\n".format(problem_id[0], problem_id[1], submits_num))
+
+        return ''.join(answer)
+
+
+
 
 classname = "MaxTestCasesCount"
