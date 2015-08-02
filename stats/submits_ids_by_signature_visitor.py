@@ -31,7 +31,7 @@ class SubmitsIdsBySignatureVisitor(Visitor):
         answer = []
         for signature, sabmits_num_and_samp in temp_data:
             answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0], sabmits_num_and_samp[1]))
-        print(answer)
+
         return '\n'.join(answer)
 
     def _sortByTestCassesCount(element):
