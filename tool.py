@@ -6,6 +6,7 @@ from compositor_visitor import CompositorVisitor
 from importlib import import_module
 from importlib.util import find_spec
 import argparse
+import filter_visitor
 
 
 def suppose_csv():
@@ -28,6 +29,9 @@ def get_arguments():
     parser = argparse.ArgumentParser(description="Calculate some statistics")
     parser.add_argument('-m', '--multicontest', help='base_dir contains several contests', action='store_true')
     parser.add_argument('-o', '--outfile', help='output file')
+    parser.add_argument('--filter-problem', metavar='ID', help='process only submits for the problem selected')
+    parser.add_argument('--filter-user', metavar='ID', help='process only submits by the selected user')
+    parser.add_argument('--filter-contest', metavar='ID', help='process only submits in the selected contest')
     parser.add_argument('base_dir', nargs='?', default=None, help="directory containing xml's")
     parser.add_argument('csv_filename', nargs='?', default=None, help="csv file")
     parser.add_argument('stats_names', default=None, help="names of statistics modules", nargs='*')
@@ -85,6 +89,12 @@ def get_arguments():
     optional = {}
     if args['outfile']:
         optional['outfile'] = args['outfile']
+    if args.get('filter_problem'):
+        optional['filter_problem'] = args['filter_problem']
+    if args.get('filter_user'):
+        optional['filter_user'] = args['filter_user']
+    if args.get('filter_contest'):
+        optional['filter_contest'] = args['filter_contest']
 
     return base_dir, is_multicontest, csv_filename, stats_counters, optional
 
@@ -95,9 +105,15 @@ def main():
         home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
     else:
         home_dirs = [base_dir]
-    compositor = CompositorVisitor(*stats_counters)
-    ejudge_parse(home_dirs, csv_filename, compositor)
-    result = compositor.pretty_print()
+    visitor = CompositorVisitor(*stats_counters)
+    if 'filter_user' in optional:
+        visitor = filter_visitor.FilterByUserVisitor(visitor, optional['filter_user'])
+    if 'filter_problem' in optional:
+        visitor = filter_visitor.FilterByProblemVisitor(visitor, optional['filter_problem'])
+    if 'filter_contest' in optional:
+        visitor = filter_visitor.FilterByContestVisitor(visitor, optional['filter_contest'])
+    ejudge_parse(home_dirs, csv_filename, visitor)
+    result = visitor.pretty_print()
     if 'outfile' in optional:
         with open(optional['outfile'], 'w') as outfile:
             outfile.write(result)
