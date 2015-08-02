@@ -46,5 +46,3 @@ class SameRuns(Visitor):
 
     def get_stat_data(self):
         return self.base_connected_components
-
-classname = "SameRuns"

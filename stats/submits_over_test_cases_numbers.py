@@ -42,5 +42,3 @@ class SubmitsOverTestCasesNumbers(Visitor):
 
         return result
 
-
-classname = "SubmitsOverTestCasesNumbers"

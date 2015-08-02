@@ -27,4 +27,3 @@ class MaxTestCasesCount(Visitor):
 
 
 
-classname = "MaxTestCasesCount"

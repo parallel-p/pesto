@@ -15,6 +15,3 @@ class CasesCounter(Visitor):
         for k, v in sorted(self.result.items()):
             result += 'Problem #{}: {} cases.\n'.format(k, v)        
         return result
-
-
-classname = 'CasesCounter'

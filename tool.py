@@ -1,99 +1,39 @@
-import sys
 import os
 import os.path
 from ejudge_parse import ejudge_parse
-from compositor_visitor import CompositorVisitor
-from importlib import import_module
-from importlib.util import find_spec
+import tool_config
 import argparse
 import filter_visitor
 from pickle_walker import pickle_walker
 
-
-def suppose_csv():
-    csv_filenames = [filename for filename in os.listdir() if filename.endswith('.csv')]
-    if csv_filenames:
-        return 'Supposed filenames:\n---\n{}\n---\n'.format('\n'.join(csv_filenames))
-    return ''
-
-
-def suppose_statistics():
-    stat_names = [filename[:-3] for filename in os.listdir('stats') if filename.endswith('.py')
-                  and not filename.endswith('_test.py') and not filename == '__init__.py']
-    if not stat_names:
-        return ''
-    stat_formatted = ['{}: {}'.format(num, stat) for num, stat in enumerate(stat_names)]
-    return ('Supposed names:\n---\n{}\n---\n'.format('\n'.join(stat_formatted)), stat_names)
-
-
-def get_arguments():
+def parse_args():
     parser = argparse.ArgumentParser(description="Calculate some statistics")
     parser.add_argument('-m', '--multicontest', help='base_dir contains several contests', action='store_true')
+    parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
     parser.add_argument('-o', '--outfile', help='output file')
     parser.add_argument('--filter-problem', metavar='ID', help='process only submits for the problem selected')
     parser.add_argument('--filter-user', metavar='ID', help='process only submits by the selected user')
     parser.add_argument('--filter-contest', metavar='ID', help='process only submits in the selected contest')
-    parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
-    parser.add_argument('base_dir', nargs='?', default=None, help="directory containing xml's")
-    parser.add_argument('csv_filename', nargs='?', default=None, help="csv file")
-    parser.add_argument('stats_names', default=None, help="names of statistics modules", nargs='*')
-    args = vars(parser.parse_args())
+    parser.add_argument('base_dir', help="directory containing xml's")
+    parser.add_argument('csv_filename', help="csv file")
+    parser.add_argument('preset_name', help="name or number of statistics module", nargs='?')
+    return vars(parser.parse_args())
 
+
+def get_arguments():
+    args = parse_args()
     base_dir = args['base_dir']
+    csv_filename = args['csv_filename']
     is_multicontest = args['multicontest']
     is_pickle = args['pickle']
-    request_multicontest = 0
+    preset_name = args['preset_name']
 
-    if base_dir is None:
-        base_dir = input('Enter contests base dir name: ').strip()
-        request_multicontest = 1
-    while not os.path.isdir(base_dir):
-        base_dir = input('Please, enter correct directory name: ').strip()
-    base_dir = base_dir.rstrip('/').rstrip('\\')
-    if request_multicontest:
-        is_multicontest = input('Does this directory contain only one contest? (y/n) ').lower()
-        while is_multicontest[0] not in 'yn':
-            is_multicontest = input('Enter "y" or "n": ').lower()
-        is_multicontest = is_multicontest[0] == 'n'
+    base_dir = base_dir.rstrip('/').rstrip('\\')  # something very important
 
-    if not is_pickle:
-        is_pickle = input('Does this directory contain pickle files? (y/n) ').lower()
-        while is_pickle[0] not in 'yn':
-            is_pickle = input('Enter "y" or "n": ').lower()
-        is_pickle = is_pickle[0] == 'y'
-
-    csv_filename = args['csv_filename']
-    if csv_filename is None:
-        csv_filename = input('Enter csv database filename: ' + suppose_csv()).strip()
-    while not (os.path.isfile(csv_filename) and os.access(csv_filename, os.R_OK)):
-        csv_filename = input('Please, enter correct filename: ').strip()
-
-    stats_names = args['stats_names']
-    stats_counters = []
-    while not stats_counters:
-        if stats_names is None:
-            supposed_stats = suppose_statistics()
-            stats_names = input('Enter statistics names or numbers (separate by spaces): ' + supposed_stats[0]).split()
-            for i in range(len(stats_names)):
-                if stats_names[i].isdigit():
-                    try:
-                        stats_names[i] = supposed_stats[1][int(stats_names[i])]
-                    except IndexError:
-                        print('There is no statistics', i)
-        stats_modules = []
-        for stats_name in stats_names:
-            if find_spec('stats.' + stats_name) is not None:
-                stats_modules.append(import_module('stats.' + stats_name))
-            else:
-                print(stats_name, 'not found')  # TODO something more noticeable
-        for i in stats_modules:
-            try:
-                stats_counters.append(getattr(i, i.classname)())
-            except AttributeError:
-                print(i.__name__.split('.')[1], 'is broken, skipping')  # TODO something more noticeable
-        if not stats_counters:
-            print('No statistics selected')  # TODO something more noticeable
-        stats_names = None
+    if not preset_name:
+        print('Presets available:', tool_config.get_presets_info())
+        exit()
+    stats_counter = tool_config.get_visitor_by_preset(preset_name)
 
     optional = {}
     if args['outfile']:
@@ -105,16 +45,15 @@ def get_arguments():
     if args.get('filter_contest'):
         optional['filter_contest'] = args['filter_contest']
 
-    return base_dir, is_multicontest, is_pickle, csv_filename, stats_counters, optional
+    return base_dir, is_multicontest, is_pickle, csv_filename, stats_counter, optional
 
 
 def main():
-    base_dir, is_multicontest, is_pickle, csv_filename, stats_counters, optional = get_arguments()
+    base_dir, is_multicontest, is_pickle, csv_filename, visitor, optional = get_arguments()
     if is_multicontest:
         home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
     else:
         home_dirs = [base_dir]
-    visitor = CompositorVisitor(*stats_counters)
     if 'filter_user' in optional:
         visitor = filter_visitor.FilterByUserVisitor(visitor, optional['filter_user'])
     if 'filter_problem' in optional:
@@ -122,7 +61,6 @@ def main():
     if 'filter_contest' in optional:
         visitor = filter_visitor.FilterByContestVisitor(visitor, optional['filter_contest'])
     if is_pickle:
-        print('!!!')
         for home_dir in home_dirs:
             for submit in pickle_walker(home_dir):
                 visitor.visit(submit)
