@@ -15,7 +15,7 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(10):
-            submits.append(Submit(i, (0, 0), 0, runs, 0))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0))
 
         for submit in submits:
             self.same.visit(submit)
@@ -36,7 +36,7 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(10):
-            submits.append(Submit(i, (0, 0), 0, runs, 0))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0))
 
         # sample = ("10 0 0 0\n"   +
         #           "0 10 10 10\n" +
@@ -57,7 +57,7 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(10):
-            submits.append(Submit(i, (0, 0), 0, runs, 0))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0))
 
         for submit in submits:
             self.same.visit(submit)
@@ -78,10 +78,10 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(4):
-            submits.append(Submit(i, (0, 0), 0, runs[:2], 0))
-            submits.append(Submit(i, (0, 0), 0, runs, 0))
-        submits.append(Submit(i, (0, 0), 0, runs[:1], 0))
-        submits.append(Submit(i, (0, 0), 0, runs[:1], 0))
+            submits.append(Submit(i, (0, 0), 0, 0, runs[:2], 0))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0))
+        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0))
+        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0))
 
         for submit in submits:
             self.same.visit(submit)
@@ -100,7 +100,7 @@ class PositiveTests(unittest.TestCase):
 
         submits1 = []
         for i in range(10):
-            submits1.append(Submit(i, (10, 10), 10, runs1, 10))
+            submits1.append(Submit(i, (10, 10), 10, 0, runs1, 10))
 
         for submit in submits1:
             self.same.visit(submit)
@@ -118,7 +118,7 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(10):
-            submits.append(Submit(i, (0, 0), 0, runs, 0))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0))
 
         # sample = ("10 0 0 0\n"   +
         #           "0 10 10 10\n" +

@@ -42,11 +42,11 @@ class FunctionTesting(unittest.TestCase):
 
 
 def doVisits(visitor):
-    visitor.visit(Submit("0", ("1", "2"), "3", [], 'OK'))
-    visitor.visit(Submit("0", ("1", "5"), "1", [], 'OK'))
-    visitor.visit(Submit("0", ("1", "2"), "2", [], 'OK'))
-    visitor.visit(Submit("0", ("5", "2"), "2", [], 'OK'))
-    visitor.visit(Submit("0", ("1", "2"), "1", [], 'OK'))
+    visitor.visit(Submit("0", ("1", "2"), "3", "0", [], 'OK'))
+    visitor.visit(Submit("0", ("1", "5"), "1", "0", [], 'OK'))
+    visitor.visit(Submit("0", ("1", "2"), "2", "0", [], 'OK'))
+    visitor.visit(Submit("0", ("5", "2"), "2", "0", [], 'OK'))
+    visitor.visit(Submit("0", ("1", "2"), "1", "0", [], 'OK'))
 
 class TestByProblem(unittest.TestCase):
     def test_submits(self):

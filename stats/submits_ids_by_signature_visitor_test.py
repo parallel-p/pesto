@@ -14,10 +14,10 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
             self.runs_not_OK.append(Run(None, '2', i, answer[1]))
             self.runs_mixed.append(Run(None, '3', i, answer[i % 2]))
 
-        self.submit1 = Submit('1', '2', '3', self.runs_OK, '0')
-        self.submit2 = Submit('2', '2', '3', self.runs_not_OK, '1')
-        self.submit3 = Submit('3', '2', '3', self.runs_mixed, '1')
-        self.submit4 = Submit('4', '2', '3', self.runs_mixed, '1')
+        self.submit1 = Submit('1', '2', '3', '0', self.runs_OK, '0')
+        self.submit2 = Submit('2', '2', '3', '0', self.runs_not_OK, '1')
+        self.submit3 = Submit('3', '2', '3', '0', self.runs_mixed, '1')
+        self.submit4 = Submit('4', '2', '3', '0', self.runs_mixed, '1')
 
         self.visitor = SubmitsIdsBySignatureVisitor()
 
