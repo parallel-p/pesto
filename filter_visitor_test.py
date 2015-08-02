@@ -68,5 +68,21 @@ class TestFilterByUserVisitor(unittest.TestCase):
         self.assertTrue(len(self.visitor.visit.mock_calls) == 0)
 
 
+class TestFilterAllCasesTestedSubmits(unittest.TestCase):
+    def setUp(self):
+        self.good_submit = Mock(problem_id=('17', '1'), runs=['1'])
+        self.bad_submit = Mock(problem_id=('17', '2'), runs = ['1'])
+        self.key = {('17', '1'): 1, ('17', '2'): 2}
+        self.visitor = Mock()
+        self.visitor.visit = Mock()
+        self.filter = filter_visitor.FilterAllCasesTestedSubmits(self.visitor, self.key)
+
+    def test_good_submit(self):
+        self.filter.visit(self.good_submit)
+        self.visitor.visit.assert_called_once_with(self.good_submit)
+
+    def test_bad_submit(self):
+        self.filter.visit(self.bad_submit)
+        self.assertTrue(len(self.visitor.visit.mock_calls) == 0)
 if __name__ == "main":
     unittest.main()
