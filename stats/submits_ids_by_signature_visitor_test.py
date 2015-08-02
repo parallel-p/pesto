@@ -14,10 +14,10 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
             self.runs_not_OK.append(Run(None, '2', i, answer[1]))
             self.runs_mixed.append(Run(None, '3', i, answer[i % 2]))
 
-        self.submit1 = Submit('1', '2', '3', self.runs_OK,'0')
-        self.submit2 = Submit('2', '2', '3', self.runs_not_OK,'1')
-        self.submit3 = Submit('3', '2', '3', self.runs_mixed,'1')
-        self.submit4 = Submit('4', '2', '3', self.runs_mixed,'1')
+        self.submit1 = Submit('1', '2', '3', self.runs_OK, '0')
+        self.submit2 = Submit('2', '2', '3', self.runs_not_OK, '1')
+        self.submit3 = Submit('3', '2', '3', self.runs_mixed, '1')
+        self.submit4 = Submit('4', '2', '3', self.runs_mixed, '1')
 
         self.visitor = SubmitsIdsBySignatueVisitor()
 
@@ -36,7 +36,7 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
         self.visitor.visit(self.submit2)
         self.visitor.visit(self.submit3)
         self.visitor.visit(self.submit4)
-        self.assertEqual(self.visitor.pretty_print(), 'OKOKOK: 1 submits found.\nWAWAWA: 1 submits found.\nOKWAOK: 2 submits found.')
+        self.assertEqual(self.visitor.pretty_print(), 'OKOKOK: 1 submits found.\nSubmits ids samples:[\'1\']\nWAWAWA: 1 submits found.\nSubmits ids samples:[\'2\']\nOKWAOK: 2 submits found.\nSubmits ids samples:[\'3\', \'4\']')
 
 if __name__ == 'main':
     unittest.main()

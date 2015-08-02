@@ -1,3 +1,4 @@
+import random
 from visitor import Visitor
 
 
@@ -20,7 +21,9 @@ class SubmitsIdsBySignatueVisitor(Visitor):
             temp_data[i] = (len(temp_data[i][1]), temp_data[i][0])
         answer = []
         for submits, signature in sorted(temp_data):
-            answer.append('{}: {} submits found.'.format(signature, submits))
+            sample_submits_ids = random.sample(range(submits), min(10, submits))
+            sample_sabmits = [self.result[signature][i] for i in sample_submits_ids]
+            answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, submits, str(sorted(sample_sabmits))))
         return '\n'.join(answer)
 
 
