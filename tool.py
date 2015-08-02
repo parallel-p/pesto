@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument('--filter-contest', metavar='ID', help='process only submits in the selected contest')
     parser.add_argument('base_dir', help="directory containing xml's")
     parser.add_argument('csv_filename', help="csv file")
-    parser.add_argument('preset_name', help="name or number of statistics module", nargs='?')
+    parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
     return vars(parser.parse_args())
 
 
@@ -34,6 +34,9 @@ def get_arguments():
         print('Presets available:', tool_config.get_presets_info())
         exit()
     stats_counter = tool_config.get_visitor_by_preset(preset_name)
+    if stats_counter is None:
+        print('Invalid preset name')
+        exit()
 
     optional = {}
     if args['outfile']:
