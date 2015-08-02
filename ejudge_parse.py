@@ -7,12 +7,14 @@ from ejudge_xml_parse import ejudge_xml_parse
 
 
 def ejudge_parse(contest_dirs, csv_filename, visitor):
-    database = EjudgeDB(csv_filename)
-    for contest_dir in contest_dirs:
-        contest_dir = contest_dir.rstrip('/').rstrip('\\')
-        contest_id = os.path.basename(contest_dir)
-        if contest_id.isdigit():
-            contest_id = contest_id.lstrip('0')
+    contest_ids = list()
+    for i in range(len(contest_dirs)):
+        contest_dirs[i] = contest_dirs[i].rstrip('/').rstrip('\\')
+        contest_ids.append(os.path.basename(contest_dirs[i]))
+        if contest_ids[i].isdigit():
+            contest_ids[i] = contest_ids[i].lstrip('0')
+    database = EjudgeDB(csv_filename, contest_ids)
+    for contest_dir, contest_id in zip(contest_dirs, contest_ids):
         for file in traverse_contest(contest_dir):
             try:
                 result = ejudge_xml_parse(file)
