@@ -133,7 +133,6 @@ def main():
         with open(optional['outfile'], 'w') as outfile:
             outfile.write(result)
     else:
-        print()
         print(result)
 
 
