@@ -29,28 +29,28 @@ class TestSubmit(unittest.TestCase):
 
         for i in range(2):
             self.runs_results.append('1')
-            self.runs.append(Run(0, 0, i, 1))
+            self.runs.append(Run('0', '0', str(i), '1'))
 
         self.runs_results = ''.join(self.runs_results)
 
     def test_init(self):
-        self.submit = Submit(0, (1, 1), 179, 0, self.runs, 1, 'ACM')
-        self.assertEqual(self.submit.problem_id[1], 1)
-        self.assertEqual(self.submit.problem_id[0], 1)
-        self.assertEqual(self.submit.submit_id, 0)
+        self.submit = Submit('0', ('1', '1'), '179', '0', self.runs, '1', 'ACM')
+        self.assertEqual(self.submit.problem_id[1], '1')
+        self.assertEqual(self.submit.problem_id[0], '1')
+        self.assertEqual(self.submit.submit_id, '0')
         self.assertEqual(self.submit.runs, self.runs)
-        self.assertEqual(self.submit.user_id, 179)
-        self.assertEqual(self.submit.lang_id, 0)
-        self.assertEqual(self.submit.outcome, 1)
+        self.assertEqual(self.submit.user_id, '179')
+        self.assertEqual(self.submit.lang_id, '0')
+        self.assertEqual(self.submit.outcome, '1')
         self.assertEqual(self.submit.scoring, 'ACM')
 
     def test_str_runs(self):
-        self.submit = Submit(0, (1, 1), 179, 0, self.runs, 1, 'ACM')
+        self.submit = Submit('0', ('1', '1'), '179', '0', self.runs, '1', 'ACM')
         self.assertEqual(str(self.submit), "Submit: 0; Result: 1; User id: 179; Runs: Case #0 Outcome 1, "
                                            "Case #1 Outcome 1.")
 
     def test_results_of_runs(self):
-        self.submit = Submit(0, (1, 1), 179, 0, self.runs, 1, 'ACM')
+        self.submit = Submit('0', ('1', '1'), '179', '0', self.runs, '1', 'ACM')
         self.assertEqual(self.submit.runs_results, self.runs_results)
 
 
