@@ -1,6 +1,5 @@
 import unittest
-from model import Submit
-from model import Run
+from model import Submit, Run, Problem
 
 
 class TestRun(unittest.TestCase):
@@ -52,6 +51,20 @@ class TestSubmit(unittest.TestCase):
     def test_results_of_runs(self):
         self.submit = Submit(0, (1, 1), 179, 0, self.runs, 1, 'ACM')
         self.assertEqual(self.submit.runs_results, self.runs_results)
+
+
+class TestProblem(unittest.TestCase):
+
+    def setUp(self):
+        self.prob = Problem(("1", "17"), "Testname", ["1", "2", "3"])
+
+    def test_init(self):
+        self.assertEqual(self.prob.problem_id, ("1", "17"))
+        self.assertEqual(self.prob.name, "Testname")
+        self.assertEqual(self.prob.cases, ["1", "2", "3"])
+
+    def test_str(self):
+        self.assertEqual(str(self.prob), 'Problem #17 ("Testname") from contest #1')
 
 
 if __name__ == "__main__":
