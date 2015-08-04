@@ -85,5 +85,43 @@ class TestFilterAllCasesTestedSubmits(unittest.TestCase):
     def test_bad_submit(self):
         self.filter.visit(self.bad_submit)
         self.assertTrue(len(self.visitor.visit.mock_calls) == 0)
+
+
+class TestFilterByScoringSystem(unittest.TestCase):
+	def setUp(self):
+		self.good_submit = Mock(scoring='acm')
+		self.good_submit_upper = Mock(scoring='ACM')
+		self.good_submit_mixed = Mock(scoring='Acm')
+		self.bad_submit = Mock(scoring='kirov')
+		self.visitor = Mock()
+		self.visitor.visit = Mock()
+
+	def test_good_submit(self):
+		filter_lower = filter_visitor.FilterByScoringSystem(self.visitor, 'acm')
+		filter_upper = filter_visitor.FilterByScoringSystem(self.visitor, 'ACM')
+		filter_mixed = filter_visitor.FilterByScoringSystem(self.visitor, 'Acm')
+
+		filter_lower.visit(self.good_submit)
+		filter_lower.visit(self.good_submit_upper)
+		filter_lower.visit(self.good_submit_mixed)
+		self.assertTrue(len(self.visitor.visit.mock_calls) == 3)
+		self.visitor.visit.mock_calls = []
+
+		filter_upper.visit(self.good_submit)
+		filter_upper.visit(self.good_submit_upper)
+		filter_upper.visit(self.good_submit_mixed)
+		self.assertTrue(len(self.visitor.visit.mock_calls) == 3)
+		self.visitor.visit.mock_calls = []
+
+		filter_mixed.visit(self.good_submit)
+		filter_mixed.visit(self.good_submit_upper)
+		filter_mixed.visit(self.good_submit_mixed)
+		self.assertTrue(len(self.visitor.visit.mock_calls) == 3)
+
+	def test_bad_submit(self):
+		self.filter = filter_visitor.FilterByScoringSystem(self.visitor, 'acm')
+		self.filter.visit(self.bad_submit)
+		self.assertTrue(len(self.visitor.visit.mock_calls) == 0)
+
 if __name__ == "main":
     unittest.main()

@@ -51,3 +51,7 @@ class FilterByLangVisitor(FilterVisitor):
 class FilterAllCasesTestedSubmits(FilterVisitor):
     def good_submit(self, submit):
         return self.key[submit.problem_id] == len(submit.runs)
+
+class FilterByScoringSystem(FilterVisitor):
+	def good_submit(self, submit):
+		return self.key.lower() == submit.scoring.lower()
