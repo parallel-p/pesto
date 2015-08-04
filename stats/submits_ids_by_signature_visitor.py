@@ -16,7 +16,7 @@ class SubmitsIdsBySignatureVisitor(Visitor):
             self.result[submit.runs_results][0] += 1
             if len(self.result[submit.runs_results][1]) > 10:
                 if random.randint(0, self.submits_number) == 5:
-                    self.result[submit.runs_results][1][random.randint(0, 9)]
+                    self.result[submit.runs_results][1][random.randint(0, 9)] = submit.submit_id
             else:
                 self.result[submit.runs_results][1].append(submit.submit_id)
 
@@ -26,7 +26,7 @@ class SubmitsIdsBySignatureVisitor(Visitor):
 
     def pretty_print(self):
         temp_data = list(self.result.items())
-        temp_data.sort()
+        temp_data.sort(key=lambda x:(-len(x[0]), -x[1][0], x[1][1]))
 
         answer = []
         for signature, sabmits_num_and_samp in temp_data:

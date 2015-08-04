@@ -1,8 +1,8 @@
 from visitor import Visitor
 from pickle import dump, HIGHEST_PROTOCOL, PicklingError
-from shutil import rmtree
 from os import mkdir
 from os.path import exists, join
+
 
 class PickleWriter(Visitor):
     def __init__(self):
@@ -25,7 +25,7 @@ class PickleWriter(Visitor):
 
         self.transmitted_submits += 1
         self.submits.append(submit)
-        if self.transmitted_submits % 100 == 0: # if 100th submit
+        if self.transmitted_submits % 100 == 0:  # if 100th submit
             self.write_file()
             self.submits = []
 
@@ -42,3 +42,4 @@ class PickleWriter(Visitor):
                 dump(self.submits, pickle_file, HIGHEST_PROTOCOL)                
             except PicklingError:
                 pass
+
