@@ -80,7 +80,7 @@ class SameRunsACM(Visitor):
         strong_runs = set()
         connected_components = []
         left = 0
-        for right in self.base:
+        for right in sorted(self.base):
             if right - left == 1:
                 strong_runs.add(self.runs[left])
             else:
