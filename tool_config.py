@@ -46,14 +46,14 @@ def get_visitor_by_preset(preset):
 class SameRunsFactory(VisitorFactory):
     def create(self, key):
         if key == 'ACM':
-            return ShardingByProblemVisitor(SameRunsACMFactory)
+            return ShardingByProblemVisitor(SameRunsACMFactory())
         else:
-            return ShardingByProblemVisitor(SameRunsKirovFactory)
+            return ShardingByProblemVisitor(SameRunsKirovFactory())
 
 
 class SameRunsACMFactory(VisitorFactory):
     def create(self, key):
-        return ElectorByMaxCasesVisitor(SameRunsACMFactory2)
+        return ElectorByMaxCasesVisitor(SameRunsACMFactory2())
 
 
 class SameRunsACMFactory2(VisitorFactory):
@@ -63,7 +63,7 @@ class SameRunsACMFactory2(VisitorFactory):
 
 class SameRunsKirovFactory(VisitorFactory):
     def create(self, key):
-        return ElectorByMaxCasesVisitor(SameRunsKirovFactory2)
+        return ElectorByMaxCasesVisitor(SameRunsKirovFactory2())
 
 
 class SameRunsKirovFactory2(VisitorFactory):
