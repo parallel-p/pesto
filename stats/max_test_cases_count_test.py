@@ -23,14 +23,16 @@ class MaxTestCountTest(unittest.TestCase):
         self.submit2 = Submit('2', ('2', '1'), '1', '0', self.lit_runs_WA, '1', 'ACM')
         self.submit3 = Submit('3', ('1', '1'), '1', '0', self.mixed, '1', 'ACM')
 
-    def test_dict_data(self):
-        visitor = MaxTestCasesCount()
-        visitor.visit(self.submit1)
-        visitor.visit(self.submit2)
-        visitor.visit(self.submit3)
-        res = visitor.get_stat_data()
-        self.assertEqual(res[("1", "1")], 11)
-        self.assertEqual(res[("2", "1")], 5)
+    def test_get_data(self):
+        visitor1 = MaxTestCasesCount()
+        visitor2 = MaxTestCasesCount()
+        visitor1.visit(self.submit1)
+        visitor1.visit(self.submit2)
+        visitor2.visit(self.submit3)
+        res1 = visitor1.get_stat_data()
+        res2 = visitor2.get_stat_data()
+        self.assertEqual(res1, 10)
+        self.assertEqual(res2, 11)
 
 
 if __name__ == "main":

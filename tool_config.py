@@ -28,7 +28,7 @@ def get_visitor_by_preset(preset):
     if preset in ['2', 'eq_matrix']:
         return ShardingByProblemVisitor(EqMatrixFactory())
     if preset in ['3', 'count_cases']:
-        return MaxTestCasesCount()
+        return ShardingByProblemVisitor(MaxTestCasesCountFactory())
     if preset in ['4', 'same_runs']:
         return ShardingByProblemVisitor(SameRunsKirovFactory())
     if preset in ['5', 'submits_by_signature']:
@@ -48,6 +48,10 @@ class SameRunsKirovFactory(VisitorFactory):
 class SubmitsCounterFactory(VisitorFactory):
     def create(self, key):
         return SubmitsCounter()
+
+class MaxTestCasesCountFactory(VisitorFactory):
+    def create(self, key):
+        return MaxTestCasesCount()
 
 
 class EqMatrixFactory(VisitorFactory):
