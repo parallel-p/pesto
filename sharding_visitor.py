@@ -42,3 +42,8 @@ class ShardingByContestVisitor(ShardingVisitor):
 class ShardingByUserVisitor(ShardingVisitor):
     def build_key(self, submit):
         return submit.user_id
+
+
+class ShardingByLangVisitor(ShardingVisitor):
+    def build_key(self, submit):
+        return submit.lang_id
