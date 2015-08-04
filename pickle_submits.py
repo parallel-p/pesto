@@ -13,9 +13,6 @@ class PickleWriter(Visitor):
         self.submits = []
         self.limit = 100
 
-    def __del__(self):
-        self.write_file()
-
     def visit(self, submit):
         if submit.problem_id[0] != self.contest_id:
             if self.submits: # if there are submits
@@ -47,3 +44,5 @@ class PickleWriter(Visitor):
             except PicklingError:
                 pass
 
+    def close(self):
+        self.write_file()
