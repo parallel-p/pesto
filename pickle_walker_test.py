@@ -33,19 +33,20 @@ class Tester(unittest.TestCase):
         self.assertEqual(len(parsed_submits), 0)
 
     def test_many_contests(self):
-        submit = Submit('0', '0', '179', '0', [], '1', "ACM")
-        submit.problem_id = ("17", "0")
         for i in range(101):
-            self.pickle_submit.visit(submit)
-        submit = Submit('0', '0', '179', '0', [], '1', "ACM")
-        submit.problem_id = ("18", "0")
+            self.pickle_submit.visit(Submit(str(i), ('17', '0'), '179', '0', [], '1', "ACM"))
         for i in range(103):
-            self.pickle_submit.visit(submit)
+            self.pickle_submit.visit(Submit(str(i + 101), ('18', '0'), '179', '0', [], '1', "ACM"))
+        for i in range(2):
+            self.pickle_submit.visit(Submit(str(i + 204), ('19', '0'), '179', '0', [], '1', "ACM"))
         self.pickle_submit.write_file()
+
         parsed_submits = [parsed_submit for parsed_submit in pickle_walker(self.pickle_submit.default_path)]
-        self.assertEqual(len(parsed_submits), 204)
-        self.assertEqual(parsed_submits[100].problem_id[0], "17")
-        self.assertEqual(parsed_submits[101].problem_id[0], "18")
+        self.assertEqual(len(parsed_submits), 206)
+        check_set = set()
+        for submit in parsed_submits:
+            check_set.add(submit.problem_id[0])
+        self.assertEqual(check_set, set(["17", "18", "19"]))
 
 
 if __name__ == "__main__":
