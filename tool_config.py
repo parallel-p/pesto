@@ -30,7 +30,7 @@ def get_visitor_by_preset(preset):
     if preset in ['3', 'count_cases']:
         return MaxTestCasesCount()
     if preset in ['4', 'same_runs']:
-        return ShardingByProblemVisitor(SameRuns())
+        return ShardingByProblemVisitor(SameRunsFactory())
     if preset in ['5', 'submits_by_signature']:
         return ShardingByProblemVisitor(SubmitsIdsBySignatureFactory())
     if preset in ['6', 'submits_by_tests']:
