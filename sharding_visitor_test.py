@@ -27,13 +27,16 @@ class FunctionTesting(unittest.TestCase):
 
     def test_one_visitors(self):
         self.shard_visitor.visit(10)
-        self.assertEqual(self.shard_visitor.pretty_print(), "Key: 10\n1")
+        self.assertEqual(self.shard_visitor.visitors.keys(), {'10'})
+        self.assertEqual(self.shard_visitor.visitors['10'].submits, [10])
 
     def test_two_visitors(self):
         for i in range(2):
             self.shard_visitor.visit(10)
         self.shard_visitor.visit(20)
-        self.assertEqual(self.shard_visitor.pretty_print(), "Key: 10\n2\n\nKey: 20\n1")
+        self.assertEqual(self.shard_visitor.visitors.keys(), {'10', '20'})
+        self.assertEqual(self.shard_visitor.visitors['10'].submits, [10, 10])
+        self.assertEqual(self.shard_visitor.visitors['20'].submits, [20])
 
     def test_raw_stats(self):
         for i in range(2):
