@@ -13,9 +13,6 @@ class Visitor:
     def get_stat_data(self):
         return self.result
 
-    def close(self):
-        pass
-
 
 class FakeVisitor(Visitor):
     def __init__(self):

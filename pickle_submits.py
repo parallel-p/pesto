@@ -25,7 +25,7 @@ class PickleWriter(Visitor):
 
         self.transmitted_submits += 1
         self.submits.append(submit)
-        if self.transmitted_submits % 100 == 0: # if 100th submit
+        if self.transmitted_submits % 100 == 0:  # if 100th submit
             self.write_file()
             self.submits = []
 
@@ -43,5 +43,3 @@ class PickleWriter(Visitor):
             except PicklingError:
                 pass
 
-    def close(self):
-        self.write_file()
