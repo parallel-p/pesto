@@ -2,11 +2,9 @@ import unittest
 from unittest.mock import Mock
 from pickle_submits import PickleWriter
 from shutil import rmtree
-from os import mkdir, listdir
 from os.path import exists, join
 from model import Submit
 from pickle_walker import pickle_walker
-
 
 
 class Tester(unittest.TestCase):
@@ -17,9 +15,8 @@ class Tester(unittest.TestCase):
         if exists(join(".", "pickle")):
             rmtree(join(".", "pickle"))
 
-
     def test_mk_many_pickles(self):
-        submit = Submit(0, 0, 179, 0, [], 1, "ACM")
+        submit = Submit('0', '0', '179', '0', [], '1', "ACM")
         submit.problem_id = ("17", "0")
         for i in range(103):
             self.pickle_submit.visit(submit)
@@ -32,11 +29,11 @@ class Tester(unittest.TestCase):
         self.assertEqual(len(parsed_submits), 0)
 
     def test_many_contests(self):
-        submit = Submit(0, 0, 179, 0, [], 1, "ACM")
+        submit = Submit('0', '0', '179', '0', [], '1', "ACM")
         submit.problem_id = ("17", "0")
         for i in range(101):
             self.pickle_submit.visit(submit)
-        submit = Submit(0, 0, 179, 0, [], 1, "ACM")
+        submit = Submit('0', '0', '179', '0', [], '1', "ACM")
         submit.problem_id = ("18", "0")
         for i in range(103):
             self.pickle_submit.visit(submit)
@@ -45,7 +42,6 @@ class Tester(unittest.TestCase):
         self.assertEqual(len(parsed_submits), 204)
         self.assertEqual(parsed_submits[100].problem_id[0], "17")
         self.assertEqual(parsed_submits[101].problem_id[0], "18")
-
 
 if __name__ == "__main__":
     unittest.main()
