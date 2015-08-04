@@ -1,13 +1,13 @@
 from visitor import Visitor
 
 
-class SameRuns(Visitor):
+class SameRunsKirov(Visitor):
 
-    def __init__(self, run_number=1000):
+    def __init__(self):
         super().__init__()
-        self.run_number = run_number
+        self.run_number = 0
         self.submit_number = 0
-        self.connected_components = [{x + 1 for x in range(run_number)}]
+        self.connected_components = []
         self.strong_runs = set()
 
     def get_stat_data(self):
@@ -16,6 +16,11 @@ class SameRuns(Visitor):
     def visit(self, submit):
         self.submit_number += 1
         temp_connected_components = []
+
+        if (len(submit.runs) > self.run_number):
+            self.connected_components.append(submit.runs[i].case_id for i in range(self.run_number, len(submit.runs)))
+            self.run_number = len(submit.runs)
+
         for component in self.connected_components:
             first, second = set(), set()
             for i in range(len(submit.runs)):
@@ -24,6 +29,7 @@ class SameRuns(Visitor):
                         first.add(submit.runs[i].case_id)
                     else:
                         second.add(submit.runs[i].case_id)
+
             if len(first) == 1:
                 self.strong_runs.add(list(first)[0])
             if len(second) == 1:
@@ -45,4 +51,4 @@ class SameRuns(Visitor):
         return result
 
 
-classname = "SameRuns"
+classname = "SameRunsKirov"
