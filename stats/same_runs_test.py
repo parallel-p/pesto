@@ -1,12 +1,12 @@
 import unittest
 from model import Submit
 from model import Run
-from stats.same_runs import SameRuns
+from stats.same_runs import SameRunsKirov
 
 
 class PositiveTests(unittest.TestCase):
     def setUp(self):
-        self.same = SameRuns()
+        self.same = SameRunsKirov()
 
     def test_allsame(self):
         runs = []

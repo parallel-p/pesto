@@ -1,7 +1,7 @@
 from stats.count_submits import SubmitsCounter
 from stats.eq_matrix import EqMatrix
 from stats.max_test_cases_count import MaxTestCasesCount
-from stats.same_runs import SameRuns
+from stats.same_runs import SameRunsKirov
 from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
 from pickle_submits import PickleWriter
@@ -30,7 +30,7 @@ def get_visitor_by_preset(preset):
     if preset in ['3', 'count_cases']:
         return MaxTestCasesCount()
     if preset in ['4', 'same_runs']:
-        return ShardingByProblemVisitor(SameRunsFactory())
+        return ShardingByProblemVisitor(SameRunsKirovFactory())
     if preset in ['5', 'submits_by_signature']:
         return ShardingByProblemVisitor(ShardingByLangFactory())
     if preset in ['6', 'submits_by_tests']:
@@ -40,9 +40,9 @@ def get_visitor_by_preset(preset):
     return None
 
 
-class SameRunsFactory(VisitorFactory):
+class SameRunsKirovFactory(VisitorFactory):
     def create(self, key):
-        return SameRuns()
+        return SameRunsKirov()
 
 
 class SubmitsCounterFactory(VisitorFactory):
