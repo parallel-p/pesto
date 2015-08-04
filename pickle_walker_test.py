@@ -19,7 +19,7 @@ class Tester(unittest.TestCase):
 
 
     def test_mk_many_pickles(self):
-        submit = Submit(0, 0, 179, 0, [], 1)
+        submit = Submit(0, 0, 179, 0, [], 1, 'ACM')
         submit.problem_id = ("17", "0")
         for i in range(3):
             self.pickle_submit.visit(submit)

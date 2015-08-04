@@ -2,9 +2,10 @@ import xml.etree.ElementTree as ETree
 
 
 class EjudgeXmlParseResult:
-    def __init__(self, submit_id, submit_outcome, run_outcomes):
+    def __init__(self, submit_id, submit_outcome, scoring, run_outcomes):
         self.submit_id = submit_id
         self.submit_outcome = submit_outcome
+        self.scoring = scoring
         self.run_outcomes = run_outcomes
 
 
@@ -25,13 +26,14 @@ def ejudge_xml_parse(file):
     except ETree.ParseError:
         return None
     run_outcomes = []
-    submit_id, submit_outcome = None, None
+    submit_id, submit_outcome, scoring = None, None, None
     for child in xml_root.iter():
         if child.tag == 'testing-report':
             submit_id = child.attrib['run-id']
             submit_outcome = child.attrib['status']
+            scoring = child.attrib['scoring']
         elif child.tag == 'test':
             run_outcomes.append(child.attrib['status'])
-    if submit_id is None or submit_outcome is None:
+    if submit_id is None or submit_outcome is None or scoring is None:
         return None
-    return EjudgeXmlParseResult(submit_id, submit_outcome, run_outcomes)
+    return EjudgeXmlParseResult(submit_id, submit_outcome, scoring, run_outcomes)
