@@ -9,6 +9,7 @@ class PickleWriter(Visitor):
         super().__init__()
         self.transmitted_submits = 0
         self.contest_id = ""
+        self.default_path = join(".", "pickle")
         self.pickle_id = None
         self.submits = []
         self.limit = 100
@@ -28,21 +29,22 @@ class PickleWriter(Visitor):
             self.submits = []
 
     def write_file(self):
-        if not exists(join(".", "pickle")):
-            mkdir(join(".", "pickle"))
-        if self.transmitted_submits % self.limit != 0:
-            file_name = "pickle" + "0" * (6 - len(str(self.transmitted_submits // self.limit))) + str(self.transmitted_submits // self.limit) + "_" + str(self.transmitted_submits % self.limit) + ".pickle"
-        else:
-            file_name = "pickle" + "0" * (6 - len(str(self.transmitted_submits // self.limit))) + str(self.transmitted_submits // self.limit) + ".pickle"
-        path = join(".", "pickle", str(self.contest_id), file_name)
-        dir = join(".", "pickle", str(self.contest_id))
-        if not exists(dir):
-            mkdir(dir)
-        with open(path, "wb") as pickle_file:
-            try:
-                dump(self.submits, pickle_file, HIGHEST_PROTOCOL)                
-            except PicklingError:
-                pass
+        if self.submits:
+            if not exists(self.default_path):
+                mkdir(self.default_path)
+            if self.transmitted_submits % self.limit != 0:
+                file_name = "pickle" + "0" * (6 - len(str(self.transmitted_submits // self.limit))) + str(self.transmitted_submits // self.limit) + "_" + str(self.transmitted_submits % self.limit) + ".pickle"
+            else:
+                file_name = "pickle" + "0" * (6 - len(str(self.transmitted_submits // self.limit))) + str(self.transmitted_submits // self.limit) + ".pickle"
+            path = join(self.default_path, str(self.contest_id), file_name)
+            dir = join(self.default_path, str(self.contest_id))
+            if not exists(dir):
+                mkdir(dir)
+            with open(path, "wb") as pickle_file:
+                try:
+                    dump(self.submits, pickle_file, HIGHEST_PROTOCOL)
+                except PicklingError:
+                    pass
 
     def close(self):
         self.write_file()

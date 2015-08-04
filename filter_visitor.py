@@ -9,7 +9,7 @@ class FilterVisitor(Visitor):
 
     def visit(self, submit):
         if self.good_submit(submit):
-           self.next_visitor.visit(submit)
+            self.next_visitor.visit(submit)
 
     def get_stat_data(self):
         return self.next_visitor.get_stat_data()
@@ -48,6 +48,12 @@ class FilterByLangVisitor(FilterVisitor):
             return True
         return False
 
+
 class FilterAllCasesTestedSubmits(FilterVisitor):
     def good_submit(self, submit):
         return self.key[submit.problem_id] == len(submit.runs)
+
+
+class FilterByScoringSystem(FilterVisitor):
+    def good_submit(self, submit):
+        return self.key.lower() == submit.scoring.lower()
