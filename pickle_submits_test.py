@@ -16,6 +16,13 @@ class PickleSubmitTests(unittest.TestCase):
         if exists(self.pickle_submit.default_path):
             rmtree(self.pickle_submit.default_path)
 
+    def test_no_write(self):
+        self.pickle_submit.visit(Submit('0', ('17', '0'), '179', '0', [], '1', 'ACM'))
+        self.pickle_submit.write_file()
+        self.pickle_submit.write_file()
+        self.assertEqual(len(listdir(join(self.pickle_submit.default_path, '17'))), 1)
+
+
     def test_mk_diff_dir(self):
         submit = Submit('0', '0', '179', '0', [], '1', 'ACM')
 
