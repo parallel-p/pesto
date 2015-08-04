@@ -11,6 +11,7 @@ class PickleWriter(Visitor):
         self.contest_id = ""
         self.pickle_id = None
         self.submits = []
+        self.limit = 100
 
     def __del__(self):
         self.write_file()
@@ -25,14 +26,17 @@ class PickleWriter(Visitor):
 
         self.transmitted_submits += 1
         self.submits.append(submit)
-        if self.transmitted_submits % 100 == 0:  # if 100th submit
+        if self.transmitted_submits % self.limit == 0:  # if 100th submit
             self.write_file()
             self.submits = []
 
     def write_file(self):
         if not exists(join(".", "pickle")):
             mkdir(join(".", "pickle"))
-        file_name = "pickle" + "0" * (6 - len(str(self.transmitted_submits // 100))) + str(self.transmitted_submits // 100) + ".pickle"
+        if self.transmitted_submits % self.limit != 0:
+            file_name = "pickle" + "0" * (6 - len(str(self.transmitted_submits // self.limit))) + str(self.transmitted_submits // self.limit) + "_" + str(self.transmitted_submits % self.limit) + ".pickle"
+        else:
+            file_name = "pickle" + "0" * (6 - len(str(self.transmitted_submits // self.limit))) + str(self.transmitted_submits // self.limit) + ".pickle"
         path = join(".", "pickle", str(self.contest_id), file_name)
         dir = join(".", "pickle", str(self.contest_id))
         if not exists(dir):
