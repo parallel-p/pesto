@@ -4,20 +4,20 @@ from sharding_visitor import ShardingByProblemVisitor
 from sharding_visitor import ShardingByContestVisitor
 from sharding_visitor import ShardingByUserVisitor
 from sharding_visitor import ShardingByLangVisitor
+from sharding_visitor import ShardingByScoringVisitor
 from visitor import FakeVisitor
 from model import Submit
 from visitor_factory import VisitorFactory
 
 
 class FakeFactory(VisitorFactory):
-    @staticmethod
-    def create(key):
+    def create(self, key):
         return FakeVisitor()
 
 
 class FunctionTesting(unittest.TestCase):
     def setUp(self):
-        self.shard_visitor = ShardingVisitor(FakeFactory)
+        self.shard_visitor = ShardingVisitor(FakeFactory())
 
     def test_empty_output(self):
         self.assertEqual(self.shard_visitor.pretty_print(), "")
@@ -44,15 +44,15 @@ class FunctionTesting(unittest.TestCase):
 
 def do_visits(visitor):
     visitor.visit(Submit("0", ("1", "2"), "3", "1", [], 'OK', 'ACM'))
-    visitor.visit(Submit("0", ("1", "5"), "1", "3", [], 'OK', 'ACM'))
+    visitor.visit(Submit("0", ("1", "5"), "1", "3", [], 'OK', 'olympiad'))
     visitor.visit(Submit("0", ("1", "2"), "2", "1", [], 'OK', 'ACM'))
-    visitor.visit(Submit("0", ("5", "2"), "2", "8", [], 'OK', 'ACM'))
-    visitor.visit(Submit("0", ("1", "2"), "1", "1", [], 'OK', 'ACM'))
+    visitor.visit(Submit("0", ("5", "2"), "2", "8", [], 'OK', 'kirov'))
+    visitor.visit(Submit("0", ("1", "2"), "1", "1", [], 'OK', 'kirov'))
 
 
 class TestByProblem(unittest.TestCase):
     def test_submits(self):
-        visitor = ShardingByProblemVisitor(FakeFactory)
+        visitor = ShardingByProblemVisitor(FakeFactory())
         do_visits(visitor)
         self.assertEqual(set(visitor.visitors.keys()), {("1", "2"), ("1", "5"), ("5", "2")})
         self.assertEqual(len(visitor.visitors[("1", "2")].submits), 3)
@@ -62,7 +62,7 @@ class TestByProblem(unittest.TestCase):
 
 class TestByContest(unittest.TestCase):
     def test_submits(self):
-        visitor = ShardingByContestVisitor(FakeFactory)
+        visitor = ShardingByContestVisitor(FakeFactory())
         do_visits(visitor)
         self.assertEqual(set(visitor.visitors.keys()), {"1", "5"})
         self.assertEqual(len(visitor.visitors["1"].submits), 4)
@@ -71,7 +71,7 @@ class TestByContest(unittest.TestCase):
 
 class TestByUser(unittest.TestCase):
     def test_submits(self):
-        visitor = ShardingByUserVisitor(FakeFactory)
+        visitor = ShardingByUserVisitor(FakeFactory())
         do_visits(visitor)
         self.assertEqual(set(visitor.visitors.keys()), {"3", "1", "2"})
         self.assertEqual(len(visitor.visitors["3"].submits), 1)
@@ -81,12 +81,22 @@ class TestByUser(unittest.TestCase):
 
 class TestByLang(unittest.TestCase):
     def test_submits(self):
-        visitor = ShardingByLangVisitor(FakeFactory)
+        visitor = ShardingByLangVisitor(FakeFactory())
         do_visits(visitor)
         self.assertEqual(set(visitor.visitors.keys()), {"1", "3", "8"})
         self.assertEqual(len(visitor.visitors["1"].submits), 3)
         self.assertEqual(len(visitor.visitors["3"].submits), 1)
         self.assertEqual(len(visitor.visitors["8"].submits), 1)
+
+
+class TestByScoring(unittest.TestCase):
+    def test_submits(self):
+        visitor = ShardingByScoringVisitor(FakeFactory())
+        do_visits(visitor)
+        self.assertEqual(set(visitor.visitors.keys()), {"ACM", "olympiad", "kirov"})
+        self.assertEqual(len(visitor.visitors["ACM"].submits), 2)
+        self.assertEqual(len(visitor.visitors["olympiad"].submits), 1)
+        self.assertEqual(len(visitor.visitors["kirov"].submits), 2)
 
 if __name__ == "__main__":
     unittest.main()
