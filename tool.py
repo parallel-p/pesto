@@ -70,6 +70,7 @@ def main():
     else:
         ejudge_parse(home_dirs, csv_filename, visitor)
     result = visitor.pretty_print()
+    visitor.close()
     if 'outfile' in optional:
         with open(optional['outfile'], 'w') as outfile:
             outfile.write(result)
