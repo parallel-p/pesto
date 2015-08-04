@@ -51,4 +51,46 @@ class SameRunsKirov(Visitor):
         return result
 
 
-classname = "SameRunsKirov"
+class SameRunsACM(Visitor):
+
+    def __init__(self):
+        super().__init__()
+        self.submit_number = 0
+        self.base = set()
+        self.mx = 0
+        self.runs = []
+
+    def get_stat_data(self):
+        return self.base
+
+    def visit(self, submit):
+        self.submit_number += 1
+        if submit.runs[-1].outcome != 'OK':
+            self.base.add(len(submit.runs) - 1)
+        else:
+            self.base.add(len(submit.runs))
+
+        if (len(submit.runs) > self.mx):
+            self.mx = len(submit.runs)
+            self.runs = [x.case_id for x in submit.runs]
+
+    def pretty_print(self):
+        self.runs.append(self.runs[-1] + 1)
+        result = 'Submits - {0}\n'.format(self.submit_number)
+        strong_runs = set()
+        connected_components = []
+        left = 0
+        for right in self.base:
+            if right - left == 1:
+                strong_runs.add(self.runs[left])
+            else:
+                connected_components.append(set(self.runs[i] for i in range(left, right)))
+            left = right
+
+        if len(connected_components) > 0:
+            result += 'Equivalent tests: ' + ' '.join(map(lambda component: '{' + (' '.join(map(str, component)) + '}'),
+                                                      connected_components)) + '\n'
+        if len(strong_runs) > 0:
+            result += 'Unique tests: {' + ' '.join(map(str, strong_runs)) + '}\n'
+        return result
+
