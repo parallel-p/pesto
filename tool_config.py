@@ -53,11 +53,6 @@ class SameRunsFactory(VisitorFactory):
 
 class SameRunsACMFactory(VisitorFactory):
     def create(self, key):
-        return ElectorByMaxCasesVisitor(SameRunsACMFactory2())
-
-
-class SameRunsACMFactory2(VisitorFactory):
-    def create(self, key):
         return SameRunsACM()
 
 
