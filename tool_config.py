@@ -8,7 +8,7 @@ from pickle_submits import PickleWriter
 from visitor_factory import VisitorFactory
 from sharding_visitor import ShardingByContestVisitor
 from sharding_visitor import ShardingByProblemVisitor
-
+from sharding_visitor import ShardingByLangVisitor
 
 def get_presets_info():
     return """
@@ -16,7 +16,7 @@ def get_presets_info():
         2.eq_matrix - Creates matrix for each problem which contains how many times cases were launched together.
         3.count_cases - Counts number of cases for each problem.
         4.same_runs - Counts for each problem lists of runs that were launched together.
-        5.submits_by_signature - Counts submits with each outcome for each problem.
+        5.submits_by_signature - Counts submits with each outcome for each problem for each language.
         6.submits_by_tests - Counts submits with each number of launched tests for each problem.
         7.gen_pickles - Generates fast access information for next use.
     """
@@ -32,7 +32,7 @@ def get_visitor_by_preset(preset):
     if preset in ['4', 'same_runs']:
         return ShardingByProblemVisitor(SameRunsFactory())
     if preset in ['5', 'submits_by_signature']:
-        return ShardingByProblemVisitor(SubmitsIdsBySignatureFactory())
+        return ShardingByProblemVisitor(ShardingByLangFactory())
     if preset in ['6', 'submits_by_tests']:
         return SubmitsOverTestCasesNumbers()
     if preset in ['7', 'gen_pickles']:
@@ -58,3 +58,8 @@ class EqMatrixFactory(VisitorFactory):
 class SubmitsIdsBySignatureFactory(VisitorFactory):
     def create(self, key):
         return SubmitsIdsBySignatureVisitor()
+
+
+class ShardingByLangFactory(VisitorFactory):
+    def create(self, key):
+        return ShardingByLangVisitor(SubmitsIdsBySignatureFactory())

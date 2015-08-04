@@ -42,6 +42,8 @@ class FilterByUserVisitor(FilterVisitor):
         return False
 
 
-class FilterAllCasesTestedSubmits(FilterVisitor):
+class FilterByLangVisitor(FilterVisitor):
     def good_submit(self, submit):
-        return self.key[submit.problem_id] == len(submit.runs)
+        if self.key == submit.lang_id:
+            return True
+        return False

@@ -22,19 +22,29 @@ class PickleSubmitTests(unittest.TestCase):
         for i in range(100):
             self.pickle_submit.visit(submit)
         self.assertTrue(exists(join(".", "pickle", submit.problem_id[0])))
-        
+
         submit.problem_id = ("18", "0")
         for i in range(100):
             self.pickle_submit.visit(submit)
         self.assertTrue(exists(join(".", "pickle", submit.problem_id[0])))
 
-
     def test_mk_many_pickles(self):
         submit = Submit(0, 0, 179, 0, [], 1)
         submit.problem_id = ("17", "0")
-        for i in range(10000):
+        for i in range(9000):
             self.pickle_submit.visit(submit)
-        self.assertEqual(len(listdir(join(".", "pickle", submit.problem_id[0]))), 100)
+        self.assertEqual(len(listdir(join(".", "pickle", submit.problem_id[0]))), 90)
+
+    def test_particial_sumbits(self):
+        submit = Submit(0, 0, 179, 0, [], 1)
+        submit.problem_id = ("17", "0")
+        for i in range(103):
+            self.pickle_submit.visit(submit)
+        self.pickle_submit.write_file()
+        self.assertEqual(len(listdir(join(".", "pickle", submit.problem_id[0]))), 3)
+        self.assertTrue(exists(join(".", "pickle", submit.problem_id[0], "pickle000001.pickle")))
+        self.assertTrue(exists(join(".", "pickle", submit.problem_id[0], "pickle000001_3.pickle")))
+
 
 if __name__ == "__main__":
     unittest.main()
