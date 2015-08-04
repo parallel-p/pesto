@@ -41,7 +41,7 @@ class PickleSubmitTests(unittest.TestCase):
         for i in range(103):
             self.pickle_submit.visit(submit)
         self.pickle_submit.write_file()
-        self.assertEqual(len(listdir(join(".", "pickle", submit.problem_id[0]))), 3)
+        self.assertEqual(len(listdir(join(".", "pickle", submit.problem_id[0]))), 2)
         self.assertTrue(exists(join(".", "pickle", submit.problem_id[0], "pickle000001.pickle")))
         self.assertTrue(exists(join(".", "pickle", submit.problem_id[0], "pickle000001_3.pickle")))
 
