@@ -1,27 +1,36 @@
 import unittest
 from unittest.mock import Mock
-from case_counter import CaseCounter
+from stats.count_cases import CasesCounter
 
 
-class TestCaseCounter(unittest.TestCase):
+class TestCountCases(unittest.TestCase):
     def setUp(self):
-        problems = []
-        problems.append(Mock(problem_id=('17', '1'), cases=[None] * 15))
-        problems.append(Mock(problem_id=('17', '2'), cases=[None] * 10))
-        problems.append(Mock(problem_id=('17', '3'), cases=[None] * 15))
-        self.counter = CaseCounter(problems)
+        self.problems = [Mock(cases=[i for i in range(2)], problem_id=('17', '1')),
+                         Mock(cases=[i for i in range(3)], problem_id=('17', '2')),
+                         Mock(cases=[i for i in range(4)], problem_id=('17', '3'))]
+        self.counter = CasesCounter(self.problems)
 
     def test_init(self):
-        good = {('17', '1'): 15, ('17', '2'): 10, ('17', '3'): 15}
-        self.assertEqual(self.counter.cases_count, good)
+        self.assertEqual(self.counter.result, {})
 
-    def test_get_number(self):
-        self.assertEqual(self.counter.get_cases_number(('17', '1')), 15)
-        self.assertEqual(self.counter.get_cases_number(('17', '2')), 10)
+    def test_get_stat_data(self):
+        self.assertEqual(self.counter.get_stat_data(), {('17', '1'): 2,
+                                                        ('17', '2'): 3,
+                                                        ('17', '3'): 4
+                                                        }
+                         )
 
-    def test_missing_problem(self):
-        self.assertEqual(self.counter.get_cases_number(('17', '42')), None)
-        self.assertEqual(self.counter.get_cases_number('not_a_problem'), None)
+        self.assertEqual(self.counter.result, {('17', '1'): 2,
+                                               ('17', '2'): 3,
+                                               ('17', '3'): 4
+                                               }
+                         )
+
+    def test_str(self):
+        self.counter.get_stat_data()
+        self.assertEqual(str(self.counter), 'Contest #17 Problem #1: 2 case(s)\n'
+                                            'Contest #17 Problem #2: 3 case(s)\n'
+                                            'Contest #17 Problem #3: 4 case(s)\n')
 
 if __name__ == "__main__":
     unittest.main()

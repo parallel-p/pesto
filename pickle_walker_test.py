@@ -6,18 +6,17 @@ from os import mkdir, listdir
 from os.path import exists, join
 from model import Submit
 from pickle_walker import pickle_walker
+from pesto_testcase import PestoTestCase
 
 
-
-class Tester(unittest.TestCase):
+class Tester(PestoTestCase):
     def setUp(self):
         self.pickle_submit = PickleWriter()
-        self.pickle_submit.default_path = join(".", "testdata", "pickle_walker")
+        self.pickle_submit.default_path = self.temp_dir + "pickle_walker"
 
     def tearDown(self):
         if exists(self.pickle_submit.default_path):
             rmtree(self.pickle_submit.default_path)
-
 
     def test_mk_many_pickles(self):
         submit = Submit('0', '0', '179', '0', [], '1', "kirov")
