@@ -32,7 +32,7 @@ def read_config(config_name):
 
 def get_arguments():
     args = parse_args()
-    config_name = args['cfg'] if args['cfg'] else 'sample.ini'
+    config_name = args['cfg'] if args['cfg'] else 'default.ini'
     try:
         config = read_config(config_name)
     except KeyError:
@@ -43,7 +43,7 @@ def get_arguments():
         csv_filename = args['database'] if args['database'] else config['database']
         outfile = (args['outfile'] if args['outfile'] else config['outfile']) if not args['console'] else None
     except KeyError:
-        print('Invalid config, see sample.ini.')
+        print('Invalid config, see config.ini.example')
         exit()
     is_multicontest = args['multicontest']
     is_pickle = args['pickle']
