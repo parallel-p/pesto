@@ -10,9 +10,9 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
         self.runs_mixed = []
         answer = ['OK', 'WA']
         for i in range(3):
-            self.runs_OK.append(Run(None, '1', i, answer[0]))
-            self.runs_not_OK.append(Run(None, '2', i, answer[1]))
-            self.runs_mixed.append(Run(None, '3', i, answer[i % 2]))
+            self.runs_OK.append(Run(None, '1', i, '100', '100', answer[0]))
+            self.runs_not_OK.append(Run(None, '2', i, '100', '100', answer[1]))
+            self.runs_mixed.append(Run(None, '3', i, '100', '100', answer[i % 2]))
 
         self.submit1 = Submit('1', '2', '3', '0', self.runs_OK, '0', 'ACM')
         self.submit2 = Submit('2', '2', '3', '0', self.runs_not_OK, '1', 'ACM')

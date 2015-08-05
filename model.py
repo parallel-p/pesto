@@ -18,10 +18,12 @@ class Submit:
 
 
 class Run:
-    def __init__(self, problem_id, submit_id, case_id, outcome):
+    def __init__(self, problem_id, submit_id, case_id, real_time, time, outcome):
         self.problem_id = problem_id
         self.submit_id = submit_id
         self.case_id = case_id
+        self.real_time = real_time
+        self.time = time
         self.outcome = outcome
 
     def __str__(self):

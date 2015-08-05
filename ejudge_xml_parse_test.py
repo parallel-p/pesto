@@ -18,7 +18,7 @@ class TestEjudgeXmlParse(unittest.TestCase):
         self.assertEqual(res.submit_id, '15')
         self.assertEqual(res.submit_outcome, 'OK')
         self.assertEqual(res.scoring, "kirov")
-        self.assertEqual(res.run_outcomes, ['OK', 'OK', 'OK', 'OK'])
+        self.assertEqual(res.run_outcomes, [('348','310','OK'), ('199','200','OK'), ('327','240','OK'), ('304','280','OK')])
 
     def test_empty_xml(self):
         file = open('testdata/xml/empty_xml.xml', encoding='utf-8')

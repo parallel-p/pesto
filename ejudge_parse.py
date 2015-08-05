@@ -31,6 +31,6 @@ def ejudge_parse(contest_dirs, csv_filename, visitor):
             lang_id = database.get_lang_id(contest_id, submit_id)
             if None in (problem_id, user_id):
                 continue
-            runs = [Run(problem_id, submit_id, i + 1, run_outcomes[i]) for i in range(len(run_outcomes))]
+            runs = [Run(problem_id, submit_id, i + 1, run_outcomes[i][0], run_outcomes[i][1], run_outcomes[i][2]) for i in range(len(run_outcomes))]
             submit = Submit(submit_id, (contest_id, problem_id), user_id, lang_id, runs, submit_outcome, scoring)
             visitor.visit(submit)

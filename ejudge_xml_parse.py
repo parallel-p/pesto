@@ -33,7 +33,7 @@ def ejudge_xml_parse(file):
             submit_outcome = child.attrib['status']
             scoring = child.attrib['scoring']
         elif child.tag == 'test':
-            run_outcomes.append(child.attrib['status'])
+            run_outcomes.append((child.attrib['real-time'], child.attrib['time'], child.attrib['status']))
     if submit_id is None or submit_outcome is None or scoring is None:
         return None
     return EjudgeXmlParseResult(submit_id, submit_outcome, scoring, run_outcomes)

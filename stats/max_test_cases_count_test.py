@@ -13,11 +13,11 @@ class MaxTestCountTest(unittest.TestCase):
         answer = ['OK', 'WA']
 
         for i in range(10):
-            self.many_runs_OK.append(Run(None, '1', i, answer[0]))
+            self.many_runs_OK.append(Run(None, '1', i, '100', '100', answer[0]))
         for i in range(11):
-            self.mixed.append(Run(None, '3', i, answer[i % 2]))
+            self.mixed.append(Run(None, '3', i, '100', '100', answer[i % 2]))
         for i in range(5):
-            self.lit_runs_WA.append(Run(None, '2', i, answer[1]))
+            self.lit_runs_WA.append(Run(None, '2', i, '100', '100', answer[1]))
 
         self.submit1 = Submit('1', ('1', '1'), '1', '0', self.many_runs_OK, '0', 'ACM')
         self.submit2 = Submit('2', ('2', '1'), '1', '0', self.lit_runs_WA, '1', 'ACM')

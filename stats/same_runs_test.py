@@ -11,7 +11,7 @@ class PositiveTestsKirov(unittest.TestCase):
     def test_allsame(self):
         runs = []
         for i in range(4):
-            runs.append(Run(0, 0, i + 1, "OK"))
+            runs.append(Run(0, 0, i + 1, '100', '100', "OK"))
 
         submits = []
         for i in range(10):
@@ -29,10 +29,10 @@ class PositiveTestsKirov(unittest.TestCase):
 
     def test_mixed(self):
         runs = []
-        runs.append(Run(0, 0, 1, "OK"))
-        runs.append(Run(0, 0, 2, "WA"))
-        runs.append(Run(0, 0, 3, "WA"))
-        runs.append(Run(0, 0, 4, "WA"))
+        runs.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs.append(Run(0, 0, 2, '100', '100', "WA"))
+        runs.append(Run(0, 0, 3, '100', '100', "WA"))
+        runs.append(Run(0, 0, 4, '100', '100', "WA"))
 
         submits = []
         for i in range(10):
@@ -50,10 +50,10 @@ class PositiveTestsKirov(unittest.TestCase):
 
     def test_different(self):
         runs = []
-        runs.append(Run(0, 0, 1, "OK"))
-        runs.append(Run(0, 0, 2, "WA"))
-        runs.append(Run(0, 0, 3, "OK"))
-        runs.append(Run(0, 0, 4, "WA"))
+        runs.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs.append(Run(0, 0, 2, '100', '100', "WA"))
+        runs.append(Run(0, 0, 3, '100', '100', "OK"))
+        runs.append(Run(0, 0, 4, '100', '100', "WA"))
 
         submits = []
         for i in range(10):
@@ -71,10 +71,10 @@ class PositiveTestsKirov(unittest.TestCase):
 
     def test_difruns(self):
         runs = []
-        runs.append(Run(0, 0, 1, "OK"))
-        runs.append(Run(0, 0, 2, "WA"))
-        runs.append(Run(0, 0, 3, "OK"))
-        runs.append(Run(0, 0, 4, "WA"))
+        runs.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs.append(Run(0, 0, 2, '100', '100', "WA"))
+        runs.append(Run(0, 0, 3, '100', '100', "OK"))
+        runs.append(Run(0, 0, 4, '100', '100', "WA"))
 
         submits = []
         for i in range(4):
@@ -100,14 +100,14 @@ class TestsACM(unittest.TestCase):
 
     def test_ACM_problem1(self):
         runs = []
-        runs.append(Run(0, 0, 1, "OK"))
-        runs.append(Run(0, 0, 2, "OK"))
-        runs.append(Run(0, 0, 3, "OK"))
+        runs.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs.append(Run(0, 0, 2, '100', '100', "OK"))
+        runs.append(Run(0, 0, 3, '100', '100', "OK"))
 
         runs1 = []
-        runs1.append(Run(0, 0, 1, "OK"))
-        runs1.append(Run(0, 0, 2, "OK"))
-        runs1.append(Run(0, 0, 3, "WA"))
+        runs1.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs1.append(Run(0, 0, 2, '100', '100', "OK"))
+        runs1.append(Run(0, 0, 3, '100', '100', "WA"))
 
         self.same.visit(Submit(1, (0, 0), 0, 0, runs, 0, 'ACM'))
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
@@ -116,13 +116,13 @@ class TestsACM(unittest.TestCase):
 
     def test_ACM_problem2(self):
         runs = []
-        runs.append(Run(0, 0, 1, "OK"))
-        runs.append(Run(0, 0, 2, "OK"))
-        runs.append(Run(0, 0, 3, "OK"))
+        runs.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs.append(Run(0, 0, 2, '100', '100', "OK"))
+        runs.append(Run(0, 0, 3, '100', '100', "OK"))
 
         runs1 = []
-        runs1.append(Run(0, 0, 1, "OK"))
-        runs1.append(Run(0, 0, 2, "WA"))
+        runs1.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs1.append(Run(0, 0, 2, '100', '100', "WA"))
 
         self.same.visit(Submit(1, (0, 0), 0, 0, runs, 0, 'ACM'))
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
@@ -131,21 +131,21 @@ class TestsACM(unittest.TestCase):
 
     def test_ACM_problem_hard(self):
         runs1 = []
-        runs1.append(Run(0, 0, 2, "OK"))
-        runs1.append(Run(0, 0, 1, "WA"))
+        runs1.append(Run(0, 0, 2, '100', '100', "OK"))
+        runs1.append(Run(0, 0, 1, '100', '100', "WA"))
 
         runs2 = []
-        runs2.append(Run(0, 0, 2, "OK"))
-        runs2.append(Run(0, 0, 1, "OK"))
-        runs2.append(Run(0, 0, 3, "OK"))
-        runs2.append(Run(0, 0, 4, "WA"))
+        runs2.append(Run(0, 0, 2, '100', '100', "OK"))
+        runs2.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs2.append(Run(0, 0, 3, '100', '100', "OK"))
+        runs2.append(Run(0, 0, 4, '100', '100', "WA"))
 
         runs3 = []
-        runs3.append(Run(0, 0, 2, "OK"))
-        runs3.append(Run(0, 0, 1, "OK"))
-        runs3.append(Run(0, 0, 3, "OK"))
-        runs3.append(Run(0, 0, 4, "OK"))
-        runs3.append(Run(0, 0, 5, "OK"))
+        runs3.append(Run(0, 0, 2, '100', '100', "OK"))
+        runs3.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs3.append(Run(0, 0, 3, '100', '100', "OK"))
+        runs3.append(Run(0, 0, 4, '100', '100', "OK"))
+        runs3.append(Run(0, 0, 5, '100', '100', "OK"))
 
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
         self.same.visit(Submit(1, (0, 0), 0, 0, runs2, 0, 'ACM'))
@@ -155,13 +155,13 @@ class TestsACM(unittest.TestCase):
 
     def test_ACM_problem_1(self):
         runs1 = []
-        runs1.append(Run(0, 0, 1, "OK"))
-        runs1.append(Run(0, 0, 2, "OK"))
+        runs1.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs1.append(Run(0, 0, 2, '100', '100', "OK"))
         runs2 = []
-        runs2.append(Run(0, 0, 1, "OK"))
-        runs2.append(Run(0, 0, 2, "WA"))
+        runs2.append(Run(0, 0, 1, '100', '100', "OK"))
+        runs2.append(Run(0, 0, 2, '100', '100', "WA"))
         runs3 = []
-        runs3.append(Run(0, 0, 1, "WA"))
+        runs3.append(Run(0, 0, 1, '100', '100', "WA"))
 
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
         self.same.visit(Submit(1, (0, 0), 0, 0, runs2, 0, 'ACM'))
@@ -172,7 +172,7 @@ class TestsACM(unittest.TestCase):
     @unittest.skip("It depends on the definition of unique tests. Solve simple crutch")
     def test_ACM_problem_2(self):
         runs1 = []
-        runs1.append(Run(0, 0, 1, "WA"))
+        runs1.append(Run(0, 0, 1, '100', '100', "WA"))
 
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
 
