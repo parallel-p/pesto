@@ -3,7 +3,6 @@ from ejudge_parse import ejudge_parse
 from pickle_submits import PickleWriter
 from visitor import FakeVisitor
 import os.path
-
 from shutil import rmtree
 from unittest import TestCase, main
 
@@ -19,7 +18,8 @@ class IntegrationTest(TestCase):
                                'multiple_submits_count_submit_test.csv')
         ejudge_parse(contest_dir, csv_dir, self.visitor)
         self.pickler = PickleWriter()
-
+        self.pickler.default_path = os.path.join('.', 'testdata', 'integration_tests',
+                                                 'pickle')
         for submit in self.visitor.submits:
             self.pickler.visit(submit)
         self.pickler.close()
@@ -30,7 +30,7 @@ class IntegrationTest(TestCase):
 
     def test_preprocessing(self):
         self.tested_submits = [submit for submit in
-                                pickle_walker(os.path.join('.', 'pickle'))]
+                                pickle_walker(self.pickler.default_path)]
 
         self.tested_submits = [''.join(map(str, submit.__dict__.values())) for submit in
                       self.tested_submits]
@@ -38,9 +38,6 @@ class IntegrationTest(TestCase):
         self.visitor.submits = [''.join(map(str, submit.__dict__.values())) for submit in
                        self.visitor.submits]
         self.assertTrue(set(self.tested_submits) == set(self.visitor.submits))
-
-
-
 
 
 if __name__ == '__main__':
