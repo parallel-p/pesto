@@ -28,5 +28,13 @@ class TestEjudgeContest(unittest.TestCase):
                 'testdata\\ejudge_contest\\000002\\tests\\A\\02.a'.replace('\\', os.path.sep))
         self.assertEqual(tests[1], good)
 
+    def test_no_cases(self):
+        contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '025950'))
+        self.assertEqual(contest.get_contest_id(), '')
+        self.assertEqual(len(contest.get_problem_ids()), 1)
+        self.assertEqual(contest.get_short_name_by_problem_id(('', '1')), 'A')
+        tests = contest.get_test_paths_by_problem_id(('1', '1'))
+        self.assertFalse(tests)
+
 if __name__ == "__main__":
     unittest.main()
