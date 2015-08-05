@@ -1,7 +1,7 @@
 [tool]
 #If you want to use your own config, use config.ini, which is added to git ignore
 base_dir = my_data
-csv_file = my_data/file.csv
+database = my_data/file.csv
 pickle_dir = pickle
 trash_dir = trash
 outfile = trash/output.txt
