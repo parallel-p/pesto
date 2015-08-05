@@ -96,10 +96,9 @@ class TestByScoring(unittest.TestCase):
     def test_submits(self):
         visitor = ShardingByScoringVisitor(FakeFactory())
         do_visits(visitor)
-        self.assertEqual(set(visitor.visitors.keys()), {"ACM", "olympiad", "kirov"})
+        self.assertEqual(set(visitor.visitors.keys()), {"ACM", "kirov"})
         self.assertEqual(len(visitor.visitors["ACM"].submits), 2)
-        self.assertEqual(len(visitor.visitors["olympiad"].submits), 1)
-        self.assertEqual(len(visitor.visitors["kirov"].submits), 2)
+        self.assertEqual(len(visitor.visitors["kirov"].submits), 3)
 
 if __name__ == "__main__":
     unittest.main()
