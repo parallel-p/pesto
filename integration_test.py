@@ -3,36 +3,41 @@ from ejudge_parse import ejudge_parse
 from pickle_submits import PickleWriter
 from visitor import FakeVisitor
 import os.path
-from os.path import exists, join
 from shutil import rmtree
+from unittest import TestCase, main
 
 
-def main():
-    visitor = FakeVisitor()
-    contest_dir = [os.path.join('.', '', 'contests',
-                                '000017'),
-                   os.path.join('testdata', 'integration_tests', 'contests',
-                                '000018')]
-    csv_dir = os.path.join('testdata', 'integration_tests',
-                           'multiple_submits_count_submit_test.csv')
-    ejudge_parse(contest_dir, csv_dir, visitor)
-    pickler = PickleWriter()
-    for submit in visitor.submits:
-        pickler.visit(submit)
+class IntegrationTest(TestCase):
+    def setUp(self):
+        self.visitor = FakeVisitor()
+        contest_dir = [os.path.join('.', '', 'contests',
+                                    '000017'),
+                       os.path.join('testdata', 'integration_tests', 'contests',
+                                    '000018')]
+        csv_dir = os.path.join('testdata', 'integration_tests',
+                               'multiple_submits_count_submit_test.csv')
+        ejudge_parse(contest_dir, csv_dir, self.visitor)
+        self.pickler = PickleWriter()
+        self.pickler.default_path = os.path.join('.', 'testdata', 'integration_tests',
+                                                 'pickle')
+        for submit in self.visitor.submits:
+            self.pickler.visit(submit)
+        self.pickler.close()
 
-    tested_submits = [submit for submit in pickle_walker(os.path.join('.', 'pickle'))]
-    tested_submits = (''.join(map(str, submit.__dict__.values())) for submit in
-                      tested_submits)
-    visitor.submits = (''.join(map(str, submit.__dict__.values())) for submit in
-                       visitor.submits)
+    def tearDown(self):
+        if os.path.exists(self.pickler.default_path):
+            rmtree(self.pickler.default_path)
 
-    if exists(join(".", "pickle")):
-            rmtree(join(".", "pickle"))
+    def test_preprocessing(self):
+        self.tested_submits = [submit for submit in
+                                pickle_walker(self.pickler.default_path)]
 
-    if set(tested_submits) == set(visitor.submits):
-        print("Test passed")
-    else:
-        print("Test failed")
+        self.tested_submits = [''.join(map(str, submit.__dict__.values())) for submit in
+                      self.tested_submits]
+
+        self.visitor.submits = [''.join(map(str, submit.__dict__.values())) for submit in
+                       self.visitor.submits]
+        self.assertTrue(set(self.tested_submits) == set(self.visitor.submits))
 
 
 if __name__ == '__main__':
