@@ -4,13 +4,12 @@ import os
 class EjudgeContest:
     def __init__(self, dir_name):
         self.problems = []
-        self.test_paths = []
         self.dir_name = dir_name
 
         file = open(os.path.join(self.dir_name, 'conf', 'serve.cfg'), encoding='utf-8')
         cfg_string = file.read().strip()
         file.close()
-        self.config = self.parse_config(cfg_string)
+        self.parse_config(cfg_string)
 
     def get_contest_id(self):
         return self.contest_id
@@ -36,7 +35,7 @@ class EjudgeContest:
         for i in cfg:
             if i.startswith(name):
                 return i.split(' = ')[1]
-        return None
+        return ''
 
     def get_languages(self, cfg):
         langs = {}
@@ -56,24 +55,27 @@ class EjudgeContest:
                 cur_id = None
         return langs
 
+    def get_patterns(self, sect):
+        if 'test_pat' in sect:
+            self.test_pattern = sect['test_pat'].strip('"')
+        elif 'test_sfx' in sect:
+            self.test_pattern = '%03d' + sect['test_sfx'].strip('"')
+        else:
+            self.test_pattern = '%03d'
+        if 'corr_pat' in sect:
+            self.corr_pattern = sect['corr_pat'].strip('"')
+        elif 'corr_sfx' in sect:
+            self.corr_pattern = '%03d' + sect['corr_sfx'].strip('"')
+        else:
+            self.corr_pattern = '%03d'
+
     def get_problems(self, cfg):
         cfg = '\n'.join(cfg).split('[problem]')[1:]
         if '[testing]' in cfg[-1]:
             cfg[-1] = cfg[-1].split('[testing]')[0]
         cfg = [self.parse_section(sect) for sect in cfg]
-        if 'test_pat' in cfg[0]:
-            self.test_pattern = cfg[0]['test_pat'].strip('"')
-        elif 'test_sfx' in cfg[0]:
-            self.test_pattern = '%03d' + cfg[0]['test_sfx'].strip('"')
-        else:
-            self.test_pattern = '%03d'
-        if 'corr_pat' in cfg[0]:
-            self.corr_pattern = cfg[0]['corr_pat'].strip('"')
-        elif 'corr_sfx' in cfg[0]:
-            self.corr_pattern = '%03d' + cfg[0]['corr_sfx'].strip('"')
-        else:
-            self.corr_pattern = '%03d'
-        self.test_dir = None
+        self.get_patterns(cfg[0])
+
         problems = {}
         paths = {}
         for root, dirs, files in os.walk(self.dir_name):
@@ -83,6 +85,7 @@ class EjudgeContest:
                 else:
                     shortname = root.split(os.path.sep)[-1]
                 paths[shortname] = root
+
         for problem in cfg[1:]:
             problems[problem['id']] = (problem['short_name'].strip('"'), paths[problem['short_name'].strip('"')])
         return problems
