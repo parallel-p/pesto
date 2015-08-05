@@ -14,5 +14,5 @@ def problem_generator(contest_dirs):
             tests_hashes = []
             for test_path in tests_paths:
                 tests_hashes.append(md5_hasher.get_hash(test_path[0], test_path[1]))
-            yield model.Problem((contest_id, problem_id), problem_name, tests_hashes)
+            yield model.Problem(problem_id, problem_name, tests_hashes)
 
