@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument('-c', '--console', help='output to console', action='store_true')
     parser.add_argument('-o', '--outfile', help='output file')
     parser.add_argument('--dir', help="directory containing xml's/pickles")
-    parser.add_argument('--csv', help="csv file")
+    parser.add_argument('--database', help="database csv file")
     parser.add_argument('--cfg', help="config file")
     parser.add_argument('--filter-problem', help='process only submits for the problem selected')
     parser.add_argument('--filter-user', help='process only submits by the selected user')
@@ -32,7 +32,7 @@ def read_config(config_name):
 
 def get_arguments():
     args = parse_args()
-    config_name = args['cfg'] if args['cfg'] else 'sample.ini'
+    config_name = args['cfg'] if args['cfg'] else 'default.ini'
     try:
         config = read_config(config_name)
     except KeyError:
@@ -40,10 +40,10 @@ def get_arguments():
         exit()
     try:
         base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
-        csv_filename = args['csv'] if args['csv'] else config['csv_file']
+        csv_filename = args['database'] if args['database'] else config['database']
         outfile = (args['outfile'] if args['outfile'] else config['outfile']) if not args['console'] else None
     except KeyError:
-        print('Invalid config, see sample.ini.')
+        print('Invalid config, see config.ini.example')
         exit()
     is_multicontest = args['multicontest']
     is_pickle = args['pickle']
