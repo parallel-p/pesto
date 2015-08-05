@@ -20,10 +20,12 @@ class PositiveTests(unittest.TestCase):
         for submit in submits:
             self.matrix.visit(submit)
 
-        sample = ("10 10 10 10\n" +
-                  "10 10 10 10\n" +
-                  "10 10 10 10\n" +
-                  "10 10 10 10\n")
+        sample = ("\t" + "".join("{:>9}".format(elem) for elem in [10, 10, 10, 10]) + "\n" +
+                  "0\t" + "".join("{:>9}".format(elem) for elem in [1, 2, 3, 4]) + "\n" +
+                  "1\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 0.0, 0.0, 0.0]) + "\n" +
+                  "2\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 0.0, 0.0, 0.0]) + "\n" +
+                  "3\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 0.0, 0.0, 0.0]) + "\n" +
+                  "4\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 0.0, 0.0, 0.0]) + "\n")
 
         self.assertEqual(self.matrix.pretty_print(), sample)
 
@@ -38,10 +40,12 @@ class PositiveTests(unittest.TestCase):
         for i in range(10):
             submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM'))
 
-        sample = ("10 0 0 0\n"   +
-                  "0 10 10 10\n" +
-                  "0 10 10 10\n" +
-                  "0 10 10 10\n")
+        sample = ("\t" + "".join("{:>9}".format(elem) for elem in [10, 10, 10, 10]) + "\n" +
+                  "0\t" + "".join("{:>9}".format(elem) for elem in [1, 2, 3, 4]) + "\n" +
+                  "1\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 100.0, 100.0, 100.0]) + "\n" +
+                  "2\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 0.0, 0.0]) + "\n" +
+                  "3\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 0.0, 0.0]) + "\n" +
+                  "4\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 0.0, 0.0]) + "\n")
 
         for submit in submits:
             self.matrix.visit(submit)
@@ -62,15 +66,17 @@ class PositiveTests(unittest.TestCase):
         for submit in submits:
             self.matrix.visit(submit)
 
-        sample = ("10 0 10 0\n" +
-                  "0 10 0 10\n" +
-                  "10 0 10 0\n" +
-                  "0 10 0 10\n")
+        sample = ("\t" + "".join("{:>9}".format(elem) for elem in [10, 10, 10, 10]) + "\n" +
+                  "0\t" + "".join("{:>9}".format(elem) for elem in [1, 2, 3, 4]) + "\n" +
+                  "1\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 100.0, 0.0, 100.0]) + "\n" +
+                  "2\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 100.0, 0.0]) + "\n" +
+                  "3\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 100.0, 0.0, 100.0]) + "\n" +
+                  "4\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 100.0, 0.0]) + "\n")
 
         self.assertEqual(self.matrix.pretty_print(), sample)
 
     def test_zero_submits(self):
-        self.assertEqual(self.matrix.pretty_print(), "")
+        self.assertEqual(self.matrix.pretty_print(), "No submits")
 
     def test_difruns(self):
         runs = []
@@ -89,10 +95,17 @@ class PositiveTests(unittest.TestCase):
         for submit in submits:
             self.matrix.visit(submit)
 
-        sample = ("10 0 4 0\n" +
-                  "0 8 0 4\n"  +
-                  "4 0 4 0\n"  +
-                  "0 4 0 4\n")
+        sample = ("\t" + "".join("{:>9}".format(elem) for elem in [10, 8, 4, 4]) + "\n" +
+                  "0\t" + "".join("{:>9}".format(elem) for elem in [1, 2, 3, 4]) + "\n" +
+                  "1\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 100.0, 0.0, 100.0]) + "\n" +
+                  "2\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 100.0, 0.0]) + "\n" +
+                  "3\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 100.0, 0.0, 100.0]) + "\n" +
+                  "4\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 100.0, 0.0]) + "\n")
+        
+        # sample = ("10 0 4 0\n" +
+        #           "0 8 0 4\n"  +
+        #           "4 0 4 0\n"  +
+        #           "0 4 0 4\n")
 
         self.assertEqual(self.matrix.pretty_print(), sample)
 

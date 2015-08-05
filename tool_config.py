@@ -29,7 +29,7 @@ def get_visitor_by_preset(preset):
     if preset in ['1', 'count_submits']:
         return ShardingByContestVisitor(SubmitsCounterFactory())
     if preset in ['2', 'eq_matrix']:
-        return ShardingByProblemVisitor(EqMatrixFactory())
+        return ShardingByScoringVisitor(EqMatrixShardingByProblem())
     if preset in ['3', 'count_cases']:
         return ShardingByProblemVisitor(MaxTestCasesCountFactory())
     if preset in ['4', 'same_runs']:
@@ -49,6 +49,11 @@ class SameRunsFactory(VisitorFactory):
             return ShardingByProblemVisitor(SameRunsACMFactory())
         else:
             return ShardingByProblemVisitor(SameRunsKirovFactory())
+
+
+class EqMatrixShardingByProblem(VisitorFactory):
+    def create(self, key):
+        return ShardingByProblemVisitor(EqMatrixFactory())
 
 
 class SameRunsACMFactory(VisitorFactory):
