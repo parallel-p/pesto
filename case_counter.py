@@ -5,10 +5,10 @@ class CasesCounter(CasesStats):
     def __init__(self, problems):
         super().__init__(problems)
         self.result = dict()
-
-    def get_stat_data(self):
         for problem in self.problems:
             self.result[problem.problem_id] = len(problem.cases)
+
+    def get_stat_data(self):
         return self.result
 
     def __str__(self):
