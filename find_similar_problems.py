@@ -15,7 +15,7 @@ class SimilarProblemsFinder:
                 if same_tests_count > similar_problems_min_ratio * min(len(problem_1.cases), len(problem_2.cases)):
                     self.result.append((problem_1, problem_2))
 
-    def get_similar_problems_pairs(self):
+    def get_stat_data(self):
         return self.result
 
     def __str__(self):
