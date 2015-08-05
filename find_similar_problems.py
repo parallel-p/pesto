@@ -1,4 +1,4 @@
-similar_problems_min_ratio = 0.5
+SIMILAR_PROBLEMS_MIN_RATIO = 0.5
 
 
 class SimilarProblemsFinder:
@@ -16,7 +16,7 @@ class SimilarProblemsFinder:
                     if problem_2_test in problem_1_tests:
                         same_tests_count += 1
                 similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
-                if similarity > similar_problems_min_ratio:
+                if similarity > SIMILAR_PROBLEMS_MIN_RATIO:
                     self.result.append((problem_1, problem_2))
                 self.same_tests_count_dict[(problem_1, problem_2)] = same_tests_count
                 self.similarity_dict[(problem_1, problem_2)] = similarity
