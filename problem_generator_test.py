@@ -9,7 +9,7 @@ class TestProblemGenerator(unittest.TestCase):
     def setUp(self):
         ejudge_contest_object = Mock()
         ejudge_contest_object.get_contest_id = Mock(return_value='42')
-        ejudge_contest_object.get_problem_ids = Mock(return_value=['1', '2'])
+        ejudge_contest_object.get_problem_ids = Mock(return_value=[('42', '1'), ('42', '2')])
         ejudge_contest_object.get_short_name_by_problem_id = Mock(return_value='a-plus-b')
         ejudge_contest_object.get_test_paths_by_problem_id = Mock(return_value=[('a', 'b'), ('c', 'd')])
         ejudge_contest.EjudgeContest = Mock(return_value=ejudge_contest_object)
