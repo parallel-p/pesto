@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from case_counter import CasesCounter
 from find_same_problems import SameProblemsFinder
+from find_similar_problems import SimilarProblemsFinder
 from problem_generator import problem_generator
 import os
 
@@ -9,6 +10,7 @@ def display_stats_list():
     print('Statistics list:')
     print('0. cases_count - Count cases for each problem.')
     print('1. same_problems - Find same problems.')
+    print('2. similar_problems - Find similar problems (problems with many same tests)')
 
 
 parser = ArgumentParser(description='Run cases-based statistic.')
@@ -34,6 +36,9 @@ if args['statistic'] in ['0', 'cases_count']:
     print(str(counter))
 elif args['statistic'] in ['1', 'same_problems']:
     finder = SameProblemsFinder(problem_generator(contest_dirs))
+    print(str(finder))
+elif args['statistic'] in ['2', 'similar_problems']:
+    finder = SimilarProblemsFinder(problem_generator(contest_dirs))
     print(str(finder))
 else:
     print('Incorrect statistic specified.')

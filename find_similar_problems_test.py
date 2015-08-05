@@ -17,7 +17,7 @@ class TestFindSameProblems(unittest.TestCase):
         self.finder = SimilarProblemsFinder(self.problems)
 
     def test_common(self):
-        result = self.finder.get_similar_problems_pairs()
+        result = self.finder.get_stat_data()
         self.assertEqual(len(result), 2)
         self.assertTrue((self.problems[0], self.problems[2]) in result)
         self.assertTrue((self.problems[1], self.problems[3]) in result)
