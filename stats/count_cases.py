@@ -1,17 +1,20 @@
-from visitor import Visitor
+from cases_stats import CasesStats
 
 
-class CasesCounter(Visitor):
-    def __init__(self):
-        super().__init__()
-        self.result = {}
-    
-    def visit(self, submit):
-        if str(submit.problem_id[1]) not in self.result or len(submit.runs) > self.result[str(submit.problem_id[1])]:
-            self.result[str(submit.problem_id[1])] = len(submit.runs)
-    
-    def pretty_print(self):
+class CasesCounter(CasesStats):
+    def __init__(self, problems):
+        super().__init__(problems)
+        self.result = dict()
+
+    def get_stat_data(self):
+        for problem in self.problems:
+            self.result[problem.problem_id] = len(problem.cases)
+        return self.result
+
+    def __str__(self):
         result = ''
-        for k, v in sorted(self.result.items()):
-            result += 'Problem #{}: {} cases.\n'.format(k, v)        
+        for problem_id, cases in sorted(self.result.items()):
+            result += 'Contest #{0} Problem #{1}: {2} case(s)\n'.format(problem_id[0],
+                                                                        problem_id[1],
+                                                                        cases)
         return result

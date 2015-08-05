@@ -4,10 +4,11 @@ from pickle_submits import PickleWriter
 from visitor import FakeVisitor
 import os.path
 from shutil import rmtree
-from unittest import TestCase, main
+from unittest import main
+from pesto_testcase import PestoTestCase
 
 
-class IntegrationTest(TestCase):
+class IntegrationTest(PestoTestCase):
     def setUp(self):
         self.visitor = FakeVisitor()
         contest_dir = [os.path.join('.', '', 'contests',
@@ -18,8 +19,12 @@ class IntegrationTest(TestCase):
                                'multiple_submits_count_submit_test.csv')
         ejudge_parse(contest_dir, csv_dir, self.visitor)
         self.pickler = PickleWriter()
-        self.pickler.default_path = os.path.join('.', 'testdata', 'integration_tests',
-                                                 'pickle')
+        self.pickler.default_path = self.temp_dir + os.path.join('integration_tests', 'pickle')
+
+        try:
+            os.makedirs(self.pickler.default_path)
+        except FileExistsError:
+            pass
         for submit in self.visitor.submits:
             self.pickler.visit(submit)
         self.pickler.close()

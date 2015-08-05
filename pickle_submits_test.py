@@ -5,12 +5,13 @@ from shutil import rmtree
 from os import mkdir, listdir
 from os.path import exists, join
 from model import Submit
+from pesto_testcase import PestoTestCase
 
 
-class PickleSubmitTests(unittest.TestCase):
+class PickleSubmitTests(PestoTestCase):
     def setUp(self):
         self.pickle_submit = PickleWriter()
-        self.pickle_submit.default_path = join(".", "testdata", "pickle_walker") 
+        self.pickle_submit.default_path = self.temp_dir + "pickle_walker"
 
     def tearDown(self):
         if exists(self.pickle_submit.default_path):
@@ -21,7 +22,6 @@ class PickleSubmitTests(unittest.TestCase):
         self.pickle_submit.write_file()
         self.pickle_submit.write_file()
         self.assertEqual(len(listdir(join(self.pickle_submit.default_path, '17'))), 1)
-
 
     def test_mk_diff_dir(self):
         submit = Submit('0', '0', '179', '0', [], '1', 'kirov')

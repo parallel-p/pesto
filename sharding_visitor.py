@@ -69,7 +69,7 @@ class ShardingByLangVisitor(ShardingVisitor):
 
 class ShardingByScoringVisitor(ShardingVisitor):
     def build_key(self, submit):
-        return submit.scoring
+        return 'ACM' if submit.scoring == 'ACM' else 'kirov'
 
     def pretty_key(self, key):
         return 'Scoring type - #{}'.format(key)
