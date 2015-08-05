@@ -64,4 +64,6 @@ unittest.cfg
 coverage/
 my_data/
 pickle/
+trash/
+config.ini
 tempdir/
