@@ -1,26 +1,18 @@
-import config
+import ejudge_contest
 import model
 import md5_hasher
 
 
 def problem_generator(contest_dirs):
-    config_parser = config.Config()
     for contest_dir in contest_dirs:
-        config_parser.parse(contest_dir)
-        cases = config_parser.get_filenames()
-        current_problem_cases = []
-        current_problem_name = ""
-        for case in cases:
-            problem_name = case[0].split("/")[-2]
-            if current_problem_name != problem_name:
-                if current_problem_name != "":
-                    yield model.Problem(config_parser.get_problem_id(current_problem_name),
-                                        current_problem_name,
-                                        current_problem_cases)
-                current_problem_name = problem_name
-                current_problem_cases = []
-            current_problem_cases.append(md5_hasher.get_hash(case[0], case[1]))
-        if current_problem_name != "":
-            yield model.Problem(config_parser.get_problem_id(current_problem_name),
-                                current_problem_name,
-                                current_problem_cases)
+        contest = ejudge_contest.EjudgeContest()
+        contest_id = contest.get_contest_id()
+        problems_ids = contest.get_problems_ids()
+        for problem_id in problems_ids:
+            problem_name = contest.get_short_name_by_problem_id(problem_id)
+            tests_paths = contest.get_tests_paths_by_problem_id(problem_id)
+            tests_hashes = []
+            for test_path in tests_paths:
+                tests_hashes.append(md5_hasher.get_hash(contest_dir+test_path[0], contest_dir+test_path[1]))
+            yield model.Problem((contest_id, problem_id), problem_name, tests_hashes)
+
