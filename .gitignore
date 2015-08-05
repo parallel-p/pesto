@@ -59,6 +59,9 @@ target/
 
 .idea/
 
+unittest.cfg
+
 coverage/
 my_data/
 pickle/
+tempdir/
