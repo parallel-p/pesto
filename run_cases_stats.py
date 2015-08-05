@@ -30,6 +30,8 @@ if not os.path.isdir(args['contest_dir']):
 contest_dirs = [args['contest_dir']]
 if 'multicontest':
     contest_dirs = os.listdir(args['contest_dir'])
+    for i in range(len(contest_dirs)):
+        contest_dirs[i] = os.path.join(args['contest_dir'], contest_dirs[i])
 
 if args['statistic'] in ['0', 'cases_count']:
     counter = CasesCounter(problem_generator(contest_dirs))
