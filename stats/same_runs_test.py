@@ -112,11 +112,6 @@ class TestsACM(unittest.TestCase):
         self.same.visit(Submit(1, (0, 0), 0, 0, runs, 0, 'ACM'))
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
 
-        # sample = ("10 0 10 0\n" +
-        #           "0 10 0 10\n" +
-        #           "10 0 10 0\n" +
-        #           "0 10 0 10\n")
-
         self.assertEqual(self.same.pretty_print(), 'Submits - 2\nEquivalent tests: {1 2}\nUnique tests: {3}\n')
 
     def test_ACM_problem2(self):
@@ -131,11 +126,6 @@ class TestsACM(unittest.TestCase):
 
         self.same.visit(Submit(1, (0, 0), 0, 0, runs, 0, 'ACM'))
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
-
-        # sample = ("10 0 10 0\n" +
-        #           "0 10 0 10\n" +
-        #           "10 0 10 0\n" +
-        #           "0 10 0 10\n")
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 2\nEquivalent tests: {2 3}\nUnique tests: {1}\n')
 
@@ -161,12 +151,32 @@ class TestsACM(unittest.TestCase):
         self.same.visit(Submit(1, (0, 0), 0, 0, runs2, 0, 'ACM'))
         self.same.visit(Submit(1, (0, 0), 0, 0, runs3, 0, 'ACM'))
 
-        # sample = ("10 0 10 0\n" +
-        #           "0 10 0 10\n" +
-        #           "10 0 10 0\n" +
-        #           "0 10 0 10\n")
-
         self.assertEqual(self.same.pretty_print(), 'Submits - 3\nEquivalent tests: {1 3} {4 5}\nUnique tests: {2}\n')
+
+    def test_ACM_problem_1(self):
+        runs1 = []
+        runs1.append(Run(0, 0, 1, "OK"))
+        runs1.append(Run(0, 0, 2, "OK"))
+        runs2 = []
+        runs2.append(Run(0, 0, 1, "OK"))
+        runs2.append(Run(0, 0, 2, "WA"))
+        runs3 = []
+        runs3.append(Run(0, 0, 1, "WA"))
+
+        self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
+        self.same.visit(Submit(1, (0, 0), 0, 0, runs2, 0, 'ACM'))
+        self.same.visit(Submit(1, (0, 0), 0, 0, runs3, 0, 'ACM'))
+
+        self.assertEqual(self.same.pretty_print(), 'Submits - 3\nUnique tests: {1 2}\n')
+
+    @unittest.skip("It depends on the definition of unique tests. Solve simple crutch")
+    def test_ACM_problem_2(self):
+        runs1 = []
+        runs1.append(Run(0, 0, 1, "WA"))
+
+        self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM'))
+
+        self.assertEqual(self.same.pretty_print(), 'Submits - 1\nUnique tests: {1}\n')
 
 
 if __name__ == "__main__":
