@@ -1,7 +1,7 @@
 from stats.count_submits import SubmitsCounter
 from stats.eq_matrix import EqMatrix
 from stats.max_test_cases_count import MaxTestCasesCount
-from stats.same_runs import SameRunsKirov
+from stats.same_runs import SameRunsKirov, SameRunsACM
 from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
 from pickle_submits import PickleWriter
@@ -9,6 +9,9 @@ from visitor_factory import VisitorFactory
 from sharding_visitor import ShardingByContestVisitor
 from sharding_visitor import ShardingByProblemVisitor
 from sharding_visitor import ShardingByLangVisitor
+from sharding_visitor import ShardingByScoringVisitor
+from elector_visitor import ElectorByMaxCasesVisitor
+
 
 def get_presets_info():
     return """
@@ -30,9 +33,9 @@ def get_visitor_by_preset(preset):
     if preset in ['3', 'count_cases']:
         return ShardingByProblemVisitor(MaxTestCasesCountFactory())
     if preset in ['4', 'same_runs']:
-        return ShardingByProblemVisitor(SameRunsKirovFactory())
+        return ShardingByScoringVisitor(SameRunsFactory())
     if preset in ['5', 'submits_by_signature']:
-        return ShardingByProblemVisitor(ShardingByLangFactory())
+        return ShardingByProblemVisitor(SubmitsIdsBySignatureFactory())
     if preset in ['6', 'submits_by_tests']:
         return SubmitsOverTestCasesNumbers()
     if preset in ['7', 'gen_pickles']:
@@ -40,7 +43,25 @@ def get_visitor_by_preset(preset):
     return None
 
 
+class SameRunsFactory(VisitorFactory):
+    def create(self, key):
+        if key == 'ACM':
+            return ShardingByProblemVisitor(SameRunsACMFactory())
+        else:
+            return ShardingByProblemVisitor(SameRunsKirovFactory())
+
+
+class SameRunsACMFactory(VisitorFactory):
+    def create(self, key):
+        return SameRunsACM()
+
+
 class SameRunsKirovFactory(VisitorFactory):
+    def create(self, key):
+        return ElectorByMaxCasesVisitor(SameRunsKirovFactory2())
+
+
+class SameRunsKirovFactory2(VisitorFactory):
     def create(self, key):
         return SameRunsKirov()
 
@@ -48,6 +69,7 @@ class SameRunsKirovFactory(VisitorFactory):
 class SubmitsCounterFactory(VisitorFactory):
     def create(self, key):
         return SubmitsCounter()
+
 
 class MaxTestCasesCountFactory(VisitorFactory):
     def create(self, key):
@@ -61,9 +83,9 @@ class EqMatrixFactory(VisitorFactory):
 
 class SubmitsIdsBySignatureFactory(VisitorFactory):
     def create(self, key):
-        return SubmitsIdsBySignatureVisitor()
+        return ShardingByLangVisitor(SubmitsIdsBySignatureFactory2())
 
 
-class ShardingByLangFactory(VisitorFactory):
+class SubmitsIdsBySignatureFactory2(VisitorFactory):
     def create(self, key):
-        return ShardingByLangVisitor(SubmitsIdsBySignatureFactory())
+        return SubmitsIdsBySignatureVisitor()
