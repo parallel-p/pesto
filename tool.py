@@ -4,26 +4,47 @@ from ejudge_parse import ejudge_parse
 import tool_config
 import argparse
 import filter_visitor
+import configparser
 from pickle_walker import pickle_walker
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Calculate some statistics")
     parser.add_argument('-m', '--multicontest', help='base_dir contains several contests', action='store_true')
     parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
+    parser.add_argument('-c', '--console', help='output to console', action='store_true')
     parser.add_argument('-o', '--outfile', help='output file')
-    parser.add_argument('--filter-problem', metavar='ID', help='process only submits for the problem selected')
-    parser.add_argument('--filter-user', metavar='ID', help='process only submits by the selected user')
-    parser.add_argument('--filter-contest', metavar='ID', help='process only submits in the selected contest')
-    parser.add_argument('base_dir', help="directory containing xml's")
-    parser.add_argument('csv_filename', help="csv file")
+    parser.add_argument('--dir', help="directory containing xml's/pickles")
+    parser.add_argument('--csv', help="csv file")
+    parser.add_argument('--cfg', help="config file")
+    parser.add_argument('--filter-problem', help='process only submits for the problem selected')
+    parser.add_argument('--filter-user', help='process only submits by the selected user')
+    parser.add_argument('--filter-contest', help='process only submits in the selected contest')
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
     return vars(parser.parse_args())
 
 
+def read_config(config_name):
+    config = configparser.ConfigParser()
+    config.read(config_name)
+    return config['tool']
+
+
 def get_arguments():
     args = parse_args()
-    base_dir = args['base_dir']
-    csv_filename = args['csv_filename']
+    config_name = args['cfg'] if args['cfg'] else 'sample.ini'
+    try:
+        config = read_config(config_name)
+    except KeyError:
+        print('Incorrect config filename.')
+        exit()
+    try:
+        base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
+        csv_filename = args['csv'] if args['csv'] else config['csv_file']
+        outfile = (args['outfile'] if args['outfile'] else config['outfile']) if not args['console'] else None
+    except KeyError:
+        print('Invalid config, see sample.ini.')
+        exit()
     is_multicontest = args['multicontest']
     is_pickle = args['pickle']
     preset_name = args['preset_name']
@@ -39,8 +60,8 @@ def get_arguments():
         exit()
 
     optional = {}
-    if args['outfile']:
-        optional['outfile'] = args['outfile']
+    if outfile:
+        optional['outfile'] = outfile
     if args.get('filter_problem'):
         optional['filter_problem'] = args['filter_problem']
     if args.get('filter_user'):

@@ -62,3 +62,6 @@ target/
 coverage/
 my_data/
 pickle/
+trash/
+config.ini
+
