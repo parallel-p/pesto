@@ -10,9 +10,8 @@ class TestMultiContestWalker(unittest.TestCase):
     def test_walk(self):
         contests_dir = os.path.join('testdata', 'ejudge_contest')
         contests = [contest for contest in self.walker.walk(contests_dir)]
-        true_contests = [('1', 'testdata\\ejudge_contest\\000001'),
-                         ('2', 'testdata\\ejudge_contest\\000002'),
-                         ]
+        true_contests = [('1', os.path.join('testdata', 'ejudge_contest', '000001')),
+                         ('2', os.path.join('testdata', 'ejudge_contest', '000002'))]
         self.assertEqual(sorted(contests), sorted(true_contests))
 
 
