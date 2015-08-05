@@ -24,5 +24,5 @@ class SameProblemsFinder(CasesStats):
     def __str__(self):
         resulting_string = ''
         for problems_set in self.result:
-            resulting_string += 'Problems {} are same.\n'.format(', '.join([problem.name for problem in problems_set]))
+            resulting_string += 'Problems {} are same.\n'.format(', '.join(['"{}" from contest {}'.format(problem.name, problem.problem_id[0]) for problem in problems_set]))
         return resulting_string

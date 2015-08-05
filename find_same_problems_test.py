@@ -30,7 +30,7 @@ class TestFindSameProblems(unittest.TestCase):
     
     def test_str(self):
         result = str(self.finder)
-        self.assertEqual(result, 'Problems A, C, D are same.\nProblems B, E are same.\n')
+        self.assertEqual(result, 'Problems "A" from contest 17, "C" from contest 17, "D" from contest 18 are same.\nProblems "B" from contest 17, "E" from contest 18 are same.\n')
 
 if __name__ == "__main__":
     unittest.main()
