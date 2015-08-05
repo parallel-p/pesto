@@ -1,25 +1,36 @@
 import unittest
+from unittest.mock import Mock
 from stats.count_cases import CasesCounter
-from model import Submit, Run
 
 
 class TestCountCases(unittest.TestCase):
     def setUp(self):
-        self.counter = CasesCounter()
+        self.problems = [Mock(cases=[i for i in range(2)], problem_id=('17', '1')),
+                         Mock(cases=[i for i in range(3)], problem_id=('17', '2')),
+                         Mock(cases=[i for i in range(4)], problem_id=('17', '3'))]
+        self.counter = CasesCounter(self.problems)
 
-    def test_common(self):
-        self.counter.visit(Submit('1', (1, '1'), '0', '0', [Run('1', '-', 'OK', '0')] * 10, 'OK', 'Kirov'))
-        self.counter.visit(Submit('2', (1, '2'), '0', '0', [Run('2', '-', 'OK', '0')] * 20, 'OK', 'Kirov'))
-        self.counter.visit(Submit('3', (1, '3'), '0', '0', [Run('3', '-', 'OK', '0')] * 50, 'OK', 'Kirov'))
-        self.counter.visit(Submit('4', (1, '2'), '0', '0', [Run('4', '-', 'OK', '0')] * 30, 'OK', 'Kirov'))
-        self.assertEqual(self.counter.pretty_print(), 'Problem #1: 10 cases.\nProblem #2: 30 cases.\nProblem #3: 50 cases.\n')
-        
-    def test_empty(self):
-        self.assertEqual(self.counter.pretty_print(), '')
+    def test_init(self):
+        self.assertEqual(self.counter.result, {})
 
-    def test_bad_submit(self):
-        with self.assertRaises(Exception):
-            self.submits_counter.visit(None)
+    def test_get_stat_data(self):
+        self.assertEqual(self.counter.get_stat_data(), {('17', '1'): 2,
+                                                        ('17', '2'): 3,
+                                                        ('17', '3'): 4
+                                                        }
+                         )
+
+        self.assertEqual(self.counter.result, {('17', '1'): 2,
+                                               ('17', '2'): 3,
+                                               ('17', '3'): 4
+                                               }
+                         )
+
+    def test_str(self):
+        self.counter.get_stat_data()
+        self.assertEqual(str(self.counter), 'Contest #17 Problem #1: 2 case(s)\n'
+                                            'Contest #17 Problem #2: 3 case(s)\n'
+                                            'Contest #17 Problem #3: 4 case(s)\n')
 
 if __name__ == "__main__":
     unittest.main()
