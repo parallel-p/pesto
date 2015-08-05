@@ -4,10 +4,10 @@ from ejudge_xml_parse import ejudge_xml_parse, EjudgeXmlParseResult
 
 class TestEjudgeXmlParse(unittest.TestCase):
     def test_parse_result(self):
-        res = EjudgeXmlParseResult("42", "OK", "ACM", ["OK", "OK", "OK"])
+        res = EjudgeXmlParseResult("42", "OK", "kirov", ["OK", "OK", "OK"])
         self.assertEqual(res.submit_id, "42")
         self.assertEqual(res.submit_outcome, "OK")
-        self.assertEqual(res.scoring, "ACM")
+        self.assertEqual(res.scoring, "kirov")
         self.assertEqual(res.run_outcomes, ["OK", "OK", "OK"])
 
     def test_normal(self):
@@ -17,7 +17,7 @@ class TestEjudgeXmlParse(unittest.TestCase):
         self.assertNotEqual(res, None)
         self.assertEqual(res.submit_id, '15')
         self.assertEqual(res.submit_outcome, 'OK')
-        self.assertEqual(res.scoring, "ACM")
+        self.assertEqual(res.scoring, "kirov")
         self.assertEqual(res.run_outcomes, ['OK', 'OK', 'OK', 'OK'])
 
     def test_empty_xml(self):

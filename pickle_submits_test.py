@@ -17,14 +17,14 @@ class PickleSubmitTests(unittest.TestCase):
             rmtree(self.pickle_submit.default_path)
 
     def test_no_write(self):
-        self.pickle_submit.visit(Submit('0', ('17', '0'), '179', '0', [], '1', 'ACM'))
+        self.pickle_submit.visit(Submit('0', ('17', '0'), '179', '0', [], '1', 'kirov'))
         self.pickle_submit.write_file()
         self.pickle_submit.write_file()
         self.assertEqual(len(listdir(join(self.pickle_submit.default_path, '17'))), 1)
 
 
     def test_mk_diff_dir(self):
-        submit = Submit('0', '0', '179', '0', [], '1', 'ACM')
+        submit = Submit('0', '0', '179', '0', [], '1', 'kirov')
 
         submit.problem_id = ("17", "0")
         for i in range(100):
@@ -37,14 +37,14 @@ class PickleSubmitTests(unittest.TestCase):
         self.assertTrue(exists(join(self.pickle_submit.default_path, submit.problem_id[0])))
 
     def test_mk_many_pickles(self):
-        submit = Submit('0', '0', '179', '0', [], '1', 'ACM')
+        submit = Submit('0', '0', '179', '0', [], '1', 'kirov')
         submit.problem_id = ("17", "0")
         for i in range(9000):
             self.pickle_submit.visit(submit)
         self.assertEqual(len(listdir(join(self.pickle_submit.default_path, submit.problem_id[0]))), 90)
 
     def test_particial_sumbits(self):
-        submit = Submit('0', '0', '179', '0', [], '1', 'ACM')
+        submit = Submit('0', '0', '179', '0', [], '1', 'kirov')
         submit.problem_id = ("17", "0")
         for i in range(103):
             self.pickle_submit.visit(submit)
