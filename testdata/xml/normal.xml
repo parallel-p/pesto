@@ -1,7 +1,7 @@
 Content-type: text/xml
 
 <?xml version="1.0" encoding="utf-8"?>
-<testing-report run-id="15" judge-id="1" status="OK" scoring="ACM" archive-available="yes" run-tests="4" correct-available="yes" >
+<testing-report run-id="15" judge-id="1" status="OK" scoring="kirov" archive-available="yes" run-tests="4" correct-available="yes" >
   <tests>
     <test num="1" status="OK" time="310" real-time="348" input-digest="71c878e3c1de0c8e8c240e7c2c9721dfd1e81970" correct-digest="5d9474c0309b7ca09a182d888f73b37a8fe1362c" output-available="yes" stderr-available="yes" checker-output-available="yes" >
     </test>
