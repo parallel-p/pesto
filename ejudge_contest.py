@@ -4,7 +4,7 @@ import os
 class EjudgeContest:
     def __init__(self, dir_name):
         self.problems = []
-        self.dir_name = dir_name
+        self.dir_name = dir_name.rstrip('\\').rstrip('/')
 
         file = open(os.path.join(self.dir_name, 'conf', 'serve.cfg'), encoding='utf-8')
         cfg_string = file.read().strip()
@@ -36,7 +36,7 @@ class EjudgeContest:
 
     def parse_config(self, cfg_string):
         cfg = cfg_string.splitlines(keepends=False)
-        self.contest_id = self.get_param(cfg, 'contest_id')
+        self.contest_id = self.get_param(cfg, 'contest_id') or os.path.basename(self.dir_name).lstrip('0')
         self.scoring = self.get_param(cfg, 'score_system')
         self.languages = self.get_languages(cfg)
         self.problems = self.get_problems(cfg)
