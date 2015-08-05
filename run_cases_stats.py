@@ -28,7 +28,8 @@ if not os.path.isdir(args['contest_dir']):
     exit()
 
 contest_dirs = [args['contest_dir']]
-if 'multicontest':
+
+if args['multicontest']:
     contest_dirs = os.listdir(args['contest_dir'])
     for i in range(len(contest_dirs)):
         contest_dirs[i] = os.path.join(args['contest_dir'], contest_dirs[i])
