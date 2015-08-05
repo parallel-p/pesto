@@ -37,8 +37,8 @@ class TestFindSimilarProblems(unittest.TestCase):
 
     def test_str(self):
         result_string = str(self.finder)
-        correct_string = """Problems 42a from contest #42 and problem 43b from contest #43 are similar (83%).
-Problems 42b from contest #42 and problem 43a from contest #43 are similar (71%).
+        correct_string = """Problems 42a from contest #42 and problem 43b from contest #43 are similar (83%). Tests: +1, -1, 5 not changed.
+Problems 42b from contest #42 and problem 43a from contest #43 are similar (71%). Tests: +2, -0, 5 not changed.
 """
         self.assertEqual(sorted(result_string.split('\n')), sorted(correct_string.split('\n')))
 
