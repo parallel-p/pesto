@@ -23,6 +23,8 @@ class EjudgeContest:
     def get_test_paths_by_problem_id(self, problem_id):
         res = []
         test_num = 0
+        if self.problems[problem_id[1]][1] is None:
+            return []
         while 1:
             test_num += 1
             test_name = self.problems[problem_id[1]][1] + os.path.sep + self.test_pattern % test_num
@@ -97,7 +99,8 @@ class EjudgeContest:
         for problem in cfg[1:]:
             if 'internal_name' in problem:
                 problem['short_name'] = problem['internal_name']
-            problems[problem['id']] = (problem['short_name'].strip('"'), paths[problem['short_name'].strip('"')])
+            problem['short_name'] = problem['short_name'].strip('"')
+            problems[problem['id']] = (problem['short_name'], paths.get(problem['short_name']))
         return problems
 
 

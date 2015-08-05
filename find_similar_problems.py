@@ -40,9 +40,15 @@ class SimilarProblemsFinder:
 
     def __str__(self):
         resulting_string = ''
-        template = 'Problems {p1} from contest #{c1} and problem {p2} from contest #{c2} are similar ({similarity}%).\n'
+        template = 'Problems {p1} from contest #{c1} and problem {p2} from contest #{c2} are similar ({similarity}%).'
+        template += ' Tests: +{added}, -{removed}, {same} not changed.\n'
         for pair in self.result:
+            added_tests_count = self.get_added_tests_count(pair[0], pair[1])
+            removed_tests_count = self.get_removed_tests_count(pair[0], pair[1])
+            same_tests_count = self.get_same_tests_count(pair[0], pair[1])
             resulting_string += template.format(p1=pair[0].name, c1=pair[0].problem_id[0],
                                                 p2=pair[1].name, c2=pair[1].problem_id[0],
-                                                similarity=int(self.get_similarity(pair[0], pair[1])*100))
+                                                similarity=int(self.get_similarity(pair[0], pair[1])*100),
+                                                added = added_tests_count, removed=removed_tests_count,
+                                                same=same_tests_count)
         return resulting_string
