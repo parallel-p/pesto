@@ -95,6 +95,8 @@ class EjudgeContest:
                 paths[shortname] = root
 
         for problem in cfg[1:]:
+            if 'internal_name' in problem:
+                problem['short_name'] = problem['internal_name']
             problems[problem['id']] = (problem['short_name'].strip('"'), paths[problem['short_name'].strip('"')])
         return problems
 
