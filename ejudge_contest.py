@@ -21,8 +21,16 @@ class EjudgeContest:
         return self.problems[problem_id[1]][0]
 
     def get_test_paths_by_problem_id(self, problem_id):
-        return (self.problems[problem_id[1]][1] + os.path.sep + self.test_pattern % int(problem_id[1]),
-                self.problems[problem_id[1]][1] + os.path.sep + self.corr_pattern % int(problem_id[1]))
+        res = []
+        test_num = 0
+        while 1:
+            test_num += 1
+            test_name = self.problems[problem_id[1]][1] + os.path.sep + self.test_pattern % test_num
+            corr_name = self.problems[problem_id[1]][1] + os.path.sep + self.corr_pattern % test_num
+            if not os.path.isfile(test_name) or not os.path.isfile(corr_name):
+                break
+            res.append((test_name, corr_name))
+        return res
 
     def parse_config(self, cfg_string):
         cfg = cfg_string.splitlines(keepends=False)
