@@ -13,6 +13,7 @@ class Walker:
 
 class SingleContestWalker(Walker):
     def walk(self, start_dir):
+        start_dir = start_dir.rstrip('/').rstrip('\\')
         yield (os.path.basename(start_dir).lstrip('0'), start_dir)
 
 class MultipleContestWalker(Walker):
