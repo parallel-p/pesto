@@ -25,6 +25,9 @@ class ElectorVisitor(Visitor):
     def pretty_print(self):
         return self.visitor.pretty_print() if self.visitor is not None else ''
 
+    def get_stat_data(self):
+        return self.visitor.get_stat_data() if self.visitor is not None else {}
+
 
 class ElectorByMaxCasesVisitor(ElectorVisitor):
     def build_key(self, submit):
