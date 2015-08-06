@@ -12,7 +12,7 @@ def parse_args_input(parser):
 
 def parse_args_output(parser):
     parser.add_argument('-c', '--console', help='output to console', action='store_true')
-    parser.add_argument('-o', '--outfile', help='output file')
+    parser.add_argument('-o', '--output', help='output file')
 
 def parse_args_config(parser):
     parser.add_argument('--cfg', help="config file")

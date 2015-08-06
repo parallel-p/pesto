@@ -66,4 +66,5 @@ my_data/
 pickle/
 trash/
 config.ini
+output.txt
 tempdir/
