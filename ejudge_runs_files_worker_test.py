@@ -20,3 +20,6 @@ class EjudgeRunsFilesWorkerTest(PestoTestCase):
     def test_empty(self):
         os.walk = Mock(return_value=[])
         self.assertEqual(list(self.worker.walk('')), [])
+
+if __name__ == "__main__":
+    unittest.main()
