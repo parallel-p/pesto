@@ -11,7 +11,7 @@ from pesto_testcase import PestoTestCase
 class PickleSubmitTests(PestoTestCase):
     def setUp(self):
         self.pickle_submit = PickleWriter()
-        self.pickle_submit.default_path = self.temp_dir + "pickle_walker"
+        self.pickle_submit.default_path = self.temp_dir + "pickle_walker_"
 
     def tearDown(self):
         if exists(self.pickle_submit.default_path):
