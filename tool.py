@@ -1,67 +1,67 @@
-import os
-import os.path
-from ejudge_parse import ejudge_parse
 import tool_config
 import argparse
 import filter_visitor
-import configparser
-from pickle_walker import pickle_walker
+import walker
+import toollib
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Calculate some statistics")
-    parser.add_argument('-m', '--multicontest', help='base_dir contains several contests', action='store_true')
+    toollib.parse_args_config(parser)
+    toollib.parse_args_input(parser)
+    toollib.parse_args_output(parser)
+    toollib.parse_args_filters(parser)
     parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
-    parser.add_argument('-c', '--console', help='output to console', action='store_true')
-    parser.add_argument('-o', '--outfile', help='output file')
-    parser.add_argument('--dir', help="directory containing xml's/pickles")
     parser.add_argument('--database', help="database csv file")
-    parser.add_argument('--cfg', help="config file")
-    parser.add_argument('--filter-problem', help='process only submits for the problem selected')
-    parser.add_argument('--filter-user', help='process only submits by the selected user')
-    parser.add_argument('--filter-contest', help='process only submits in the selected contest')
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
     return vars(parser.parse_args())
 
 
-def read_config(config_name):
-    config = configparser.ConfigParser()
-    config.read(config_name)
-    return config['tool']
-
-
 def get_arguments():
-    args = parse_args()
-    config_name = args['cfg'] if args['cfg'] else 'default.ini'
+    args, config = parse_args(), None
+    if args['cfg']:
+        try:
+            config = toollib.read_config(args['cfg'], 'tool')
+        except KeyError:
+            print('Incorrect config filename.')
+            exit()
+    else:
+        config = dict(pickle_dir='pickle', database=None, base_dir=None, trash='trash', output='output.txt')
+
+    base_dir, output, csv_filename = None, None, None
     try:
-        config = read_config(config_name)
-    except KeyError:
-        print('Incorrect config filename.')
-        exit()
-    try:
+        if args['preset_name'] in ['7', 'gen_pickles']:
+            if args['pickle']:
+                print('You want to gen pickles from pickles, seriously?')
+                exit()
+            if args['console']:
+                print('Can you imagine pickles inside the console?')
+                exit()
+            output = config['pickle_dir']
+        else:
+            output = (args['output'] if args['output'] else config['output']) if not args['console'] else None
+        output = output.rstrip('/').rstrip('\\') if output else None
         base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
+        base_dir = base_dir.rstrip('/').rstrip('\\') if base_dir else None
         csv_filename = args['database'] if args['database'] else config['database']
-        outfile = (args['outfile'] if args['outfile'] else config['outfile']) if not args['console'] else None
     except KeyError:
         print('Invalid config, see config.ini.example')
         exit()
-    is_multicontest = args['multicontest']
-    is_pickle = args['pickle']
-    preset_name = args['preset_name']
-
-    base_dir = base_dir.rstrip('/').rstrip('\\')  # something very important
-
-    if not preset_name:
+    if base_dir is None:
+        print('Directory is not defined.')
+        exit()
+    if not args['pickle'] and csv_filename is None:
+        print('Database file is not defined.')
+        exit()
+    stats_counter = tool_config.get_visitor_by_preset(args['preset_name'], output)
+    if stats_counter is None:
+        print('Preset name is not defined or invalid.')
         print('Presets available:', tool_config.get_presets_info())
         exit()
-    stats_counter = tool_config.get_visitor_by_preset(preset_name)
-    if stats_counter is None:
-        print('Invalid preset name')
-        exit()
 
-    optional = {}
-    if outfile:
-        optional['outfile'] = outfile
+    optional = dict()
+    if output and not (args['preset_name'] in ['7', 'gen_pickles']):
+        optional['outfile'] = output
     if args.get('filter_problem'):
         optional['filter_problem'] = args['filter_problem']
     if args.get('filter_user'):
@@ -69,13 +69,13 @@ def get_arguments():
     if args.get('filter_contest'):
         optional['filter_contest'] = args['filter_contest']
 
-    return base_dir, is_multicontest, is_pickle, csv_filename, stats_counter, optional
+    return base_dir, args['multicontest'], args['pickle'], csv_filename, stats_counter, optional
 
 
 def main():
     base_dir, is_multicontest, is_pickle, csv_filename, visitor, optional = get_arguments()
     if is_multicontest:
-        home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
+        home_dirs = toollib.get_contests_from_dir(base_dir)
     else:
         home_dirs = [base_dir]
     if 'filter_user' in optional:
@@ -84,12 +84,23 @@ def main():
         visitor = filter_visitor.FilterByProblemVisitor(visitor, optional['filter_problem'])
     if 'filter_contest' in optional:
         visitor = filter_visitor.FilterByContestVisitor(visitor, optional['filter_contest'])
-    if is_pickle:
-        for home_dir in home_dirs:
-            for submit in pickle_walker(home_dir):
-                visitor.visit(submit)
+    if is_multicontest:
+        contest_walker = walker.MultipleContestWalker()
     else:
-        ejudge_parse(home_dirs, csv_filename, visitor)
+        contest_walker = walker.SingleContestWalker()
+
+    if is_pickle:
+        file_walker = walker.PickleWorker()
+    else:
+        file_walker = walker.AllFilesWalker()
+
+    for contest in contest_walker.walk(base_dir):
+        obj_walker = walker.SubmitWalker(csv_filename, contest[0])
+        for file in file_walker.walk(contest[1]):
+            for submit in obj_walker.walk(file[1]):
+                if submit:
+                    visitor.visit(submit)
+
     result = visitor.pretty_print()
     visitor.close()
     if 'outfile' in optional:

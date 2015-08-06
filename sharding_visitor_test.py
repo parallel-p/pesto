@@ -8,6 +8,7 @@ from sharding_visitor import ShardingByScoringVisitor
 from visitor import FakeVisitor
 from model import Submit
 from visitor_factory import VisitorFactory
+from unittest.mock import Mock
 
 
 class FakeFactory(VisitorFactory):
@@ -44,6 +45,17 @@ class FunctionTesting(unittest.TestCase):
         self.shard_visitor.visit(10)
         self.assertEqual(self.shard_visitor.get_stat_data(), [('10', 1), ('20', 2)])
 
+    def test_pretty_key(self):
+        self.assertEqual(self.shard_visitor.pretty_key(5), '5')
+        self.shard_visitor.visit(10)
+
+    def test_pretty_print(self):
+        self.shard_visitor.visitors['a'] = Mock(pretty_print=Mock(return_value='A'))
+        self.shard_visitor.visitors['b'] = Mock(pretty_print=Mock(return_value=''))
+        self.shard_visitor.visitors['c'] = Mock(pretty_print=Mock(return_value=None))
+        self.shard_visitor.visitors['d'] = Mock(pretty_print=Mock(return_value='D'))
+        self.assertEqual(self.shard_visitor.pretty_print(), '\na:\n\tA\nd:\n\tD')
+
 
 def do_visits(visitor):
     visitor.visit(Submit("0", ("1", "2"), "3", "1", [], 'OK', 'ACM'))
@@ -62,6 +74,10 @@ class TestByProblem(unittest.TestCase):
         self.assertEqual(len(visitor.visitors[("1", "5")].submits), 1)
         self.assertEqual(len(visitor.visitors[("5", "2")].submits), 1)
 
+    def test_pretty_key(self):
+        visitor = ShardingByProblemVisitor(Mock())
+        self.assertEqual(visitor.pretty_key(('1', '2')), 'Contest #1, Problem #2')
+
 
 class TestByContest(unittest.TestCase):
     def test_submits(self):
@@ -70,6 +86,10 @@ class TestByContest(unittest.TestCase):
         self.assertEqual(set(visitor.visitors.keys()), {"1", "5"})
         self.assertEqual(len(visitor.visitors["1"].submits), 4)
         self.assertEqual(len(visitor.visitors["5"].submits), 1)
+
+    def test_pretty_key(self):
+        visitor = ShardingByContestVisitor(Mock())
+        self.assertEqual(visitor.pretty_key('1'), 'Contest #1')
 
 
 class TestByUser(unittest.TestCase):
@@ -81,6 +101,10 @@ class TestByUser(unittest.TestCase):
         self.assertEqual(len(visitor.visitors["1"].submits), 2)
         self.assertEqual(len(visitor.visitors["2"].submits), 2)
 
+    def test_pretty_key(self):
+        visitor = ShardingByUserVisitor(Mock())
+        self.assertEqual(visitor.pretty_key('1'), 'UserID #1')
+
 
 class TestByLang(unittest.TestCase):
     def test_submits(self):
@@ -91,6 +115,10 @@ class TestByLang(unittest.TestCase):
         self.assertEqual(len(visitor.visitors["3"].submits), 1)
         self.assertEqual(len(visitor.visitors["8"].submits), 1)
 
+    def test_pretty_key(self):
+        visitor = ShardingByLangVisitor(Mock())
+        self.assertEqual(visitor.pretty_key('1'), 'LangID #1')
+
 
 class TestByScoring(unittest.TestCase):
     def test_submits(self):
@@ -99,6 +127,10 @@ class TestByScoring(unittest.TestCase):
         self.assertEqual(set(visitor.visitors.keys()), {"ACM", "kirov"})
         self.assertEqual(len(visitor.visitors["ACM"].submits), 2)
         self.assertEqual(len(visitor.visitors["kirov"].submits), 3)
+
+    def test_pretty_key(self):
+        visitor = ShardingByScoringVisitor(Mock())
+        self.assertEqual(visitor.pretty_key('blah'), 'Scoring type - #blah')
 
 if __name__ == "__main__":
     unittest.main()
