@@ -22,3 +22,6 @@ class SubmitsOverCasesTest(unittest.TestCase):
         correct = "-------------\nProblem #('1', '1')\n-------------\n    2 ################################################## 1\n    3 #################################################################################################### 2\n-------------\nProblem #('1', '2')\n-------------\n    3 #################################################################################################### 2\n"
         ejudge_parse([os.path.join(self.base_path, '001')], os.path.join(self.base_path, 'db.csv'), self.visitor)
         self.assertEqual(self.visitor.pretty_print(), correct)
+
+if __name__ == "__main__":
+    unittest.main()

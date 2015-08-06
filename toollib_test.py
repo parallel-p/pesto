@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import Mock, MagicMock
 from pesto_testcase import PestoTestCase
 import configparser
+import os
 import toollib
 
 
@@ -66,3 +67,10 @@ class ToollibTest(PestoTestCase):
         config_parser_object.read.assert_called_once_with('filename')
         self.assertEqual(result, None)
         configparser.ConfigParser = config_parser_backup
+
+    @unittest.mock.patch('os.listdir', return_value=['a', 'b'])
+    def test_get_contests_from_dir(self, d):
+        result = toollib.get_contests_from_dir('d')
+        self.assertEqual(result, [os.path.join('d', 'a'), os.path.join('d', 'b')])
+if __name__ == "__main__":
+    unittest.main()
