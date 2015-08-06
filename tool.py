@@ -54,7 +54,7 @@ def get_arguments():
     if not preset_name:
         print('Presets available:', tool_config.get_presets_info())
         exit()
-    stats_counter = tool_config.get_visitor_by_preset(preset_name)
+    stats_counter = tool_config.get_visitor_by_preset(preset_name, outfile)
     if stats_counter is None:
         print('Invalid preset name')
         exit()
