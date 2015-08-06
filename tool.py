@@ -30,16 +30,24 @@ def get_arguments():
             print('Incorrect config filename.')
             exit()
     else:
-        config = dict(pickle_dir=None, database=None, base_dir=None, trash='trash')
-        config['output'] = 'pickle' if args['pickle'] else 'output.txt'
+        config = dict(pickle_dir='pickle', database=None, base_dir=None, trash='trash', output='output.txt')
 
     base_dir, output, csv_filename = None, None, None
     try:
+        if args['preset_name'] in ['7', 'gen_pickles']:
+            if args['pickle']:
+                print('You want to gen pickles from pickles, seriously?')
+                exit()
+            if args['console']:
+                print('Can you imagine pickles inside the console?')
+                exit()
+            output = config['pickle_dir']
+        else:
+            output = (args['output'] if args['output'] else config['output']) if not args['console'] else None
+        output = output.rstrip('/').rstrip('\\')
         base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
         base_dir = base_dir.rstrip('/').rstrip('\\')
         csv_filename = args['database'] if args['database'] else config['database']
-        output = (args['output'] if args['output'] else config['output']) if not args['console'] else None
-        output = output.rstrip('/').rstrip('\\')
     except KeyError:
         print('Invalid config, see config.ini.example')
         exit()
