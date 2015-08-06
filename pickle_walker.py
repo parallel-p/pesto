@@ -10,6 +10,7 @@ def pickle_walker(start_dir):
                 continue
 
             file_name = join(root, file)
+            arr = []
             try:
                 with open(file_name, 'rb') as file:
                     arr = pickle.load(file)
