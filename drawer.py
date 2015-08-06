@@ -1,5 +1,5 @@
-class Drawer:
-    def __init__(self, img_size):
+class Image:
+    def __init__(self, img_size, background_color):
         pass
 
     def draw_line(self, begin, end, thickness, line_color):
