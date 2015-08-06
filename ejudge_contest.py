@@ -23,7 +23,7 @@ class EjudgeContest:
     def get_test_paths_by_problem_id(self, problem_id):
         res = []
         test_num = 0
-        if self.problems[problem_id[1]][1] is None:
+        if self.problems[problem_id[1]][1] is None or not self.test_pattern or not self.corr_pattern:
             return []
         while 1:
             test_num += 1
@@ -71,25 +71,25 @@ class EjudgeContest:
         elif 'test_sfx' in sect:
             self.test_pattern = '%03d' + sect['test_sfx'].strip('"')
         else:
-            self.test_pattern = '%03d'
+            self.test_pattern = None
         if 'corr_pat' in sect:
             self.corr_pattern = sect['corr_pat'].strip('"')
         elif 'corr_sfx' in sect:
             self.corr_pattern = '%03d' + sect['corr_sfx'].strip('"')
         else:
-            self.corr_pattern = '%03d'
+            self.corr_pattern = None
 
     def get_problems(self, cfg):
         cfg = '\n'.join(cfg).split('[problem]')[1:]
-        if '[testing]' in cfg[-1]:
-            cfg[-1] = cfg[-1].split('[testing]')[0]
+        if '[tester]' in cfg[-1]:
+            cfg[-1] = cfg[-1].split('[tester]')[0]
         cfg = [self.parse_section(sect) for sect in cfg]
         self.get_patterns(cfg[0])
 
         problems = {}
         paths = {}
         for root, dirs, files in os.walk(self.dir_name):
-            if (self.test_pattern % 1) in files:
+            if self.test_pattern and (self.test_pattern % 1) in files:
                 if root.endswith('tests'):
                     shortname = root.rstrip('tests').rstrip(os.path.sep).split(os.path.sep)[-1]
                 else:
