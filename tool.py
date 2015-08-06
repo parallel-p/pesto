@@ -6,37 +6,25 @@ import argparse
 import filter_visitor
 import configparser
 from pickle_walker import pickle_walker
-
+import toollib
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Calculate some statistics")
-    parser.add_argument('-m', '--multicontest', help='base_dir contains several contests', action='store_true')
+    toollib.parse_args_config(parser)
+    toollib.parse_args_input(parser)
+    toollib.parse_args_output(parser)
+    toollib.parse_args_filters(parser)
     parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
-    parser.add_argument('-c', '--console', help='output to console', action='store_true')
-    parser.add_argument('-o', '--outfile', help='output file')
-    parser.add_argument('--dir', help="directory containing xml's/pickles")
     parser.add_argument('--database', help="database csv file")
-    parser.add_argument('--cfg', help="config file")
-    parser.add_argument('--filter-problem', help='process only submits for the problem selected')
-    parser.add_argument('--filter-user', help='process only submits by the selected user')
-    parser.add_argument('--filter-contest', help='process only submits in the selected contest')
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
     return vars(parser.parse_args())
-
-
-def read_config(config_name):
-    config = configparser.ConfigParser()
-    config.read(config_name)
-    return config['tool']
-
 
 def get_arguments():
     args = parse_args()
     config_name = args['cfg'] if args['cfg'] else 'default.ini'
-    try:
-        config = read_config(config_name)
-    except KeyError:
-        print('Incorrect config filename.')
+    config = toollib.read_config(config_name, 'tool')
+    if config is None:
+        print('Incorrect config scpecifed.')
         exit()
     try:
         base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
@@ -75,7 +63,7 @@ def get_arguments():
 def main():
     base_dir, is_multicontest, is_pickle, csv_filename, visitor, optional = get_arguments()
     if is_multicontest:
-        home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
+        home_dirs = toollib.get_contests_from_dir(base_dir)
     else:
         home_dirs = [base_dir]
     if 'filter_user' in optional:

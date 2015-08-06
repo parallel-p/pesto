@@ -5,3 +5,6 @@ database = my_data/file.csv
 pickle_dir = pickle
 trash_dir = trash
 outfile = trash/output.txt
+[cases_stats]
+base_dir = my_data
+outfile = trash/output.txt
