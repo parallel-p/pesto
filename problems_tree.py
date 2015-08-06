@@ -1,5 +1,5 @@
 import find_similar_problems
-import sys
+
 
 class ProblemsTree:
     def __init__(self, problems):
@@ -14,6 +14,9 @@ class ProblemsTree:
                 new_similarity = self.finder.get_similarity(pair[0], pair[1])
                 if new_similarity >= old_similarity:
                     self.problem_previous[pair[1]] = pair[0]
+
+    def get_problems(self):
+        return self.problems
 
     def get_previous_problem(self, problem):
         if problem in self.problem_previous:
