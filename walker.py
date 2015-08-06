@@ -5,16 +5,21 @@ from ejudgedb import EjudgeDB
 from model import Run
 from model import Submit
 import pickle
+import ejudge_contest
+import md5_hasher
+import model
 
 
 class Walker:
     def walk(self, start_dir):
         yield None
 
+
 class SingleContestWalker(Walker):
     def walk(self, start_dir):
         start_dir = start_dir.rstrip('/').rstrip('\\')
         yield (os.path.basename(start_dir).lstrip('0'), start_dir)
+
 
 class MultipleContestWalker(Walker):
     def walk(self, start_dir = os.path.dirname(__file__)):
@@ -25,12 +30,14 @@ class MultipleContestWalker(Walker):
                                and len(contest_id) == 6):
                 yield (contest_id.lstrip('0'), root)
 
+
 class EjudgeRunsFilesWorker(Walker):
     def walk(self, start_dir):
         for dirname, _, filenames in os.walk(os.path.join(start_dir, 'var', 'archive', 'xmlreports')):
             for filename in filenames:
                 file_full_name = os.path.join(dirname, filename)
                 yield ('gzip' if filename.endswith('.gz') else 'xml', file_full_name)
+
 
 class AllFilesWalker(Walker):
     def walk(self, start_dir):
@@ -40,6 +47,7 @@ class AllFilesWalker(Walker):
                     continue
                 file_name = os.path.join(root, file)
                 yield ('gzip' if file.endswith('.gz') else 'xml', file_name)
+
 
 class PickleWorker(Walker):
     def walk(self, start_dir):
@@ -51,10 +59,26 @@ class PickleWorker(Walker):
                 file_name = os.path.join(root, file)
                 yield ('pickle', file_name)
 
+
+class ProblemWalker(Walker):
+    def walk(self, contest_dir):
+        contest = ejudge_contest.EjudgeContest(contest_dir)
+        contest_id = contest.get_contest_id()
+        problems_ids = contest.get_problem_ids()
+        for problem_id in problems_ids:
+            problem_name = contest.get_short_name_by_problem_id(problem_id)
+            tests_paths = contest.get_test_paths_by_problem_id(problem_id)
+            tests_hashes = []
+            for test_path in tests_paths:
+                tests_hashes.append(md5_hasher.get_hash(test_path[0], test_path[1]))
+            yield model.Problem(problem_id, problem_name, tests_hashes)
+
+
 class SubmitWalker(Walker):
     def __init__(self, database_dir, contest_id):
         self.database = EjudgeDB(database_dir)
         self.contest_id = contest_id
+
 
     def walk(self, file_name):
         if file_name.endswith('.gz'):
