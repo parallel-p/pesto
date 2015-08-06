@@ -54,6 +54,11 @@ class TestElectorVisitor(unittest.TestCase):
     def test_key(self):
         self.assertEqual(self.elector.build_key(125), '125')
 
+    def test_stat_data(self):
+        self.assertFalse(self.elector.get_stat_data())
+        self.elector.visitor = Mock(get_stat_data=Mock(return_value=42))
+        self.assertEqual(self.elector.get_stat_data(), 42)
+
 
 class TestElectorByMaxCases(unittest.TestCase):
     def test_key(self):
