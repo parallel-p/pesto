@@ -1,10 +1,6 @@
-import os
-import os.path
-from ejudge_parse import ejudge_parse
 import tool_config
 import argparse
 import filter_visitor
-import configparser
 import walker
 import toollib
 
@@ -44,9 +40,9 @@ def get_arguments():
             output = config['pickle_dir']
         else:
             output = (args['output'] if args['output'] else config['output']) if not args['console'] else None
-        output = output.rstrip('/').rstrip('\\')
+        output = output.rstrip('/').rstrip('\\') if output else None
         base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
-        base_dir = base_dir.rstrip('/').rstrip('\\')
+        base_dir = base_dir.rstrip('/').rstrip('\\') if base_dir else None
         csv_filename = args['database'] if args['database'] else config['database']
     except KeyError:
         print('Invalid config, see config.ini.example')
@@ -64,7 +60,7 @@ def get_arguments():
         exit()
 
     optional = dict()
-    if output:
+    if output and not (args['preset_name'] in ['7', 'gen_pickles']):
         optional['outfile'] = output
     if args.get('filter_problem'):
         optional['filter_problem'] = args['filter_problem']
