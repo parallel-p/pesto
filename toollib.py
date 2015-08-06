@@ -29,4 +29,4 @@ def read_config(filename, section=None):
         return config
 
 def get_contests_from_dir(base_dir):
-    home_dirs = [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
+    return [base_dir + os.path.sep + i for i in os.listdir(base_dir)]
