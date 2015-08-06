@@ -33,6 +33,3 @@ class SubmitsIdsBySignatureVisitor(Visitor):
             answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0], sabmits_num_and_samp[1]))
 
         return '\n'.join(answer)
-
-    def _sortByTestCassesCount(element):
-        return (len(element))
