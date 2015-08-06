@@ -48,7 +48,7 @@ class PickleWorker(Walker):
                     continue
 
                 file_name = os.path.join(root, file)
-                yield file_name
+                yield ('pickle', file_name)
 
 class SubmitWalker(Walker):
     def __init__(self, database_dir, contest_id):
@@ -57,14 +57,14 @@ class SubmitWalker(Walker):
 
     def walk(self, file_name):
         if file_name.endswith('.gz'):
-            current_file = gzip_open(file_name)
-            yield self._get_submit_from_xml(current_file)
+            with gzip_open(file_name) as current_file:
+             yield self._get_submit_from_xml(current_file)
         elif file_name.endswith('.pickle'):
             for submit in self._get_submit_from_pickle(file_name):
                 yield submit
         else:
-            current_file = open(file_name, encoding='utf-8')
-            yield self._get_submit_from_xml(current_file)
+            with open(file_name, encoding='utf-8') as current_file:
+                yield self._get_submit_from_xml(current_file)
 
     def _get_submit_from_pickle(self, file_name):
         try:
