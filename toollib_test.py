@@ -66,3 +66,6 @@ class ToollibTest(PestoTestCase):
         config_parser_object.read.assert_called_once_with('filename')
         self.assertEqual(result, None)
         configparser.ConfigParser = config_parser_backup
+
+if __name__ == "__main__":
+    unittest.main()
