@@ -4,4 +4,4 @@ base_dir = my_data
 database = my_data/file.csv
 pickle_dir = pickle
 trash_dir = trash
-outfile = trash/output.txt
+output = trash/output.txt
