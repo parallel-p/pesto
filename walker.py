@@ -58,11 +58,13 @@ class SubmitWalker(Walker):
     def walk(self, file_name):
         if file_name.endswith('.gz'):
             current_file = gzip_open(file_name)
+            yield self._get_submit_from_xml(current_file)
         elif file_name.endswith('.pickle'):
-            yield self._get_submit_from_pickle(file_name)
+            for submit in self._get_submit_from_pickle(file_name):
+                yield submit
         else:
             current_file = open(file_name, encoding='utf-8')
-        yield self._get_submit_from_xml(current_file)
+            yield self._get_submit_from_xml(current_file)
 
     def _get_submit_from_pickle(self, file_name):
         try:
@@ -70,7 +72,6 @@ class SubmitWalker(Walker):
                 arr = pickle.load(file)
         except pickle.UnpicklingError:
             pass
-
         for submit in arr:
             yield submit
 
