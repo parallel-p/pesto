@@ -29,7 +29,7 @@ def get_arguments():
     try:
         base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
         csv_filename = args['database'] if args['database'] else config['database']
-        outfile = (args['outfile'] if args['outfile'] else config['outfile']) if not args['console'] else None
+        outfile = (args['output'] if args['output'] else config['output']) if not args['console'] else None
     except KeyError:
         print('Invalid config, see config.ini.example')
         exit()
