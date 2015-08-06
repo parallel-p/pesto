@@ -28,7 +28,7 @@ class ToollibTest(PestoTestCase):
         toollib.parse_args_output(parser)
         good_parser = Mock()
         good_parser.add_argument('-c', '--console', help='output to console', action='store_true')
-        good_parser.add_argument('-o', '--outfile', help='output file')
+        good_parser.add_argument('-o', '--output', help='output file')
         self.assertEqual(parser.add_argument.call_args_list, good_parser.add_argument.call_args_list)
 
     def test_parse_args_config(self):
