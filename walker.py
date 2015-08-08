@@ -95,7 +95,7 @@ class SubmitWalker(Walker):
             with open(file_name, 'rb') as file:
                 arr = pickle.load(file)
         except pickle.UnpicklingError:
-            pass
+            arr = []
         for submit in arr:
             yield submit
 
@@ -123,7 +123,7 @@ class SubmitWalker(Walker):
         if None in (problem_id, user_id):
             return None
 
-        runs = [Run(problem_id, submit_id, i + 1, run_outcomes[i][0], run_outcomes[i][1], run_outcomes[i][2]) for i in range(len(run_outcomes))]
+        runs = [Run((self.contest_id, problem_id), submit_id, i + 1, run_outcomes[i][0], run_outcomes[i][1], run_outcomes[i][2]) for i in range(len(run_outcomes))]
         submit = Submit(submit_id, (self.contest_id, problem_id), user_id, lang_id, runs, submit_outcome, scoring, time_stamp)
         return submit
 
