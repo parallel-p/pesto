@@ -12,6 +12,6 @@ class PestoTestCase(unittest.TestCase):
         if 'dirs' in parser and 'temp_dir' in parser['dirs']:
             if not os.path.isdir(parser['dirs']['temp_dir']):
                 os.mkdir(parser['dirs']['temp_dir'])
-            self.temp_dir = parser['dirs']['temp_dir'].rstrip('/').rstrip('\\') + os.path.sep
+            self.temp_dir = parser['dirs']['temp_dir']
         else:
-            self.temp_dir = 'testdata' + os.path.sep
+            self.temp_dir = 'testdata'
