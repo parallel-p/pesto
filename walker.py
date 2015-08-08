@@ -113,7 +113,7 @@ class SubmitWalker(Walker):
         run_outcomes = result.run_outcomes
         scoring = result.scoring
 
-        submit_info = self.get_submit_info(self.contest_id, submit_id)
+        submit_info = self.database.get_submit_info(self.contest_id, submit_id)
 
         problem_id = submit_info.problem_id
         user_id = submit_info.user_id
