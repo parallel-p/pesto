@@ -96,7 +96,7 @@ class SubmitWalker(Walker):
             with open(file_name, 'rb') as file:
                 arr = pickle.load(file)
         except pickle.UnpicklingError:
-            pass
+            arr = []
         for submit in arr:
             yield submit
 

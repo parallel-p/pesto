@@ -5,9 +5,10 @@ from walker import EjudgeRunsFilesWorker
 from walker import AllFilesWalker
 from walker import PickleWorker
 from walker import SubmitWalker
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
 import unittest
 import os.path
+import pickle
 
 
 class TestSingleContestWalker(PestoTestCase):
@@ -75,6 +76,81 @@ class TestPickleWalker(PestoTestCase):
                       ('pickle', os.path.join('testdata', 'pickle_walker', '18', 'pickle000001_3.pickle'))]
         self.assertEqual(sorted(files), sorted(good_files))
 
+
+class TestSubmitWalker(PestoTestCase):
+
+    @patch('walker.EjudgeDB', return_value=5)
+    def test_init(self, db):
+        w = SubmitWalker('7', 'a')
+        self.assertEqual(w.database, 5)
+        db.assert_called_once_with('7')
+
+    @patch('builtins.open', return_value=MagicMock(__exit__=Mock(return_value=False)))
+    @patch('pickle.load', return_value=[1, 2, 3])
+    def test_submit_from_pickle(self, pk, op):
+        res = list(SubmitWalker._get_submit_from_pickle(Mock(), 'filename'))
+        op.assert_called_once_with('filename', 'rb')
+        pk.asssert_called_once_with(42)
+        self.assertEqual(res, [1, 2, 3])
+
+    @patch('builtins.open', return_value=MagicMock(__exit__=Mock(return_value=False)))
+    @patch('pickle.load', return_value=[1, 2, 3], side_effect=pickle.UnpicklingError())
+    def test_submit_from_pickle_error(self, pk, op):
+        res = list(SubmitWalker._get_submit_from_pickle(Mock(), 'filename'))
+        op.assert_called_once_with('filename', 'rb')
+        pk.asssert_called_once_with(42)
+        self.assertEqual(res, [])
+
+    @patch('walker.EjudgeDB', return_value=5)
+    @patch('walker.ejudge_xml_parse', return_value=Mock(submit_id='5', submit_outcome='OK', scoring='ACM', run_outcomes=[('2', '3', 'OK'), ('4', '5', 'WA')]))
+    def test_get_submit_from_xml(self, par, db):
+        w = SubmitWalker('a', '7')
+        w.database = Mock(get_problem_id=Mock(return_value='1'),
+                          get_user_id=Mock(return_value='11'),
+                          get_lang_id=Mock(return_value='2'))
+        res = w._get_submit_from_xml('filename')
+        self.assertEqual(res.submit_id, '5')
+        self.assertEqual(res.problem_id, ('7', '1'))
+        self.assertEqual(res.user_id, '11')
+        self.assertEqual(res.lang_id, '2')
+        self.assertEqual(res.outcome, 'OK')
+        self.assertEqual(res.scoring, 'ACM')
+        self.assertEqual((res.runs[0].problem_id, res.runs[0].submit_id, res.runs[0].case_id, res.runs[0].real_time,
+                          res.runs[0].time, res.runs[0].outcome),
+                         ('1', '5', 1, '2', '3', 'OK'))
+        self.assertEqual((res.runs[1].problem_id, res.runs[1].submit_id, res.runs[1].case_id, res.runs[1].real_time,
+                          res.runs[1].time, res.runs[1].outcome),
+                         ('1', '5', 2, '4', '5', 'WA'))
+        par.assert_called_once_with('filename')
+
+    @patch('walker.EjudgeDB', return_value=5)
+    @patch('walker.ejudge_xml_parse', return_value=None)
+    def test_get_submit_from_xml_none(self, par, db):
+        w = SubmitWalker('a', '7')
+        res = w._get_submit_from_xml('filename')
+        self.assertIsNone(res)
+
+    @patch('walker.EjudgeDB', return_value=5)
+    @patch('walker.ejudge_xml_parse', return_value=None, side_effect=OSError())
+    def test_get_submit_from_xml_error(self, par, db):
+        w = SubmitWalker('a', '7')
+        res = w._get_submit_from_xml('filename')
+        self.assertIsNone(res)
+
+    @patch('walker.EjudgeDB', return_value=5)
+    @patch('walker.ejudge_xml_parse', return_value=Mock(submit_id='5', submit_outcome='OK', scoring='ACM', run_outcomes=[('2', '3', 'OK'), ('4', '5', 'WA')]))
+    def test_get_submit_from_xml_no_value(self, par, db):
+        w = SubmitWalker('a', '7')
+        w.database = Mock(get_problem_id=Mock(return_value=None),
+                          get_user_id=Mock(return_value='11'),
+                          get_lang_id=Mock(return_value='2'))
+        res = w._get_submit_from_xml('filename')
+        self.assertIsNone(res)
+        w.database = Mock(get_problem_id=Mock(return_value='1'),
+                          get_user_id=Mock(return_value=None),
+                          get_lang_id=Mock(return_value='2'))
+        res = w._get_submit_from_xml('filename')
+        self.assertIsNone(res)
 
 if __name__ == "__main__":
     unittest.main()
