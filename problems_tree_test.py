@@ -3,6 +3,7 @@ from unittest.mock import Mock
 from problems_tree import ProblemsTree
 import find_similar_problems
 
+
 class TestProblemsTree(unittest.TestCase):
     def setUp(self):
         self.problems = []
@@ -61,6 +62,9 @@ Problem #1 ("46a") from contest #46: it is Problem #1 ("44a") from contest #44. 
 """
         self.assertEqual(result_string, correct_string)
 
+    def test_get_problems(self):
+        self.tree.problems = 42
+        self.assertEqual(self.tree.get_problems(), 42)
+
 if __name__ == "__main__":
     unittest.main()
-
