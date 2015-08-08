@@ -1,0 +1,1 @@
+EjudgeDatabase = None  # stub
