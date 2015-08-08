@@ -7,7 +7,7 @@ def RGB(r, g, b):
 
 class Image:
     def __init__(self, img_size, background_color):
-        self.image = PIL.Image.new("RGBA", img_size, background_color)
+        self.image = PIL.Image.new("RGB", img_size, background_color)
         self.draw = PIL.ImageDraw.Draw(self.image)
 
     def draw_line(self, begin, end, line_thickness, line_color):
