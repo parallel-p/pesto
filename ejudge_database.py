@@ -6,7 +6,7 @@ class EjudgeSubmitInfo:
         self.timestamp = timestamp
 
 
-class EjudgeDatabases:
+class EjudgeDatabase:
     def __init__(self, ejudge_cursor):
         self.data = {}
         self.db_cursor = ejudge_cursor
