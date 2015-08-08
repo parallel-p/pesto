@@ -1,3 +1,4 @@
+import unittest
 from unittest.mock import Mock
 from pesto_testcase import PestoTestCase
 from mysql_connector import MySQLConnector

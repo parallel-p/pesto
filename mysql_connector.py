@@ -13,7 +13,7 @@ class MySQLConnector():
         # NO ERRORS ARE CAUGHT HERE
 
     def get_cursor(self):
-        if connection != None:
+        if self.connection != None:
             return self.connection.cursor()
 
     def close(self):
