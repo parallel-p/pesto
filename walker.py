@@ -75,10 +75,9 @@ class ProblemWalker(Walker):
 
 
 class SubmitWalker(Walker):
-    def __init__(self, database_dir, contest_id):
-        self.database = EjudgeDB(database_dir)
-        self.contest_id = contest_id
-
+    def __init__(self, ejudge_DB):
+        self.database = ejudge_DB
+        self.contest_id = 0
 
     def walk(self, file_name):
         if file_name.endswith('.gz'):
@@ -96,7 +95,7 @@ class SubmitWalker(Walker):
             with open(file_name, 'rb') as file:
                 arr = pickle.load(file)
         except pickle.UnpicklingError:
-            pass
+            arr = []
         for submit in arr:
             yield submit
 
@@ -108,18 +107,23 @@ class SubmitWalker(Walker):
 
         if result is None:
             return None
+
         submit_id = result.submit_id
         submit_outcome = result.submit_outcome
         run_outcomes = result.run_outcomes
         scoring = result.scoring
-        problem_id = self.database.get_problem_id(self.contest_id, submit_id)
-        user_id = self.database.get_user_id(self.contest_id, submit_id)
-        lang_id = self.database.get_lang_id(self.contest_id, submit_id)
+
+        submit_info = self.database.get_submit_info(self.contest_id, submit_id)
+
+        problem_id = submit_info.problem_id
+        user_id = submit_info.user_id
+        lang_id = submit_info.lang_id
+        time_stamp = submit_info.timestamp
 
         if None in (problem_id, user_id):
             return None
 
-        runs = [Run(problem_id, submit_id, i + 1, run_outcomes[i][0], run_outcomes[i][1], run_outcomes[i][2]) for i in range(len(run_outcomes))]
-        submit = Submit(submit_id, (self.contest_id, problem_id), user_id, lang_id, runs, submit_outcome, scoring)
+        runs = [Run((self.contest_id, problem_id), submit_id, i + 1, run_outcomes[i][0], run_outcomes[i][1], run_outcomes[i][2]) for i in range(len(run_outcomes))]
+        submit = Submit(submit_id, (self.contest_id, problem_id), user_id, lang_id, runs, submit_outcome, scoring, time_stamp)
         return submit
 

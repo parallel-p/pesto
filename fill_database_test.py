@@ -1,0 +1,62 @@
+import unittest
+from unittest.mock import patch, MagicMock
+from fill_database import create_submit_walker, fill_from_pickles, fill_from_xml
+
+
+class TestFillDatabase(unittest.TestCase):
+    @patch('fill_database.EjudgeDatabase')
+    @patch('fill_database.SubmitWalker', return_value=17)
+    def test_create_walker(self, sw, ed):
+        self.assertEqual(create_submit_walker(1), 17)
+        ed.assert_called_once_with(1)
+
+
+    @patch('fill_database.create_submit_walker')
+    @patch('fill_database.PickleWorker')
+    @patch('fill_database.fill_db_from_submit')
+    def test_fill_from_pickles(self, fill, pw, sw):
+        walker = MagicMock(walk=MagicMock(return_value=[10, 20, 30]))
+        pickle_walker = MagicMock(walk=MagicMock(return_value=[(1, 'a'), (2, 'b'), (3, 'c')]))
+        pw.return_value = pickle_walker
+        sw.return_value = walker
+        fill_from_pickles('sqlite', 'ejudge', 'pickle', 'origin')
+        sw.assert_called_once_with('ejudge')
+        good = '''[call('sqlite', 10, 'origin'),
+ call('sqlite', 20, 'origin'),
+ call('sqlite', 30, 'origin'),
+ call('sqlite', 10, 'origin'),
+ call('sqlite', 20, 'origin'),
+ call('sqlite', 30, 'origin'),
+ call('sqlite', 10, 'origin'),
+ call('sqlite', 20, 'origin'),
+ call('sqlite', 30, 'origin')]'''
+        self.assertEqual(str(fill.call_args_list), good)
+
+
+    @patch('fill_database.create_submit_walker')
+    @patch('fill_database.fill_db_from_submit')
+    @patch('fill_database.MultipleContestWalker')
+    @patch('fill_database.EjudgeRunsFilesWorker')
+    def test_fill_from_xml(self, er, mc, fill, sw):
+        walker = MagicMock(walk=MagicMock(return_value=[10, 20]))
+        er.return_value = MagicMock(walk=MagicMock(return_value=[(1, 'a'), (2, 'b')]))
+        mc.return_value = MagicMock(walk=MagicMock(return_value=[(1, 'a'), (2, 'b')]))
+        sw.return_value = walker
+        fill_from_xml('sqlite', 'ejudge', 'dir', 'origin')
+        sw.assert_called_once_with('ejudge')
+        good = '''[call('sqlite', 10, 'origin'),
+ call('sqlite', 20, 'origin'),
+ call('sqlite', 10, 'origin'),
+ call('sqlite', 20, 'origin'),
+ call('sqlite', 10, 'origin'),
+ call('sqlite', 20, 'origin'),
+ call('sqlite', 10, 'origin'),
+ call('sqlite', 20, 'origin')]'''
+        self.assertEqual(str(fill.call_args_list), good)
+
+
+
+
+
+if __name__ == "__main__":
+    unittest.main()
