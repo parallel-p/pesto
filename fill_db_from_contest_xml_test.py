@@ -25,3 +25,6 @@ class FillDBFromContestXMLTest(PestoTestCase):
                         'UPDATE Contests SET name = "Contest name #2" WHERE origin = "lksh" AND contest_id = 179179', \
                         'UPDATE Contests SET name = "Yo, i am contest name #3!" WHERE origin = "lksh" AND contest_id = 031337']
         self.assertEqual(resulting_requests, good_requests)
+
+if __name__ == "__main__":
+    unittest.main()

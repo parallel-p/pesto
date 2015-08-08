@@ -27,3 +27,6 @@ class ExtractCasesToDBTest(PestoTestCase):
                         'UPDATE Cases SET io_hash = asdf WHERE problem_ref = 2 AND case_id = 2',\
                         'UPDATE Cases SET io_hash = zxcv WHERE problem_ref = 2 AND case_id = 3']
         self.assertEqual(resulting_requests, good_requests)
+
+if __name__ == "__main__":
+    unittest.main()
