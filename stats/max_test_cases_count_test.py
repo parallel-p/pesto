@@ -34,6 +34,11 @@ class MaxTestCountTest(unittest.TestCase):
         self.assertEqual(res1, 10)
         self.assertEqual(res2, 11)
 
+    def test_pretty_print(self):
+        visitor = MaxTestCasesCount()
+        visitor.result = 42
+        self.assertEqual(visitor.pretty_print(), 'Test cases:42')
+
 
 if __name__ == "main":
     unittest.main()
