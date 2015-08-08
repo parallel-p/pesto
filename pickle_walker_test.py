@@ -12,7 +12,7 @@ from pesto_testcase import PestoTestCase
 class Tester(PestoTestCase):
     def setUp(self):
         self.pickle_submit = PickleWriter()
-        self.pickle_submit.default_path = self.temp_dir + "pickle_walker"
+        self.pickle_submit.default_path = join(self.temp_dir, "pickle_walker_")
 
     def tearDown(self):
         if exists(self.pickle_submit.default_path):
@@ -46,6 +46,17 @@ class Tester(PestoTestCase):
         for submit in parsed_submits:
             check_set.add(submit.problem_id[0])
         self.assertEqual(check_set, {"17", "18", "19"})
+
+    def test_wrong_pickles(self):
+        submit = Submit('0', '0', '179', '0', [], '1', "kirov")
+        submit.problem_id = ("17", "0")
+        self.pickle_submit.visit(submit)
+        self.pickle_submit.write_file()
+        open(join(self.pickle_submit.default_path, 'not_a_pickle.dat'), 'w').close()
+        with open(join(self.pickle_submit.default_path, 'bad_pickle.pickle'), 'w') as f:
+            f.write('123')
+        for parsed_submit in pickle_walker(self.pickle_submit.default_path):
+            self.assertEqual(str(submit), str(parsed_submit))
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ class IntegrationTest(PestoTestCase):
                                'multiple_submits_count_submit_test.csv')
         ejudge_parse(contest_dir, csv_dir, self.visitor)
         self.pickler = PickleWriter()
-        self.pickler.default_path = self.temp_dir + os.path.join('integration_tests', 'pickle')
+        self.pickler.default_path = os.path.join(self.temp_dir, 'integration_tests', 'pickle')
 
         try:
             os.makedirs(self.pickler.default_path)

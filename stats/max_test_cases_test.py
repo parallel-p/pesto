@@ -11,3 +11,5 @@ class MaxTestCases(unittest.TestCase):
                                                     ('17', '3'): 3,
                                                     ('17', '4'): 4})
 
+if __name__ == "__main__":
+    unittest.main()

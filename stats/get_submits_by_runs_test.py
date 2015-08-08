@@ -40,3 +40,6 @@ class SubmitsByRunsTest(unittest.TestCase):
             get_submits_by_runs(None, 3)
         with self.assertRaises(TypeError):
             get_submits_by_runs([None], 3)
+
+if __name__ == "__main__":
+    unittest.main()

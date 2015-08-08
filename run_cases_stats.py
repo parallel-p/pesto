@@ -4,6 +4,8 @@ from find_same_problems import SameProblemsFinder
 from find_similar_problems import SimilarProblemsFinder
 from problem_generator import problem_generator
 import os
+import configparser
+import toollib
 
 
 def display_stats_list():
@@ -12,37 +14,55 @@ def display_stats_list():
     print('1. same_problems - Find same problems.')
     print('2. similar_problems - Find similar problems (problems with many same tests)')
 
+def parse_args():
+    parser = ArgumentParser(description='Run cases-based statistic.')
+    toollib.parse_args_input(parser)
+    toollib.parse_args_output(parser)
+    toollib.parse_args_config(parser)
+    parser.add_argument('statistic', help='Name of statistic to run.', nargs='?', type=str)
+    return vars(parser.parse_args())
 
-parser = ArgumentParser(description='Run cases-based statistic.')
-parser.add_argument('-m', '--multicontest', help='contest_dir contains several contests.', action='store_true')
-parser.add_argument('contest_dir', help='Name of a directory with contest files', type=str)
-parser.add_argument('statistic', help='Name of statistic to run.', nargs='?', type=str)
-args = vars(parser.parse_args())
+def main():
+    args = parse_args()
+    
+    config_name = args['cfg'] if args['cfg'] else 'default.ini'
 
-if 'statistic' not in args:
-    display_stats_list()
-    exit()
+    config = toollib.read_config(config_name, 'cases_stats')
+    if config is None:
+        print('Incorrect config scpecifed.')
+        exit()
 
-if not os.path.isdir(args['contest_dir']):
-    print('Please, specify correct directory.')
-    exit()
+    if args['statistic'] is None:
+        display_stats_list()
+        exit()
 
-contest_dirs = [args['contest_dir']]
+    try:
+        base_dir = args['dir'] if args['dir'] else config['base_dir']
+    except KeyError:
+        print('Invalid config, see config.ini.example')
+        exit()
 
-if args['multicontest']:
-    contest_dirs = os.listdir(args['contest_dir'])
-    for i in range(len(contest_dirs)):
-        contest_dirs[i] = os.path.join(args['contest_dir'], contest_dirs[i])
+    if not os.path.isdir(base_dir):
+        print('Incorrect dir specified.')
+        exit()
 
-if args['statistic'] in ['0', 'cases_count']:
-    counter = CasesCounter(problem_generator(contest_dirs))
-    print(str(counter))
-elif args['statistic'] in ['1', 'same_problems']:
-    finder = SameProblemsFinder(problem_generator(contest_dirs))
-    print(str(finder))
-elif args['statistic'] in ['2', 'similar_problems']:
-    finder = SimilarProblemsFinder(problem_generator(contest_dirs))
-    print(str(finder))
-else:
-    print('Incorrect statistic specified.')
-    display_stats_list()
+    if args['multicontest']:
+        contest_dirs = toollib.get_contests_from_dir(base_dir)
+    else:
+        contest_dirs = [base_dir]
+
+    if args['statistic'] in ['0', 'cases_count']:
+        counter = CasesCounter(problem_generator(contest_dirs))
+        print(str(counter))
+    elif args['statistic'] in ['1', 'same_problems']:
+        finder = SameProblemsFinder(problem_generator(contest_dirs))
+        print(str(finder))
+    elif args['statistic'] in ['2', 'similar_problems']:
+        finder = SimilarProblemsFinder(problem_generator(contest_dirs))
+        print(str(finder))
+    else:
+        print('Incorrect statistic specified.')
+        display_stats_list()
+
+if __name__ == '__main__':
+    main()

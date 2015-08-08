@@ -11,6 +11,7 @@ from sharding_visitor import ShardingByProblemVisitor
 from sharding_visitor import ShardingByLangVisitor
 from sharding_visitor import ShardingByScoringVisitor
 from elector_visitor import ElectorByMaxCasesVisitor
+from os import path
 
 
 def get_presets_info():
@@ -25,7 +26,7 @@ def get_presets_info():
     """
 
 
-def get_visitor_by_preset(preset):
+def get_visitor_by_preset(preset, output):
     if preset in ['1', 'count_submits']:
         return ShardingByContestVisitor(SubmitsCounterFactory())
     if preset in ['2', 'eq_matrix']:
@@ -39,7 +40,9 @@ def get_visitor_by_preset(preset):
     if preset in ['6', 'submits_by_tests']:
         return SubmitsOverTestCasesNumbers()
     if preset in ['7', 'gen_pickles']:
-        return PickleWriter()
+        visitor = PickleWriter()
+        visitor.default_path = path.join('.', output)
+        return visitor
     return None
 
 
