@@ -7,6 +7,10 @@ class TextGetName(unittest.TestCase):
     def test_common(self):
         self.assertEqual(ejudge_get_contest_name('nope'), 'contestname')
 
+    @patch('builtins.open', mock_open(read_data='<contest><noname>contestname</noname></contest>'))
+    def test_no_name(self):
+        self.assertIsNone(ejudge_get_contest_name('nope'))
+
     @patch('builtins.open', mock_open(read_data='not_xml'))
     def test_not_xml(self):
         self.assertIsNone(ejudge_get_contest_name('nope'))

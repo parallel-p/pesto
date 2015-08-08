@@ -8,4 +8,7 @@ def ejudge_get_contest_name(xml_filename):
         xml_root = ETree.fromstring(data)
     except ETree.ParseError:
         return None
-    return xml_root.find("name").text
+    try:
+        return xml_root.find("name").text
+    except AttributeError:
+        return None
