@@ -13,6 +13,6 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
                                     (problem.name, contest_ref, problem.problem_id[1]))
         problem_ref = cursor.execute('SELECT id FROM Problems WHERE contest_ref = ? AND problem_id = ?',\
                                     (contest_ref, problem.problem_id[1])).fetchone()[0]
-        for i in range(len(problem.cases)):
+        for case_num in range(len(problem.cases)):
             cursor.execute('UPDATE Cases SET io_hash = ? WHERE problem_ref = ? AND case_id = ?',\
-                            (problem.cases[i], problem_ref, i + 1))
+                            (problem.cases[case_num], problem_ref, case_num + 1))
