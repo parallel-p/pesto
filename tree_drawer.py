@@ -68,9 +68,6 @@ def _point_rectangle_distance_sqr(point, rect_begin, rect_size):
         return (rect_begin[1] - point[1]) ** 2
     else:
         return (point[1] - rect_end[1]) ** 2
-    # center = (point[0] + rect_size[0] / 2, point[1] + rect_size[1] / 2)
-    # vec_w = (point[0] - center[0], (point[1] - center[1]) * PROBLEM_SIZE_Y / PROBLEM_SIZE_X)
-    # return _distance_sqr(vec_w) ** 0.5 - PROBLEM_SIZE_X / 2 *
 
 
 class TreeDrawer:
