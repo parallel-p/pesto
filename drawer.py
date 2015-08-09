@@ -22,8 +22,13 @@ class Image:
     def draw_rectangle(self, begin, size, border_thickness, border_color, rectangle_color):
         self.draw.rectangle(begin + (begin[0] + size[0], begin[1] + size[1]), rectangle_color, border_color)
 
+    def draw_circle(self, center, radius, border_thickness, border_color, circle_color):
+        self.draw.ellipse((center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius),
+                          circle_color, border_color)
+
     def draw_text(self, text, begin, size, font, text_color):
         self.draw.text(begin + (begin[0] + size[0], begin[1] + size[1]), text, text_color)
 
     def save_png(self, file_name):
         self.image.save(file_name, 'BMP')
+
