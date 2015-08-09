@@ -4,46 +4,48 @@ class DBSubmitsFiller:
 
     def fill_db_from_submit(self, submit, origin):
         submit.problem_id[0] = submit.problem_id[0].rjust(6, '0')
-        contest_def = [('origin', origin), ('scoring', submit.scoring), ('contest_id', submit.problem_id[0])]
-        contest_ref = self.db_define_ref('Contests', contest_def)
 
-        user_def = [('origin', origin), ('user_id', submit.user_id)]
-        user_ref = self.db_define_ref('Users', user_def)
+        keys, values = ['origin', 'scoring', 'contest_id'], [origin, submit.scoring, submit.problem_id[0]]
+        contest_ref = self.db_define_ref('Contests', keys, values)
 
-        problem_def = [('contest_ref', contest_ref), ('problem_id', submit.problem_id[1])]
-        problem_ref = self.db_define_ref('Problems', problem_def)
+        keys, values = ['origin', 'user_id'], [origin, submit.user_id]
+        user_ref = self.db_define_ref('Users', keys, values)
 
-        submit_def = [('submit_id', submit.submit_id), ('problem', problem_ref)]
-        submit_ref = self.db_define_ref('Submits', submit_def)
+        keys, values = ['contest_ref', 'problem_id'], [contest_ref, submit.problem_id[1]]
+        problem_ref = self.db_define_ref('Problems', keys, values)
 
-        update = [('lang_id', submit.lang_id), ('outcome', submit.outcome), ('timestamp', submit.timestamp),
-                  ('user_ref', user_ref)]
-        self.db_update('Submits', submit_ref, update)
+        keys, values = ['submit_id', 'problem_ref'], [submit.submit_id, problem_ref]
+        submit_ref = self.db_define_ref('Submits', keys, values)
+
+        keys = ['lang_id', 'outcome', 'timestamp', 'user_ref']
+        values = [submit.lang_id, submit.outcome, submit.timestamp, user_ref]
+        self.db_update('Submits', submit_ref, keys, values)
 
         for run in submit.runs:
-            case_def = [('problem_ref', problem_ref), ('case_id', run.case_id)]
-            case_ref = self.db_define_ref('Cases', case_def)
+            keys, values = ['problem_ref', 'case_id'], [problem_ref, run.case_id]
+            case_ref = self.db_define_ref('Cases', keys, values)
 
-            run_def = [('submit_ref', submit_ref), ('case_ref', case_ref)]
-            run_ref = self.db_define_ref('Runs', run_def)
+            keys, values = ['submit_ref', 'case_ref'], [submit_ref, case_ref]
+            run_ref = self.db_define_ref('Runs', keys, values)
 
-            update = [('realtime', run.real_time), ('time', run.time), ('outcome', run.outcome)]
-            self.db_update('Runs', run_ref, update)
+            keys, values = ['realtime', 'time', 'outcome'], [run.real_time, run.time, run.outcome]
+            self.db_update('Runs', run_ref, keys, values)
 
-    def db_define_ref(self, table_name, params):
-        ref = self.db_find_ref(table_name, params)
+    def db_define_ref(self, table, keys, values):
+        ref = self.db_find_ref(table, keys, values)
         if ref is None:
-            self.db_cur.execute('INSERT INTO ' + table_name + ' (id' + ', ?' * len(params) + ') VALUES (NULL' +
-                                ', ?' * len(params) + ')', *[y for x in zip(*params) for y in x])
-            ref = self.db_find_ref(table_name, params)
+            keys_str = ', '.join(keys)
+            ans = ', ?' * len(keys)
+            self.db_cur.execute('INSERT INTO {} (id, {}) VALUES (NULL{})'.format(table, keys_str, ans), values)
+            ref = self.db_find_ref(table, keys, values)
         return ref
 
-    def db_find_ref(self, table_name, params):
-        self.db_cur.execute('SELECT id FROM ' + table_name + ' WHERE ' + ' AND '.join(['? = ?'] * len(params)),
-                            *[y for x in params for y in x])
+    def db_find_ref(self, table, keys, values):
+        equals = ' AND '.join(['{} = ?'] * len(keys)).format(*keys)
+        self.db_cur.execute('SELECT id FROM {} WHERE {}'.format(table, equals), values)
         query = self.db_cur.fetchone()
         return query[0] if query else None
 
-    def db_update(self, table_name, ref, update):
-        self.db_cur.execute('UPDATE ' + table_name + ' SET ' + ', '.join(['? = ?'] * len(update)) + ' WHERE id = ?',
-                            *([y for x in update for y in x] + [ref]))
+    def db_update(self, table, ref, keys, values):
+        equals = ', '.join(['{} = ?'] * len(keys)).format(*keys)
+        self.db_cur.execute('UPDATE {} SET {} WHERE id = {}'.format(table, equals, ref), values)
