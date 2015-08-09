@@ -3,6 +3,7 @@ from case_counter import CasesCounter
 from find_same_problems import SameProblemsFinder
 from find_similar_problems import SimilarProblemsFinder
 from problem_generator import problem_generator
+from walker import MultipleContestWalker
 import os
 import configparser
 import toollib
@@ -29,7 +30,7 @@ def main():
 
     config = toollib.read_config(config_name, 'cases_stats')
     if config is None:
-        print('Incorrect config scpecifed.')
+        print('Incorrect config specified.')
         exit()
 
     if args['statistic'] is None:
@@ -47,7 +48,7 @@ def main():
         exit()
 
     if args['multicontest']:
-        contest_dirs = toollib.get_contests_from_dir(base_dir)
+        contest_dirs = MultipleContestWalker().walk(base_dir)
     else:
         contest_dirs = [base_dir]
 
