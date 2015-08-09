@@ -24,6 +24,22 @@ class ProblemsTree:
         else:
             return None
 
+    def get_similarity_to_parent(self, problem):
+        return finder.get_similarity(self.get_previous_problem(problem), problem)
+
+    def get_tests_same_with_parent(self, problem):
+        return finder.get_same_tests_count(self.get_previous_problem(problem), problem)
+
+    def get_removed_tests_count(self, problem):
+        return finder.get_removed_tests_count(self.get_previous_problem(problem), problem)
+
+    def get_added_tests_count(self, problem):
+        return finder.get_added_tests_count(self.get_previous_problem(problem), problem)
+
+    def get_relation_to_parent(self, problem):
+        return self.get_similarity_to_parent(problem), self.get_tests_same_with_parent(problem),
+                self.get_removed_tests_count(problem), self.get_added_tests_count(problem)
+
     def __str__(self):
         resulting_string = ''
         for problem in self.problems:
