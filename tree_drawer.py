@@ -22,6 +22,7 @@ LOCATE_LINES_MAX_SPEED = 8.0
 LOCATE_LINES_MAX_SPEED_SQR = LOCATE_LINES_MAX_SPEED ** 2
 LOCATE_LINES_PROBLEMS_FORCE = -10000.0
 LOCATE_LINES_DESTINATION_CONSTANT_FORCE = 4.0
+LOCATE_LINES_MAX_ITERATIONS = 3000
 
 LOCATE_LINES_LINE_CONSTANT_FORCE = 1.0
 LOCATE_LINES_LINE_FORCE_DISTANCE = 20
@@ -123,7 +124,7 @@ class TreeDrawer:
             steps = 0
             while True:
                 steps += 1
-                if steps == 3000:
+                if steps == LOCATE_LINES_MAX_ITERATIONS:
                     print("Failed to locate line", len(self.lines) - 1, file=sys.stderr)
                     break
                 speed_sqr = _vector_length_sqr((curr_vx, curr_vy))
