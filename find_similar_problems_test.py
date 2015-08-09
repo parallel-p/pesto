@@ -10,11 +10,11 @@ class TestFindSimilarProblems(unittest.TestCase):
         self.problems[-1].name = '42a'
         self.problems.append(Mock(cases=['b1', 'b2', 'b3', 'b4', 'b5'], problem_id=('42', '2')))
         self.problems[-1].name = '42b'
-        self.problems.append(Mock(cases=['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'], problem_id=('43', '2')))
+        self.problems.append(Mock(cases=['b7', 'b2', 'b4', 'b3', 'b5', 'b6', 'b1'], problem_id=('43', '2')))
         self.problems[-1].name = '43a'
         self.problems.append(Mock(cases=['a1', 'a2', 'a3', 'a4', 'a5', 'a7'], problem_id=('43', '1')))
         self.problems[-1].name = '43b'
-        self.problems.append(Mock(cases=['c1', 'c2', 'c3', 'c4'], problem_id=('44', '1')))
+        self.problems.append(Mock(cases=['c2', 'c1', 'c3', 'c4'], problem_id=('44', '1')))
         self.problems[-1].name = '44a'
         self.finder = SimilarProblemsFinder(self.problems)
 
