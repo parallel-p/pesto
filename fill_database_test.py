@@ -11,7 +11,6 @@ class TestFillDatabase(unittest.TestCase):
         self.assertEqual(create_submit_walker(), 17)
         ed.assert_called_once_with(1)
 
-
     @patch('fill_database.create_submit_walker')
     @patch('fill_database.PickleWorker')
     @patch('fill_database.fill_db_from_submit')
@@ -21,17 +20,10 @@ class TestFillDatabase(unittest.TestCase):
         pw.return_value = pickle_walker
         sw.return_value = walker
         fill_from_pickles('sqlite', 'pickle', 'origin')
-        good = '''[call('sqlite', 10, 'origin'),
- call('sqlite', 20, 'origin'),
- call('sqlite', 30, 'origin'),
- call('sqlite', 10, 'origin'),
- call('sqlite', 20, 'origin'),
- call('sqlite', 30, 'origin'),
- call('sqlite', 10, 'origin'),
- call('sqlite', 20, 'origin'),
- call('sqlite', 30, 'origin')]'''
+        good = ("[call('sqlite', 10, 'origin'),\n call('sqlite', 20, 'origin'),\n call('sqlite', 30, 'origin'),\n "
+                "call('sqlite', 10, 'origin'),\n call('sqlite', 20, 'origin'),\n call('sqlite', 30, 'origin'),\n "
+                "call('sqlite', 10, 'origin'),\n call('sqlite', 20, 'origin'),\n call('sqlite', 30, 'origin')]")
         self.assertEqual(str(fill.call_args_list), good)
-
 
     @patch('fill_database.create_submit_walker')
     @patch('fill_database.fill_db_from_submit')
@@ -44,18 +36,10 @@ class TestFillDatabase(unittest.TestCase):
         sw.return_value = walker
         fill_from_xml('sqlite', 'ejudge', 'dir', 'origin')
         sw.assert_called_once_with('ejudge')
-        good = '''[call('sqlite', 10, 'origin'),
- call('sqlite', 20, 'origin'),
- call('sqlite', 10, 'origin'),
- call('sqlite', 20, 'origin'),
- call('sqlite', 10, 'origin'),
- call('sqlite', 20, 'origin'),
- call('sqlite', 10, 'origin'),
- call('sqlite', 20, 'origin')]'''
+        good = ("[call('sqlite', 10, 'origin'),\n call('sqlite', 20, 'origin'),\n call('sqlite', 10, 'origin'),\n "
+                "call('sqlite', 20, 'origin'),\n call('sqlite', 10, 'origin'),\n call('sqlite', 20, 'origin'),\n "
+                "call('sqlite', 10, 'origin'),\n call('sqlite', 20, 'origin')]")
         self.assertEqual(str(fill.call_args_list), good)
-
-
-
 
 
 if __name__ == "__main__":
