@@ -100,6 +100,8 @@ class SubmitWalker(Walker):
             yield submit
 
     def _get_submit_from_xml(self, xml_file):
+        if self.database == None:
+            return None
         try:
             result = ejudge_xml_parse(xml_file)
         except OSError:

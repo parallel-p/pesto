@@ -3,7 +3,8 @@ import argparse
 import filter_visitor
 import walker
 import toollib
-
+from sqlite_connector import SQLiteConnector
+from ejudge_database import EjudgeDatabase
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Calculate some statistics")
@@ -12,6 +13,11 @@ def parse_args():
     toollib.parse_args_output(parser)
     toollib.parse_args_filters(parser)
     parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
+    parser.add_argument('-e', '--ejudge_runs', help="work with runs in ejudge contest", action='store_true')
+    parser.add_argument('-a', '--all_files', help="work with all files in contests dirs", action='store_true')
+    parser.add_argument('--problems', help="load problems from contest", action='store_true')
+    parser.add_argument('-s', '--submits', help="load submits from files", action='store_true')
+
     parser.add_argument('--database', help="database csv file")
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
     return vars(parser.parse_args())
@@ -69,37 +75,55 @@ def get_arguments():
     if args.get('filter_contest'):
         optional['filter_contest'] = args['filter_contest']
 
-    return base_dir, args['multicontest'], args['pickle'], csv_filename, stats_counter, optional
+    return base_dir, args['multicontest'], args['pickle'], csv_filename, stats_counter, optional, args['ejudge_runs'],\
+           args['problems'], args['all_files'], args['submits']
 
 
 def main():
-    base_dir, is_multicontest, is_pickle, csv_filename, visitor, optional = get_arguments()
-    if is_multicontest:
-        home_dirs = toollib.get_contests_from_dir(base_dir)
-    else:
-        home_dirs = [base_dir]
+    base_dir, is_multicontest, is_pickle, database_filename, visitor, optional, is_ejudge_runs, is_problems, is_all_files, is_submits = get_arguments()
     if 'filter_user' in optional:
         visitor = filter_visitor.FilterByUserVisitor(visitor, optional['filter_user'])
     if 'filter_problem' in optional:
         visitor = filter_visitor.FilterByProblemVisitor(visitor, optional['filter_problem'])
     if 'filter_contest' in optional:
         visitor = filter_visitor.FilterByContestVisitor(visitor, optional['filter_contest'])
+
+    if not is_problems:
+        is_submits = True
+
+    ej_db = None
+    connector = None
+    if is_submits and not is_pickle:
+        connector = SQLiteConnector()
+        sqlite_cursor = connector.create_connection(database_filename)
+        ej_db = EjudgeDatabase(sqlite_cursor)
+
+
     if is_multicontest:
         contest_walker = walker.MultipleContestWalker()
     else:
         contest_walker = walker.SingleContestWalker()
 
+    file_walker = walker.AllFilesWalker()
     if is_pickle:
         file_walker = walker.PickleWorker()
-    else:
-        file_walker = walker.AllFilesWalker()
 
     for contest in contest_walker.walk(base_dir):
-        obj_walker = walker.SubmitWalker(csv_filename, contest[0])
-        for file in file_walker.walk(contest[1]):
-            for submit in obj_walker.walk(file[1]):
-                if submit:
-                    visitor.visit(submit)
+        if is_problems:
+            obj_loader = walker.ProblemWalker()
+            for problem in obj_loader.walk(contest[1]):
+                #problem processing
+                print(problem)
+        if is_submits:
+            obj_loader = walker.SubmitWalker(ej_db)
+            if not is_pickle:
+                obj_loader.contest_id = contest[0]
+            for file in file_walker.walk(contest[1]):
+                for submit in obj_loader.walk(file[1]):
+                    if submit:
+                        visitor.visit(submit)
+    if connector:
+        connector.close_connection()
 
     result = visitor.pretty_print()
     visitor.close()
