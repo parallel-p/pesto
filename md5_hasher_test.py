@@ -13,7 +13,6 @@ class TestMD5Hasher(unittest.TestCase):
         _md5_update(md5, 'filename')
         open.assert_called_once_with('filename', 'rb')
         md5.update.assert_called_once_with('contents')
-        open.return_value.__enter__.return_value.close.assert_any_call()
 
     @patch('md5_hasher._md5_update', lambda md5, name: md5.update(name))
     def test_get_hash(self):

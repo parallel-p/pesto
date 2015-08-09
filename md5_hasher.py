@@ -4,7 +4,6 @@ import hashlib
 def _md5_update(md5, filename):
     with open(filename, "rb") as file:
         md5.update(file.read())
-        file.close()
 
 
 def get_hash(input_data_filename, output_data_filename):
