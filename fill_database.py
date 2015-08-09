@@ -5,12 +5,14 @@ from ejudge_database import EjudgeDatabase
 from walker import PickleWorker, SubmitWalker, MultipleContestWalker, EjudgeRunsFilesWorker
 
 
-def create_submit_walker(cursor):
-    return SubmitWalker(EjudgeDatabase(cursor))
+def create_submit_walker(cursor=None):
+    if cursor:
+        return SubmitWalker(EjudgeDatabase(cursor))
+    return SubmitWalker(None)
 
 
-def fill_from_pickles(sqlite_cursor, ejudge_cursor, pickle_dir, origin):
-    walker = create_submit_walker(ejudge_cursor)
+def fill_from_pickles(sqlite_cursor, pickle_dir, origin):
+    walker = create_submit_walker()
     pw = PickleWorker()
     for filename in pw.walk(pickle_dir):
         for submit in walker.walk(filename[1]):

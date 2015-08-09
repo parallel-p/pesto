@@ -8,6 +8,7 @@ class TestFillDatabase(unittest.TestCase):
     @patch('fill_database.SubmitWalker', return_value=17)
     def test_create_walker(self, sw, ed):
         self.assertEqual(create_submit_walker(1), 17)
+        self.assertEqual(create_submit_walker(), 17)
         ed.assert_called_once_with(1)
 
 
@@ -19,8 +20,7 @@ class TestFillDatabase(unittest.TestCase):
         pickle_walker = MagicMock(walk=MagicMock(return_value=[(1, 'a'), (2, 'b'), (3, 'c')]))
         pw.return_value = pickle_walker
         sw.return_value = walker
-        fill_from_pickles('sqlite', 'ejudge', 'pickle', 'origin')
-        sw.assert_called_once_with('ejudge')
+        fill_from_pickles('sqlite', 'pickle', 'origin')
         good = '''[call('sqlite', 10, 'origin'),
  call('sqlite', 20, 'origin'),
  call('sqlite', 30, 'origin'),
