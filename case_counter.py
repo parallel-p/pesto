@@ -13,8 +13,8 @@ class CasesCounter(CasesStats):
 
     def __str__(self):
         result = ''
-        for problem_id, cases in sorted(self.result.items()):
-            result += 'Contest #{0} Problem #{1}: {2} case(s)\n'.format(problem_id[0],
+        for problem_id, cases in sorted(self.result.items(), key=lambda x: (int(x[0][0]), int(x[0][1]))):
+            result += 'Contest #{0} Problem #{1}: {2} case(s)\n'.format(problem_id[0].rjust(6, '0'),
                                                                         problem_id[1],
                                                                         cases)
         return result
