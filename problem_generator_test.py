@@ -16,7 +16,7 @@ class TestProblemGenerator(unittest.TestCase):
         md5_hasher.get_hash = Mock(return_value='hash')
 
     def test_common(self):
-        contest_dirs = ['000001', '000179']
+        contest_dirs = [('000001', '000001'), ('000179', '000179')]
         result = [x for x in problem_generator(contest_dirs)]
         self.assertEqual(len(result), 4)
         self.assertEqual(result[0].problem_id, ('42', '1'))
