@@ -9,9 +9,9 @@ class MySQLConnTest(PestoTestCase):
 
     def test_connection(self):
         self.connector.create_connection = Mock()
-        config = {'user': 'Scott', 'password': 'qwerty', 'host': '127.0.0.1', 'database': 'ejudge'}
-        self.connector.create_connection(**config)
-        self.connector.create_connection.assert_called_once_with(**config)
+        config = {'user': 'Scott', 'password': 'qwerty', 'host': '127.0.0.1', 'port': 8880, 'database': 'ejudge'}
+        self.connector.create_connection(config)
+        self.connector.create_connection.assert_called_once_with(config)
 
     def test_get_cursor(self):
         self.connector.get_cursor = Mock(return_value="Get this!")

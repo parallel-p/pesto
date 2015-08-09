@@ -7,10 +7,9 @@ class MySQLConnector():
 
     def create_connection(self, config):
         self.config = config
-        if self.connector.connection_id != None:
+        if self.connection != None:
             self.connection.close()
         self.connection = self.connector.connect(**self.config)
-        # NO ERRORS ARE CAUGHT HERE
 
     def get_cursor(self):
         if self.connection != None:
