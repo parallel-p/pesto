@@ -17,7 +17,8 @@ def fill_from_pickles(sqlite_cursor, pickle_dir, origin):
     filler = DBSubmitsFiller(sqlite_cursor)
     for filename in pw.walk(pickle_dir):
         for submit in walker.walk(filename[1]):
-            filler.fill_db_from_submit(submit, origin)
+            if submit is not None:
+                filler.fill_db_from_submit(submit, origin)
 
 
 def fill_from_xml(sqlite_cursor, ejudge_cursor, start_dir, origin):
@@ -27,4 +28,5 @@ def fill_from_xml(sqlite_cursor, ejudge_cursor, start_dir, origin):
         walker.contest_id = contest_id
         for filename in EjudgeRunsFilesWorker().walk(contest_dir):
             for submit in walker.walk(filename[1]):
-                filler.fill_db_from_submit(submit, origin)
+                if submit is not None:
+                    filler.fill_db_from_submit(submit, origin)

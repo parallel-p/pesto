@@ -117,6 +117,9 @@ class SubmitWalker(Walker):
 
         submit_info = self.database.get_submit_info(self.contest_id, submit_id)
 
+        if submit_info is None:
+            return None
+
         problem_id = submit_info.problem_id
         user_id = submit_info.user_id
         lang_id = submit_info.lang_id

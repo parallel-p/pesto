@@ -12,8 +12,13 @@ class EjudgeDatabase:
         self.db_cursor = ejudge_cursor
 
     def get_submit_info(self, contest_id, submit_id):
-        self.db_cursor.execute('SELECT problem_id,user_id,lang_id,create_time '
+
+        query = ('SELECT prob_id,user_id,lang_id,create_time '
                                'FROM runs '
-                               'WHERE contest_id=? AND submit_id=?', contest_id, submit_id)
-        problem_id, user_id, lang_id, timestamp = list(self.db_cursor.get_row())
+                               'WHERE contest_id=%(contest)s AND run_id=%(submit)s')
+        self.db_cursor.execute(query, {'contest': contest_id, 'submit': submit_id})
+        response = self.db_cursor.fetchone()
+        if response is None:
+            return None
+        problem_id, user_id, lang_id, timestamp = list(response)
         return EjudgeSubmitInfo(problem_id, user_id, lang_id, timestamp)

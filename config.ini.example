@@ -8,3 +8,16 @@ output = trash/output.txt
 [cases_stats]
 base_dir = my_data
 output = trash/output.txt
+[db_tool]
+pickle_dir = my_data/pickle
+base_dir = my_data/contests
+
+# WARNING If you have any non-empty database there, it'll be overwritten
+output_database = my_data/database.db
+origin = default_origin
+contests_info_dir = my_data/contests
+mysql_user = user
+mysql_password = password
+mysql_host = 127.0.0.1
+mysql_port = 8080
+mysql_db_name = ejudge_sis

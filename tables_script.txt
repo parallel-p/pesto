@@ -1,0 +1,41 @@
+CREATE TABLE `Cases` (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `case_id`    TEXT,
+                    `problem_ref`    INTEGER,
+                    `io_hash`    TEXT
+                );
+CREATE TABLE "Contests" (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `contest_id`    TEXT,
+                    `origin`    TEXT,
+                    `scoring`    TEXT,
+                    `name`    TEXT
+                );
+CREATE TABLE `Problems` (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                	`problem_id`    TEXT,
+                    `contest_ref`    INTEGER,
+                    `name`    TEXT
+                );
+CREATE TABLE `Runs` (
+	`id`	INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`submit_ref`	INTEGER,
+	`case_ref`	INTEGER,
+	`time`	TEXT,
+	`realtime`	TEXT,
+	`outcome`	TEXT
+);
+CREATE TABLE `Submits` (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `submit_id`    TEXT,
+                    `problem_ref`    INTEGER,
+                    `user_ref`    INTEGER,
+                    `lang_id`    TEXT,
+                    `timestamp`    TEXT,
+                    `outcome`    TEXT
+                );
+CREATE TABLE "Users" (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `user_id`    TEXT,
+                    `origin`    TEXT
+                );
