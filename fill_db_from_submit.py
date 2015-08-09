@@ -37,7 +37,7 @@ def db_define_ref(db_cur, table_name, params):
 def db_find_ref(db_cur, table_name, params):
     db_cur.execute('SELECT id FROM ' + table_name + ' WHERE ' + ' AND '.join(['? = ?'] * len(params)),
                    *[y for x in params.items() for y in x])
-    query = db_cur.fetchOne()
+    query = db_cur.fetchone()
     return query[0] if query else None
 
 
