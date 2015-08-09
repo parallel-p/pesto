@@ -10,14 +10,14 @@ class ExtractCasesToDBTest(PestoTestCase):
 
     def test_common(self):
         cursor = Mock()
-        cursor.execute = Mock(side_effect=[(1,), None, (2,), None, None, None, None])
+        cursor.execute.return_value.fetchone = Mock(side_effect=[(1,), (1,), (2,)])
         problem = Mock(problem_id=[3, 4], cases=['qwer', 'asdf', 'zxcv'])
         problem.name = 'A'
         # problem_generator = Mock(return_value=problem)
         with unittest.mock.patch('extract_cases_to_db.problem_generator', return_value=[problem]):
             extract_cases_to_db(None, cursor, 'abacaba')
         resulting_requests = []
-        for one_call in cursor.execute.call_args_list:
+        for one_call in cursor.execute.call_args_list[1:]:
             format_string, data_tuple = tuple(one_call)[0]
             resulting_requests.append(self.prepare_request(format_string, data_tuple))
         good_requests = ['SELECT id FROM Contests WHERE origin = abacaba AND contest_id = 3',\
@@ -26,7 +26,15 @@ class ExtractCasesToDBTest(PestoTestCase):
                         'UPDATE Cases SET io_hash = qwer WHERE problem_ref = 2 AND case_id = 1',\
                         'UPDATE Cases SET io_hash = asdf WHERE problem_ref = 2 AND case_id = 2',\
                         'UPDATE Cases SET io_hash = zxcv WHERE problem_ref = 2 AND case_id = 3']
+        self.maxDiff = None
         self.assertEqual(resulting_requests, good_requests)
+
+    def test_empty(self):
+        cursor = Mock()
+        cursor.execute.return_value.fetchone = Mock(side_effect=[(0,)])
+        with unittest.mock.patch('extract_cases_to_db.problem_generator', return_value=[None]):
+            extract_cases_to_db(None, cursor, 'abacaba')
+        cursor.execute.assert_called_once_with('SELECT COUNT(id) FROM Contests')
 
 if __name__ == "__main__":
     unittest.main()
