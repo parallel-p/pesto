@@ -3,6 +3,7 @@ class DBSubmitsFiller:
         self.db_cur = db_cur
 
     def fill_db_from_submit(self, submit, origin):
+        submit.problem_id[0] = submit.problem_id[0].rjust(6, '0')
         contest_def = [('origin', origin), ('scoring', submit.scoring), ('contest_id', submit.problem_id[0])]
         contest_ref = self.db_define_ref('Contests', contest_def)
 
