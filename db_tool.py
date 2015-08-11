@@ -28,11 +28,8 @@ def parse_args():
 def get_arguments():
     args = parse_args()
     config = None
-    if not args['cfg']:
-        print('Config file is not specified')
-        exit()
     try:
-        config = toollib.read_config(args['cfg'], 'db_tool')
+        config = toollib.read_config(args['cfg'] if args['cfg'] else 'config.ini', 'db_tool')
     except KeyError:
         print('Incorrect config filename.')
         exit()
