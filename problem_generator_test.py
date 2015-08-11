@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock, patch
-from problem_generator import problem_generator, sqlite_problem_generator
+from problem_generator import problem_generator, sqlite_problem_generator, connect
 import ejudge_contest
 import md5_hasher
 
@@ -47,6 +47,13 @@ class TestSqliteProblemGenerator(unittest.TestCase):
         result = list(sqlite_problem_generator('sqlite'))
         self.assertEqual(len(result), 1)
         conn.return_value.execute.assert_called_once_with('SELECT 123 FROM Problems')
+
+    def test_connect(self):
+        conn = Mock()
+        conn.get_cursor.return_value = 42
+        self.assertEqual(connect(conn, '123'), 42)
+        conn.create_connection.assert_called_once_with('123')
+
 
 
 if __name__ == "__main__":
