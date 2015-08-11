@@ -11,9 +11,9 @@ class RunsDaoTest(PestoTestCase):
         self.row = ('id', 'submit_ref', 'real_time', 'time', 'outcome', 'case_ref')
 
     def test_load(self):
-        arg = {'real_time':'real_time', 'time':'time', 'outcome':'outcome'}
+        arg = {'realtime':'realtime', 'time':'time', 'outcome':'outcome'}
         result = DAORuns.load(arg)
-        run = Run('', '', '', 'real_time', 'time', 'outcome')
+        run = Run('', '', '', 'realtime', 'time', 'outcome')
         self.assertEqual(result.real_time, run.real_time)
         self.assertEqual(result.time, run.time)
         self.assertEqual(result.outcome, run.outcome)
@@ -24,10 +24,10 @@ class RunsDaoTest(PestoTestCase):
         curs.fetchone = ('case_id')
         conn.get_cursor = curs
 
-        arg = {'real_time':'real_time', 'time':'time', 'outcome':'outcome', 'case_ref':'case_ref'}
+        arg = {'realtime':'realtime', 'time':'time', 'outcome':'outcome', 'case_ref':'case_ref'}
         result = DAORuns(conn).deep_load(arg)
 
-        run = Run(None, None, 'case_id', 'real_time', 'time', 'outcome')
+        run = Run(None, None, 'case_id', 'realtime', 'time', 'outcome')
         self.assertEqual(result.real_time, run.real_time)
         self.assertEqual(result.time, run.time)
         self.assertEqual(result.outcome, run.outcome)
