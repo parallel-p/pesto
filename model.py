@@ -9,6 +9,10 @@ class Submit:
         self.lang_id = lang_id
         self.scoring = scoring
         self.timestamp = timestamp
+        self.runs_results = ''
+        self.count_results()
+
+    def count_results(self):
         self.runs_results = ''.join([str(run.outcome) for run in self.runs])
 
     def __str__(self):
