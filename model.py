@@ -52,3 +52,15 @@ class User:
 
     def __str__(self):
         return 'User #{} from {}'.format(self.user_id, self.origin)
+
+
+class Contest:
+    def __init__(self, contest_id, origin, name, scoring):
+        self.contest_id = contest_id
+        self.origin = origin
+        self.name = name
+        self.scoring = scoring
+
+    def __str__(self):
+        return 'Contest {} (#{}) from {}, scoring {}'.format(self.name, self.contest_id, self.origin, self.scoring)
+
