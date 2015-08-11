@@ -92,6 +92,7 @@ def main():
         if '' in mysql_config.values():
             print('MySQL parameters are not specified')
             exit()
+        print('Now connecting to MySQL')
         mysql_connector = MySQLConnector()
         mysql_connector.create_connection(mysql_config)
         print('Connected to MySQL database')
