@@ -21,9 +21,9 @@ class FillDBFromContestXMLTest(PestoTestCase):
         for one_call in cursor.execute.call_args_list:
             format_string, data_tuple = tuple(one_call)[0]
             resulting_requests.append(self.prepare_request(format_string, data_tuple))
-        good_requests = ['UPDATE Contests SET name = "I am contest name #1" WHERE origin = "lksh" AND contest_id = 123456',\
-                        'UPDATE Contests SET name = "Contest name #2" WHERE origin = "lksh" AND contest_id = 179179', \
-                        'UPDATE Contests SET name = "Yo, i am contest name #3!" WHERE origin = "lksh" AND contest_id = 031337']
+        good_requests = ['UPDATE Contests SET name = I am contest name #1 WHERE origin = lksh AND contest_id = 123456',
+                        'UPDATE Contests SET name = Contest name #2 WHERE origin = lksh AND contest_id = 179179',
+                        'UPDATE Contests SET name = Yo, i am contest name #3! WHERE origin = lksh AND contest_id = 031337']
         self.assertEqual(resulting_requests, good_requests)
 
 if __name__ == "__main__":

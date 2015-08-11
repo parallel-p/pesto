@@ -5,7 +5,7 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
     problems = problem_generator(contest_dirs)
     contests_len = cursor.execute('SELECT COUNT(id) FROM Contests').fetchone()
     if contests_len is None or contests_len[0] == 0:
-        print('Something went wrong. Database is empty')
+        print('Database is empty')
         return
 
     for problem in problems:
