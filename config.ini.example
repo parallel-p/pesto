@@ -4,8 +4,7 @@ database = my_data/file.csv
 trash_dir = trash
 output = trash/output.txt
 [cases_stats]
-base_dir = my_data
-output = trash/output.txt
+database = database.db
 [db_tool]
 pickle_dir = my_data/pickle
 base_dir = my_data/contests

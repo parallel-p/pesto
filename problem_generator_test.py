@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import Mock
-from problem_generator import problem_generator
+from unittest.mock import Mock, patch
+from problem_generator import problem_generator, sqlite_problem_generator
 import ejudge_contest
 import md5_hasher
 
@@ -27,6 +27,26 @@ class TestProblemGenerator(unittest.TestCase):
             self.assertEqual(problem.name, 'a-plus-b')
             self.assertEqual(problem.cases, ['hash', 'hash'])
         self.assertEqual(md5_hasher.get_hash.call_args_list, [(('a', 'b'),), (('c', 'd'),)] * 4)
+
+class TestSqliteProblemGenerator(unittest.TestCase):
+    def setUp(self):
+        ejudge_contest_object = Mock()
+        ejudge_contest_object.get_contest_id = Mock(return_value='42')
+        ejudge_contest_object.get_problem_ids = Mock(return_value=[('42', '1'), ('42', '2')])
+        ejudge_contest_object.get_short_name_by_problem_id = Mock(return_value='a-plus-b')
+        ejudge_contest_object.get_test_paths_by_problem_id = Mock(return_value=[('a', 'b'), ('c', 'd')])
+        ejudge_contest.EjudgeContest = Mock(return_value=ejudge_contest_object)
+        md5_hasher.get_hash = Mock(return_value='hash')
+
+    @patch('problem_generator.connect')
+    @patch('sqlite_connector.SQLiteConnector')
+    @patch('problem_generator.DAOProblems')
+    def test_common(self, dao, connector, conn):
+        conn.return_value.fetchall.return_value = [{'id': 1, 'problem_id': '42', 'name': 'a_plus_b'}]
+        dao.columns = '123'
+        result = list(sqlite_problem_generator('sqlite'))
+        self.assertEqual(len(result), 1)
+        conn.return_value.execute.assert_called_once_with('SELECT 123 FROM Problems')
 
 
 if __name__ == "__main__":
