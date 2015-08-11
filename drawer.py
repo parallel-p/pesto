@@ -1,5 +1,6 @@
 import PIL.Image
 import PIL.ImageDraw
+import PIL.ImageFont
 
 
 def RGB(r, g, b):
@@ -26,8 +27,9 @@ class Image:
         self.draw.ellipse((center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius),
                           circle_color, border_color)
 
-    def draw_text(self, text, begin, size, font, text_color):
-        self.draw.text(begin + (begin[0] + size[0], begin[1] + size[1]), text, text_color)
+    def draw_text(self, text, begin, font, size, color):
+        self.draw.setfont(PIL.ImageFont.truetype(font, size))
+        self.draw.text(begin, text, color)
 
     def save_png(self, file_name):
         self.image.save(file_name, 'BMP')
