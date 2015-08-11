@@ -176,15 +176,6 @@ class TestsACM(unittest.TestCase):
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 3\nUnique tests: {1 2}\n')
 
-    @unittest.skip("It depends on the definition of unique tests. Solve simple crutch")
-    def test_ACM_problem_2(self):
-        runs1 = []
-        runs1.append(Run(0, 0, 1, '100', '100', "WA"))
-
-        self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM', 37))
-
-        self.assertEqual(self.same.pretty_print(), 'Submits - 1\nUnique tests: {1}\n')
-
     def test_ACM_(self):
         run1 = Mock()
         run1.case_id = 1

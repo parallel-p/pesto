@@ -28,10 +28,11 @@ class TestFillDatabase(unittest.TestCase):
                 "call(10, 'origin'),\n call(20, 'origin'),\n call(30, 'origin')]")
         self.assertEqual(str(fill.fill_db_from_submit.call_args_list), good)
 
+    @patch('builtins.print')
     @patch('fill_database.create_submit_walker')
     @patch('fill_database.MultipleContestWalker')
     @patch('fill_database.EjudgeRunsFilesWorker')
-    def test_fill_from_xml(self, er, mc, sw):
+    def test_fill_from_xml(self, er, mc, sw, pr):
         walker = MagicMock(walk=MagicMock(return_value=[10, 20]))
         er.return_value = MagicMock(walk=MagicMock(return_value=[(1, 'a'), (2, 'b')]))
         mc.return_value = MagicMock(walk=MagicMock(return_value=[(1, 'a'), (2, 'b')]))

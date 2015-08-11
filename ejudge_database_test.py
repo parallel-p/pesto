@@ -18,11 +18,11 @@ class TestEjudgeDatabase(unittest.TestCase):
         self.assertFalse(db.data)
 
     def test_get_info(self):
-        db = EjudgeDatabase(Mock(get_row=Mock(return_value=['1', '2', '3', 4])))
+        db = EjudgeDatabase(Mock(fetchone=Mock(return_value=['1', '2', '3', 4])))
         info = db.get_submit_info('ci', 'si')
-        db.db_cursor.execute.assert_called_once_with('SELECT problem_id,user_id,lang_id,create_time '
-                                                     'FROM runs WHERE contest_id=? AND submit_id=?',
-                                                     'ci', 'si')
+        db.db_cursor.execute.assert_called_once_with('SELECT prob_id,user_id,lang_id,create_time '
+                                                     'FROM runs WHERE contest_id=%(contest)s AND run_id=%(submit)s',
+                                                     {'contest': 'ci', 'submit': 'si'})
         self.assertEqual(info.problem_id, '1')
         self.assertEqual(info.user_id, '2')
         self.assertEqual(info.lang_id, '3')

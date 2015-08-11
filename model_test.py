@@ -1,5 +1,5 @@
 import unittest
-from model import Submit, Run, Problem
+from model import Submit, Run, Problem, User, Contest
 
 
 class TestRun(unittest.TestCase):
@@ -69,6 +69,34 @@ class TestProblem(unittest.TestCase):
 
     def test_str(self):
         self.assertEqual(str(self.prob), 'Problem #17 ("Testname") from contest #1')
+
+
+class TestUser(unittest.TestCase):
+
+    def setUp(self):
+        self.user = User(1, 'lksh')
+
+    def test_init(self):
+        self.assertEqual(self.user.user_id, 1)
+        self.assertEqual(self.user.origin, 'lksh')
+
+    def test_str(self):
+        self.assertEqual(str(self.user), 'User #1 from lksh')
+
+
+class TestContest(unittest.TestCase):
+
+    def setUp(self):
+        self.contest = Contest('42', 'orig', 'Untitled', 'ACM')
+
+    def test_init(self):
+        self.assertEqual(self.contest.contest_id, '42')
+        self.assertEqual(self.contest.origin, 'orig')
+        self.assertEqual(self.contest.name, 'Untitled')
+        self.assertEqual(self.contest.scoring, 'ACM')
+
+    def test_str(self):
+        self.assertEqual(str(self.contest), 'Contest Untitled (#42) from orig, scoring ACM')
 
 
 if __name__ == "__main__":

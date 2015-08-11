@@ -7,6 +7,7 @@ class SQLiteConnector:
 
     def create_connection(self, db_dir):
         self.sqlite_connection = sqlite3.connect(db_dir)
+        self.sqlite_connection.row_factory = sqlite3.Row
 
     def get_cursor(self):
         return self.sqlite_connection.cursor()

@@ -10,10 +10,10 @@ class SQLiteConnectorTest(pesto_testcase.PestoTestCase):
         self.connector = SQLiteConnector()
 
     def test_connection(self):
-        sqlite3.connect = MagicMock(return_value='connection succeeded')
+        sqlite3.connect = MagicMock(return_value=MagicMock())
+        sqlite3.connect.row_factory = MagicMock()
         self.connector.create_connection('test_database')
         sqlite3.connect.assert_called_with('test_database')
-        self.assertEqual(self.connector.sqlite_connection,'connection succeeded')
 
     def test_get_cursor(self):
         sqlite3.connect = MagicMock()

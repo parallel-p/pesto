@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from pesto_testcase import PestoTestCase
 from mysql_connector import MySQLConnector
 
-class MySQLConnTest(PestoTestCase):
+class MySQLConnTest(unittest.TestCase):
     def setUp(self):
         self.connector = MySQLConnector()
 
@@ -24,5 +24,6 @@ class MySQLConnTest(PestoTestCase):
         self.connector.close()
         self.connector.close.assert_called_once_with()
 
-if __name__ == "main":
+
+if __name__ == "__main__":
     unittest.main()

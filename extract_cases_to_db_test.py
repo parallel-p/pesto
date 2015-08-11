@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from pesto_testcase import PestoTestCase
 from extract_cases_to_db import extract_cases_to_db
 
@@ -29,7 +29,8 @@ class ExtractCasesToDBTest(PestoTestCase):
         self.maxDiff = None
         self.assertEqual(resulting_requests, good_requests)
 
-    def test_empty(self):
+    @patch('builtins.print')
+    def test_empty(self, pr):
         cursor = Mock()
         cursor.execute.return_value.fetchone = Mock(side_effect=[(0,)])
         with unittest.mock.patch('extract_cases_to_db.problem_generator', return_value=[None]):
