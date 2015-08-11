@@ -6,7 +6,7 @@ from walker import MultipleContestWalker
 from fill_db_from_contest_xml import fill_db_from_contest_xml
 from mysql_connector import MySQLConnector
 from fill_database import fill_from_xml, fill_from_pickles
-
+import os.path
 
 def create_tables(cursor, filename):
     script_file = open(filename)
@@ -81,7 +81,7 @@ def main():
     print("Database created successfully")
     # except OperationalError:
     #     print(OperationalError)
-    contests_dir = [c_dir[1] for c_dir in MultipleContestWalker().walk(base_dir)]
+
     if contests_info_dir == '':
         print("WARNING. Contests info directory is not specified. Contests name won't be filled")
     if is_pickle:
@@ -101,6 +101,11 @@ def main():
         fill_from_xml(sqlite_cursor, ej_cursor, base_dir, origin)
         mysql_connector.close()
         connection.commit()
+    print("Filling cases...")
+    contests_dir = []
+    for c_dir in MultipleContestWalker().walk(base_dir):
+        contests_dir.append(c_dir[1])
+        print("Retrieving cases for contest #{}".format(c_dir[0]))
     extract_cases_to_db(contests_dir, sqlite_cursor, origin)
     if contests_info_dir != '':
         fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
