@@ -25,6 +25,7 @@ def fill_from_xml(sqlite_cursor, ejudge_cursor, start_dir, origin):
     walker = create_submit_walker(ejudge_cursor)
     filler = DBSubmitsFiller(sqlite_cursor)
     for contest_id, contest_dir in MultipleContestWalker().walk(start_dir):
+        print("Filling contest #{0}".format(contest_id))
         walker.contest_id = contest_id
         for filename in EjudgeRunsFilesWorker().walk(contest_dir):
             for submit in walker.walk(filename[1]):
