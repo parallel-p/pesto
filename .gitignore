@@ -68,3 +68,6 @@ trash/
 config.ini
 output.txt
 tempdir/
+
+# Fonts
+fonts/
