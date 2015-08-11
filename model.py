@@ -43,3 +43,12 @@ class Problem:
 
     def __str__(self):
         return 'Problem #{0} ("{1}") from contest #{2}'.format(self.problem_id[1], self.name, self.problem_id[0])
+
+
+class User:
+    def __init__(self, user_id, origin):    
+        self.user_id = user_id
+        self.origin = origin
+
+    def __str__(self):
+        return 'User #{} from {}'.format(self.user_id, self.origin)
