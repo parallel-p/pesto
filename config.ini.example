@@ -1,8 +1,6 @@
 [tool]
 #If you want to use your own config, use config.ini, which is added to git ignore
-base_dir = my_data
 database = my_data/file.csv
-pickle_dir = pickle
 trash_dir = trash
 output = trash/output.txt
 [cases_stats]
