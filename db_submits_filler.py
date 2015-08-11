@@ -37,7 +37,7 @@ class DBSubmitsFiller:
             keys_str = ', '.join(keys)
             ans = ', ?' * len(keys)
             self.db_cur.execute('INSERT INTO {} (id, {}) VALUES (NULL{})'.format(table, keys_str, ans), values)
-            ref = self.db_find_ref(table, keys, values)
+            ref = self.db_cur.lastrowid
         return ref
 
     def db_find_ref(self, table, keys, values):

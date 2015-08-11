@@ -62,12 +62,13 @@ class TestDBSubmitsFiller(unittest.TestCase):
         self.assertEqual(self.filler.db_find_ref.mock_calls, [call('table', ['one', 'two'], ['one_val', 'two_val'])])
 
     def test_define_none(self):
-        self.filler.db_find_ref = Mock(side_effect=[None, 1])
+        self.filler.db_find_ref = Mock(side_effect=[None])
+        self.filler.db_cur.lastrowid = 1
         keys, values = ['one', 'two'], ['one_val', 'two_val']
         self.assertEqual(self.filler.db_define_ref('table', keys, values), 1)
         params = ['INSERT INTO table (id, one, two) VALUES (NULL, ?, ?)', ['one_val', 'two_val']]
         self.assertEqual(self.filler.db_cur.mock_calls, [call.execute(*params)])
-        self.assertEqual(self.filler.db_find_ref.mock_calls, [call('table', keys, values)] * 2)
+        self.assertEqual(self.filler.db_find_ref.mock_calls, [call('table', keys, values)])
 
     def test_find_right_values(self):
         self.filler.db_cur.fetchone.return_value = [1]
