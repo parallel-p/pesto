@@ -18,33 +18,53 @@ def get_presets_info():
     return """
         1.count_submits - Counts number of submits for each problem.
         2.eq_matrix - Creates matrix for each problem which contains how many times cases were launched together.
-        3.count_cases - Counts number of cases for each problem.
-        4.same_runs - Counts for each problem lists of runs that were launched together.
-        5.submits_by_signature - Counts submits with each outcome for each problem for each language.
-        6.submits_by_tests - Counts submits with each number of launched tests for each problem.
-        7.gen_pickles - Generates fast access information for next use.
+        3.same_runs - Counts for each problem lists of runs that were launched together.
+        4.submits_by_signature - Counts submits with each outcome for each problem for each language.
+        5.submits_by_tests - Counts submits with each number of launched tests for each problem.
+        6.gen_pickles - Generates fast access information for next use.
     """
 
 
-def get_visitor_by_preset(preset, output):
+def get_factory_by_preset(preset, output):
     if preset in ['1', 'count_submits']:
-        return ShardingByContestVisitor(SubmitsCounterFactory())
+        return CustomShardingFactory(ShardingByContestVisitor, SubmitsCounterFactory)
     if preset in ['2', 'eq_matrix']:
-        return ShardingByScoringVisitor(EqMatrixShardingByProblem())
-    if preset in ['3', 'count_cases']:
-        return ShardingByProblemVisitor(MaxTestCasesCountFactory())
-    if preset in ['4', 'same_runs']:
-        return ShardingByScoringVisitor(SameRunsFactory())
-    if preset in ['5', 'submits_by_signature']:
-        return ShardingByProblemVisitor(SubmitsIdsBySignatureFactory())
-    if preset in ['6', 'submits_by_tests']:
-        return SubmitsOverTestCasesNumbers()
-    if preset in ['7', 'gen_pickles']:
-        visitor = PickleWriter()
-        visitor.default_path = path.join('.', output)
-        return visitor
+        return CustomShardingFactory(ShardingByScoringVisitor, EqMatrixShardingByProblem)
+    if preset in ['3', 'same_runs']:
+        return CustomShardingFactory(ShardingByScoringVisitor, SameRunsFactory)
+    if preset in ['4', 'submits_by_signature']:
+        return CustomShardingFactory(ShardingByProblemVisitor, SubmitsIdsBySignatureFactory)
+    if preset in ['5', 'submits_by_tests']:
+        return CustomVisitorFactory(SubmitsOverTestCasesNumbers)
+    if preset in ['6', 'gen_pickles']:
+        default_path = path.join('.', output)
+        return PickleWriterFactory(default_path)
     return None
 
+
+class PickleWriterFactory(VisitorFactory):
+    def __init__(self, default_path):
+        self.default_path = default_path
+
+    def create(self, key):
+        result = PickleWriter()
+        result.default_path = self.default_path
+        return result
+
+class CustomShardingFactory(VisitorFactory):
+    def __init__(self, sharding_class, visitor_factory_class):
+        self.sharding_class = sharding_class
+        self.visitor_factory_class = visitor_factory_class
+
+    def create(self, key):
+        return self.sharding_class(self.visitor_factory_class())
+
+class CustomVisitorFactory(VisitorFactory):
+    def __init__(self, visitor_class):
+        self.visitor_class = visitor_class
+
+    def create(self, key):
+        return self.visitor_class()
 
 class SameRunsFactory(VisitorFactory):
     def create(self, key):

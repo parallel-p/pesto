@@ -19,7 +19,7 @@ class DAOContestsTest(unittest.TestCase):
         model.Contest.assert_called_once_with('42', 'orig', 'Untitled', 'ACM')
 
     def test_deep_load(self):
-        return_value = self.dao.load(self.row)
+        return_value = self.dao.deep_load(self.row)
         self.assertEqual(return_value, 'Contest_object')
         model.Contest.assert_called_once_with('42', 'orig', 'Untitled', 'ACM')
 
