@@ -9,7 +9,6 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
         return
 
     for problem in problems:
-        print(problem.problem_id)
         contest_response = cursor.execute('SELECT id FROM Contests WHERE origin = ? AND contest_id = ?',
                                     (origin, problem.problem_id[0].rjust(6, '0'))).fetchone()
         if contest_response is None:
