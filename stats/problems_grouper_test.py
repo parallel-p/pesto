@@ -66,3 +66,6 @@ class ProblemsGrouperTest(PestoTestCase):
         self.assertEqual(grouped_by_parallel['olymp'], ['789012'])
         self.assertTrue('' in grouped_by_parallel)
         self.assertEqual(grouped_by_parallel[''], ['345678'])
+
+if __name__ == "__main__":
+    unittest.main()
