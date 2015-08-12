@@ -31,3 +31,6 @@ class RunsDaoTest(PestoTestCase):
         self.assertEqual(result.real_time, run.real_time)
         self.assertEqual(result.time, run.time)
         self.assertEqual(result.outcome, run.outcome)
+
+if __name__ == "__main__":
+    unittest.main()
