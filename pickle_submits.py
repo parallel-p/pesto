@@ -19,7 +19,7 @@ class PickleWriter(Visitor):
             if self.submits: # if there are submits
                 self.write_file()
                 self.submits = []
-            self.contest_id = submit.problem_id[0]
+            self.contest_id = "_".join(map(str, submit.problem_id))
             self.transmitted_submits = 0
 
         self.transmitted_submits += 1
