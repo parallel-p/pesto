@@ -6,21 +6,21 @@ from walker import MultipleContestWalker
 from fill_db_from_contest_xml import fill_db_from_contest_xml
 from mysql_connector import MySQLConnector
 from fill_database import fill_from_xml, fill_from_pickles
-import os.path
 
-def create_tables(cursor, filename):
-    script_file = open(filename)
-    script = script_file.read()
-    cursor.executescript(script)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Dump all the data to the database\n"
                                                  "You need to fill the config file first")
-    parser.add_argument('--cfg', help="config file")
+    parser.add_argument('--cfg', help="config file. By default config.ini is used")
     parser.add_argument('-p', help='Use pickle database. '
                                    'By default MySQL and xml databases are used',
                         action='store_true')
+    parser.add_argument('--clean', help='Create new or overwrite existing database',
+                        action='store_true')
+    parser.add_argument('--update', help='Update an existing database. Used by default',
+                        action='store_true')
+
 
     return vars(parser.parse_args())
 
@@ -29,10 +29,11 @@ def get_arguments():
     args = parse_args()
     config = None
     if not args['cfg']:
-        print('Config file is not specified')
-        exit()
+        config_name = 'config.ini'
+    else:
+        config_name = args['cfg']
     try:
-        config = toollib.read_config(args['cfg'], 'db_tool')
+        config = toollib.read_config(config_name, 'db_tool')
     except KeyError:
         print('Incorrect config filename.')
         exit()
@@ -61,30 +62,50 @@ def get_arguments():
     except KeyError:
         print('Wrong config file: MySQL parameters are not specified')
         exit()
-    return base_dir, args['p'], pickle_dir, output_database, origin, mysql_config, contests_info_dir
+    return base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir
 
-def create_database(path):
+def create_tables(cursor, filename):
+    script_file = open(filename)
+    script = script_file.read()
+    cursor.executescript(script)
+
+def create_new_database(path, tables_script_filename):
     db_file = open(path, 'w')
     db_file.close()
     connection = sqlite3.connect(path)
-    return connection.cursor()
+    create_tables(connection.cursor(), tables_script_filename)
+    return connection, connection.cursor()
+
+def update_database(path):
+    connection = sqlite3.connect(path)
+    tables = list(connection.execute("SELECT name FROM sqlite_master WHERE type='table'"))
+    if tables == []:
+        print("Database is empty, can't update it")
+        exit()
+    return connection, connection.cursor()
+
 
 def main():
-    base_dir, is_pickle, pickle_dir, output_database, origin, mysql_config, contests_info_dir = get_arguments()
-    db_file = open(output_database, 'w')
-    db_file.close()
+    base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir = get_arguments()
 
-    connection = sqlite3.connect(output_database)
-    sqlite_cursor = connection.cursor()
 
-    create_tables(sqlite_cursor, 'tables_script.txt')
-    print("Database created successfully")
+
     # except OperationalError:
     #     print(OperationalError)
 
+
+
+
+    if args['clean']:
+        connection, sqlite_cursor = create_new_database(output_database, 'tables_script.txt')
+        print("Database created successfully")
+    else:
+        connection, sqlite_cursor = update_database(output_database)
+        print("Database is going to be updated")
+
     if contests_info_dir == '':
         print("WARNING. Contests info directory is not specified. Contests name won't be filled")
-    if is_pickle:
+    if args['p']:
         print('Filling database from pickles...')
         fill_from_pickles(sqlite_cursor, pickle_dir, origin)
         connection.commit()
@@ -107,9 +128,13 @@ def main():
         contests_dir.append(c_dir[1])
         print("Retrieving cases for contest #{}".format(c_dir[0]))
     extract_cases_to_db(contests_dir, sqlite_cursor, origin)
+    print('Cases were filled')
+
     if contests_info_dir != '':
+        print('Filling contests names')
         fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
-    print('Cases were written')
+        print('Contests names were filled')
+
     connection.commit()
     connection.close()
     print('Connection closed')

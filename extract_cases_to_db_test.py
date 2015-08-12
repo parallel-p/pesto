@@ -8,7 +8,8 @@ class ExtractCasesToDBTest(PestoTestCase):
     def prepare_request(self, format_string, data_tuple):
         return format_string.replace('?', '{}').format(*data_tuple)
 
-    def test_common(self):
+    @patch('builtins.print')
+    def test_common(self, pr):
         cursor = Mock()
         cursor.execute.return_value.fetchone = Mock(side_effect=[(1,), (1,), (2,)])
         problem = Mock(problem_id=['3', '4'], cases=['qwer', 'asdf', 'zxcv'])
