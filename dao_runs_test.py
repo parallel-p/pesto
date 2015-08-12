@@ -21,8 +21,8 @@ class RunsDaoTest(PestoTestCase):
     def test_deep_load(self):
         conn = Mock()
         curs = Mock()
-        curs.fetchone = ('case_id')
-        conn.get_cursor = curs
+        curs.fetchone = Mock(return_value=('case_id', ''))
+        conn.get_cursor.return_value = curs
 
         arg = {'realtime':'realtime', 'time':'time', 'outcome':'outcome', 'case_ref':'case_ref'}
         result = DAORuns(conn).deep_load(arg)
