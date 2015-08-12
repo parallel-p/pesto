@@ -10,7 +10,6 @@ class TestToolConfig(unittest.TestCase):
     def test_info(self):
         self.assertEqual(type(get_presets_info()), str)
 
-    @unittest.skip("ShardingVisitors don't exist anymore")
     def test_presets(self):
         presets1 = ['1', 'count_submits', '2', 'eq_matrix', '3', 'count_cases', '4', 'same_runs']
         presets2 = ['5', 'submits_by_signature', '6', 'submits_by_tests', '7', 'gen_pickles']
@@ -18,7 +17,6 @@ class TestToolConfig(unittest.TestCase):
             self.assertEqual(issubclass(type(get_visitor_by_preset(preset, 'kek.txt')), Visitor), True)
         self.assertEqual(get_visitor_by_preset('kek', 'kok.txt'), None)
 
-    @unittest.skip("ShardingVisitors don't exist anymore")
     @patch('tool_config.SameRunsACMFactory')
     @patch('tool_config.SameRunsKirovFactory')
     def test_same_runs_factory(self, kirov, acm):
@@ -28,7 +26,6 @@ class TestToolConfig(unittest.TestCase):
         self.assertIsInstance(factory.create('kirov'), tool_config.ShardingByProblemVisitor)
         kirov.assert_any_call()
 
-    @unittest.skip("ShardingVisitors don't exist anymore")
     @patch('tool_config.EqMatrixFactory')
     def test_eq_matrix_factory(self, eq):
         factory = tool_config.EqMatrixShardingByProblem()
@@ -61,7 +58,6 @@ class TestToolConfig(unittest.TestCase):
         factory = tool_config.EqMatrixFactory()
         self.assertIsInstance(factory.create(1), tool_config.EqMatrix)
 
-    @unittest.skip("ShardingVisitors don't exist anymore")
     @patch('tool_config.SubmitsIdsBySignatureFactory2')
     def test_submit_ids_sign(self, si):
         factory = tool_config.SubmitsIdsBySignatureFactory()

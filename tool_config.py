@@ -6,6 +6,10 @@ from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
 from pickle_submits import PickleWriter
 from visitor_factory import VisitorFactory
+from sharding_visitor import ShardingByContestVisitor
+from sharding_visitor import ShardingByProblemVisitor
+from sharding_visitor import ShardingByLangVisitor
+from sharding_visitor import ShardingByScoringVisitor
 from elector_visitor import ElectorByMaxCasesVisitor
 from os import path
 
