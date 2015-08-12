@@ -67,10 +67,10 @@ class DAOProblemsTest(unittest.TestCase):
 
     def test_update(self):
         self.cursor.fetchone.return_value = None
-        contest1, contest2 = Mock(), Mock()
-        contest1.contest_ref, contest1.name, contest1.problem_id = 'contest_ref1', 'name1', ('', 'problem_id1')
-        contest2.contest_ref, contest2.name, contest2.problem_id = 'contest_ref2', 'name2', ('', 'problem_id2')
-        self.dao.load = Mock(side_effect=[contest1, contest2])
+        problem1, problem2 = Mock(), Mock()
+        problem1.contest_ref, problem1.name, problem1.problem_id = 'contest_ref1', 'name1', ('', 'problem_id1')
+        problem2.contest_ref, problem2.name, problem2.problem_id = 'contest_ref2', 'name2', ('', 'problem_id2')
+        self.dao.load = Mock(side_effect=[problem1, problem2])
         self.dao.update(1, {'contest_ref': 'contest_ref3'})
         self.dao.update(2, {'name': 'name3', 'problem_id': 'problem_id3'})
         calls = [call.execute('SELECT id, contest_ref, problem_id, name FROM Problems WHERE id = ?', 1),
