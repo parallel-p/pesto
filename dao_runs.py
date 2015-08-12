@@ -20,8 +20,8 @@ class DAORuns:
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT case_id '
                        'FROM cases '
-                       'WHERE cases.id=?', case_ref)
+                       'WHERE cases.id=?', (case_ref, ))
 
-        case_id = cursor.fetchone()
+        case_id = tuple(cursor.fetchone())[0]
         run = Run('', '', case_id, real_time, time, outcome)
         return run
