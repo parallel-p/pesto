@@ -46,7 +46,7 @@ class DAOCasesTest(unittest.TestCase):
 
     def test_update(self):
         self.cursor.fetchone.return_value = None
-        DAOCases.load = Mock(side_effect=['io_hash1', 'io_hash2'])
+        self.dao_cases.load = Mock(side_effect=['io_hash1', 'io_hash2'])
         self.dao_cases.update(1, {'io_hash': 'io_hash3'})
         self.dao_cases.update(2, {})
         calls = [call.execute('SELECT io_hash FROM Cases WHERE id = ?', 1),

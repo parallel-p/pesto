@@ -32,7 +32,7 @@ class DAOCases:
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT {} FROM Cases WHERE id = ?'.format(DAOCases.columns), ref)
-        old = DAOCases.load(cursor.fetchone())
+        old = self.load(cursor.fetchone())
         new_def = {'io_hash': old}
         for key, value in update_def.items():
             new_def[key] = value
