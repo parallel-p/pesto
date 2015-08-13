@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import Mock
 from problems_tree import ProblemsTree
-import find_similar_problems
 
 
 class TestProblemsTree(unittest.TestCase):
@@ -25,19 +24,6 @@ class TestProblemsTree(unittest.TestCase):
             string = 'Problem #{0} ("{1}") from contest #{2}'.\
                 format(problem.problem_id[1], problem.name, problem.problem_id[0])
             problem.__str__ = Mock(return_value=string)
-
-        finder_object = Mock()
-        finder_object.get_same_tests_count = lambda p1, p2: len(set(p1.cases) & set(p2.cases))
-        finder_object.get_added_tests_count = lambda p1, p2: len(p2.cases) - len(set(p1.cases) & set(p2.cases))
-        finder_object.get_removed_tests_count = lambda p1, p2: len(p1.cases) - len(set(p1.cases) & set(p2.cases))
-        finder_object.get_similarity = lambda p1, p2: len(set(p1.cases) & set(p2.cases)) / \
-            max(len(p1.cases), len(p2.cases))
-        finder_object.get_stat_data = Mock(return_value=[(self.problems[0], self.problems[3]),
-                                                         (self.problems[1], self.problems[2]),
-                                                         (self.problems[4], self.problems[5]),
-                                                         (self.problems[4], self.problems[6]),
-                                                         (self.problems[5], self.problems[6])])
-        find_similar_problems.SimilarProblemsFinder = Mock(return_value=finder_object)
 
         self.tree = ProblemsTree(self.problems)
 
@@ -68,25 +54,10 @@ Problem #1 ("46a") from contest #46: it is Problem #1 ("44a") from contest #44. 
 
     def test_parent_relation(self):
         tree = ProblemsTree(self.problems)
-        tree.finder = Mock()
-        tree.finder.get_similarity.return_value = 1
-        tree.finder.get_same_tests_count.return_value = 2
-        tree.finder.get_removed_tests_count.return_value = 3
-        tree.finder.get_added_tests_count.return_value = 4
-        tree.get_previous_problem = Mock()
         problem = Mock()
-        prev_problem = tree.get_previous_problem()
+        tree.problem_previous[problem] = (1, 2, 3, 4, 5)
 
-        self.assertEqual(tree.get_similarity_to_parent(problem), 1)
-        tree.finder.get_similarity.assert_called_once_with(prev_problem, problem)
-        self.assertEqual(tree.get_tests_same_with_parent(problem), 2)
-        tree.finder.get_same_tests_count.assert_called_once_with(prev_problem, problem)
-        self.assertEqual(tree.get_removed_tests_count(problem), 3)
-        tree.finder.get_removed_tests_count.assert_called_once_with(prev_problem, problem)
-        self.assertEqual(tree.get_added_tests_count(problem), 4)
-        tree.finder.get_added_tests_count.assert_called_once_with(prev_problem, problem)
-
-        self.assertEqual(tree.get_relation_to_parent(problem), (1, 2, 3, 4))
+        self.assertEqual(tree.get_relation_to_parent(problem), (1, 2, 3, 4, 5))
 
 if __name__ == "__main__":
     unittest.main()

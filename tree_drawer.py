@@ -11,10 +11,6 @@ PROBLEM_FILL_COLOR = "yellow"
 PROBLEM_BORDER_COLOR = "black"
 PROBLEM_BORDER_THICKNESS = 2
 
-PROBLEM_Y_INTERVAL = 180
-PROBLEM_X_MIN_INTERVAL = 200
-TOP_BOTTOM_SPACE = 50
-
 LINE_THICKNESS = 4
 
 LOCATE_LINES_MAX_SPEED = 8.0
@@ -84,21 +80,15 @@ def _point_rectangle_distance_sqr(point, rect_begin, rect_size):
 
 
 class TreeDrawer:
-    def __init__(self, tree):
+    def __init__(self, tree, contests_grouper):
         self.tree = tree
+        self.contests_grouper = contests_grouper
         self.problems = self.tree.get_problems()
-        self.contests = []
-        current_contest_id = ''
-        for problem in self.problems:
-            if problem.problem_id[0] != current_contest_id:
-                current_contest_id = problem.problem_id[0]
-                self.contests.append([])
-            self.contests[-1].append(problem)
+        self.seasons = []
+        self._create_seasons()
 
-        self.size_y = TOP_BOTTOM_SPACE*2 +\
-            len(self.contests) * (PROBLEM_DIAMETER + PROBLEM_Y_INTERVAL) - PROBLEM_Y_INTERVAL
-        self.size_x = PROBLEM_X_MIN_INTERVAL +\
-            len(max(self.contests, key=lambda x: len(x))) * (PROBLEM_DIAMETER + PROBLEM_X_MIN_INTERVAL)
+        self.size_y = ...
+        self.size_x = ...
 
         self.image = drawer.Image((self.size_x, self.size_y), BACKGROUND_COLOR)
 
@@ -108,19 +98,31 @@ class TreeDrawer:
         self._draw_tree()
 
     def _locate_problems(self):
+        """some usefull work"""
         self.problem_coords = dict()
         self.problems_and_coords = []
-        current_y = TOP_BOTTOM_SPACE + PROBLEM_RADIUS
-        for contest_index, contest in enumerate(self.contests):
-            x_interval = (self.size_x - len(contest) * PROBLEM_DIAMETER) / (len(contest) + 1)
-            for problem_index, problem in enumerate(contest):
-                problem_x = int((x_interval + PROBLEM_DIAMETER) * (problem_index + 1) - PROBLEM_RADIUS)
-                self.problem_coords[problem] = (problem_x, current_y)
-                self.problems_and_coords.append((problem, (problem_x, current_y)))
-            current_y += PROBLEM_DIAMETER + PROBLEM_Y_INTERVAL
+        self.texts = []
+
+    def _create_seasons(self):
+        seasons_dict = dict()
+        for problem in self.problems:
+            contest_id = problem.problem_id[0]
+
+            group = self.contests_grouper.get_contest_parallel_by_id(contest_id)
+            season_name = self.contests_grouper.get_contest_season_by_id(contest_id)
+            day = self.contests_grouper.det_contest_day_by_id(contest_id)
+            year = self.contests_grouper.get_contest_year_by_id(contest_id)
+
+            if season_name not in self.seasons_dict:
+                seasons_dict[season_name] = Season(season_name, year)
+            seasons_dict[season_name].add_day_and_problem(problem, day, group, contest_id)
+        for season_name in seasons_dict:
+            self.seasons.append(seasons_dict[season_name])
+        self.seasons = self.seasons.sort(key=lambda x: x.order)
+
 
     def _get_line_color(self, problem):
-        similarity, same, removed, added = self.tree.get_relation_to_parent(problem)
+        parent, similarity, same, added, removed = self.tree.get_relation_to_parent(problem)
         if removed == 0 and added == 0:
             return LINE_COLOR_SAME
         color_k = (similarity - MIN_SIMILARITY) / (1.0 - MIN_SIMILARITY)
@@ -250,3 +252,81 @@ class TreeDrawer:
     def save_image_to_file(self, filename):
         self.image.save_png(filename)
 
+
+class Season:
+    def __init__(self, name, year):
+        #dict of days
+        #day is dict of list with id of problem
+        self.days_dict = dict()
+        self.groups_dict = dict()
+
+        self.groups = []
+        self.days = []
+        self.order = self._get_order(name, year)
+        self.name = name
+
+    def add_day_and_problem(self, problem, day, group, contest_id):
+        if day not in self.days_dict:
+            self.days_dict[day] = Day(day, contest_id)
+        self.days_dict[day].add_problem(problem, group)
+
+        if group not in self.groups_dict:
+            self.groups_dict[group] = Group(group)
+        self.groups_dict[group].max_len = max(self.groups_dict[group].max_len, len(self.days_dict[day].problems))
+
+    def create_days_list(self):
+        for day in self.days_dict:
+            self.days.append(self.days_dict[day])
+        self.days.sort(key=lambda x: x.order)
+
+    def create_group_list(self):
+        for group in self.groups_dict:
+            self.groups.append(self.groups_dict[group])
+        self.groups.sort(key=lambda x: x.order)
+
+    def _get_order(self, name, year):
+        pos = {'июль' : 0, 'август' : 1, 'зима' : 2}
+        order_2 = 3
+        if name in pos:
+            order_2 = pos[name.lower()]
+        order_1 = int(year)
+        return tuple(order_1, order_2)
+
+
+class Group:
+    def __init__(self, group):
+        self.max_len = 0
+        self.name = group
+        self.order = self._get_order(group)
+
+    def _get_order(self, group):
+        order_dict  = {'A':0,
+                'A\'':1,
+                'A0':2,
+                'AA':3,
+                'AS':4,
+                'AY':5,
+                'B':6,
+                'B\'':7,
+                'C':8,
+                'C\'':9,
+                'Ccpp':8,
+                'Cpy':10,
+                'D':11,
+                'olymp':12}
+        if group in order_dict:
+            return order_dict[group]
+        else:
+            return 13
+
+
+class Day:
+    def __init__(self, name, contest_id):
+        self.name = name
+        self.order = int(contest_id)
+        self.problems = dict()
+
+    def add_problem(self, problem, group):
+        if group not in self.problems:
+            self.problems[group] = []
+        self.problems[group].append(problem)

@@ -1,43 +1,43 @@
-import find_similar_problems
+SIMILAR_PROBLEMS_MIN_RATIO = 0.5
+EPS = 1e-9
 
 
 class ProblemsTree:
     def __init__(self, problems):
         self.problems = list(problems)
-        self.finder = find_similar_problems.SimilarProblemsFinder(self.problems)
-        self.problem_previous = dict()
-        for pair in self.finder.get_stat_data():
-            if pair[1] not in self.problem_previous:
-                self.problem_previous[pair[1]] = pair[0]
-            else:
-                old_similarity = self.finder.get_similarity(self.problem_previous[pair[1]], pair[1])
-                new_similarity = self.finder.get_similarity(pair[0], pair[1])
-                if new_similarity >= old_similarity:
-                    self.problem_previous[pair[1]] = pair[0]
+        self.problem_previous = dict()  # problem -> (previous, similarity, same, added, removed)
+        for index, problem_1 in enumerate(self.problems):
+            problem_1_tests = set(problem_1.cases)
+            for problem_2 in self.problems[index + 1:]:
+                same_tests_count = 0
+                for problem_2_test in problem_2.cases:
+                    if problem_2_test in problem_1_tests:
+                        same_tests_count += 1
+                try:
+                    similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
+                except ZeroDivisionError:
+                    similarity = 0.0
+                if similarity > SIMILAR_PROBLEMS_MIN_RATIO:
+                    if problem_2 not in self.problem_previous or\
+                       similarity > self.problem_previous[problem_2][1] - EPS:
+                        self.problem_previous[problem_2] = (problem_1, similarity, same_tests_count,
+                                                            len(problem_2.cases) - same_tests_count,
+                                                            len(problem_1.cases) - same_tests_count)
 
     def get_problems(self):
         return self.problems
 
     def get_previous_problem(self, problem):
         if problem in self.problem_previous:
-            return self.problem_previous[problem]
+            return self.problem_previous[problem][0]
         else:
             return None
 
-    def get_similarity_to_parent(self, problem):
-        return self.finder.get_similarity(self.get_previous_problem(problem), problem)
-
-    def get_tests_same_with_parent(self, problem):
-        return self.finder.get_same_tests_count(self.get_previous_problem(problem), problem)
-
-    def get_removed_tests_count(self, problem):
-        return self.finder.get_removed_tests_count(self.get_previous_problem(problem), problem)
-
-    def get_added_tests_count(self, problem):
-        return self.finder.get_added_tests_count(self.get_previous_problem(problem), problem)
-
     def get_relation_to_parent(self, problem):
-        return self.get_similarity_to_parent(problem), self.get_tests_same_with_parent(problem), self.get_removed_tests_count(problem), self.get_added_tests_count(problem)
+        if problem in self.problem_previous:
+            return self.problem_previous[problem]
+        else:
+            return None
 
     def __str__(self):
         resulting_string = ''
@@ -46,10 +46,7 @@ class ProblemsTree:
             if problem not in self.problem_previous:
                 resulting_string += 'it is a new problem. Tests: {tests}.\n'.format(tests=len(problem.cases))
             else:
-                previous = self.problem_previous[problem]
-                same_tests_count = self.finder.get_same_tests_count(previous, problem)
-                added_tests_count = self.finder.get_added_tests_count(previous, problem)
-                removed_tests_count = self.finder.get_removed_tests_count(previous, problem)
+                previous, similarity, same_tests_count, added_tests_count, removed_tests_count = self.problem_previous[problem]
                 if added_tests_count == 0 and removed_tests_count == 0:
                     resulting_string += 'it is {previous}. Tests: {tests}.\n'.\
                         format(previous=str(previous), tests=same_tests_count)

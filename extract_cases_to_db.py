@@ -1,7 +1,7 @@
 from problem_generator import problem_generator
 
 
-def extract_cases_to_db(contest_dirs, cursor, origin):
+def extract_cases_to_db(contest_dirs, cursor, origin, start_from='1'):
     problems = problem_generator(contest_dirs)
     contests_len = cursor.execute('SELECT COUNT(id) FROM Contests').fetchone()
     if contests_len is None or contests_len[0] == 0:
@@ -9,6 +9,11 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
         return
 
     for problem in problems:
+        if problem.problem_id[0] < start_from:
+            continue
+
+        print('Filling in cases for problem #{0} from contest #{1}'.format(problem.problem_id[1],
+                                                                           problem.problem_id[0]))
         contest_response = cursor.execute('SELECT id FROM Contests WHERE origin = ? AND contest_id = ?',
                                          (origin, problem.problem_id[0].rjust(6, '0'))).fetchone()
         if contest_response is None:
@@ -16,7 +21,7 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
 
         contest_ref = contest_response[0]
         problem_in_db = len(cursor.execute('SELECT id FROM Problems WHERE contest_ref = ? AND problem_id = ?',
-                                        (contest_ref, problem.problem_id[1])))
+                                        (contest_ref, problem.problem_id[1])).fetchall())
         if problem_in_db:
             cursor.execute('UPDATE Problems SET name = ? WHERE contest_ref = ? AND problem_id = ?',
                                         (problem.name, contest_ref, problem.problem_id[1]))
@@ -38,6 +43,6 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
                                                                                       problem.problem_id[1],
                                                                                       problem.problem_id[0]))
 
-        print('Filled in {0} cases of problem # {1} from contest #{2}'.format(case_num,
+        print('Filled in {0} cases of problem #{1} from contest #{2}'.format(case_num,
                                                                               problem.problem_id[1],
                                                                               problem.problem_id[0]))

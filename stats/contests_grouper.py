@@ -1,56 +1,73 @@
-from ejudge_contest_xml import ejudge_get_contest_name
-from walker import AllFilesWalker
+from dao_contests import DAOContests
 import re
-import os
 
 
 class _Contest:
-    def __init__(self, year, season, parallel):
+    def __init__(self, year, season, day, parallel):
         self.year = year
         self.season = season
+        self.day = day
         self.parallel = parallel
 
 
-class ProblemsGrouper:
-    def __init__(self, contests_dir):
+class ContestsGrouper:
+    def __init__(self, contests):
         self.contests = dict()
 
         year_regex = re.compile('20[0-9]{2}')
         parallel_regex = re.compile('(?:' + re.escape('.') + '|\\s)' +
-                                    '(?:[ABCDPSKMZСА]|AS|AA|AY)(?:py|python|prime|' +
+                                    '(?:[ABCDZСА]|AS|AA|AY)(?:py|python|prime|' +
                                     re.escape('c++') + '|' + re.escape('++') + '|cpp|[0-9]+|' +
                                     re.escape('\'') + ')?' + re.escape('+') +
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)
-        files_walker = AllFilesWalker()
-        for _, contest_xml_filename in files_walker.walk(contests_dir):
-            contest_name = ejudge_get_contest_name(contest_xml_filename)
-            if contest_name is None:
+        day_regex = re.compile('(?:(?:день|day)(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.|D)[0-9]{1,2}(?:\\s|\\.|[^0-9]|$))(?!(?:день|day)))', re.I)
+
+        parallels = set()
+
+        for contest in contests:
+
+            if contest.name is None:
                 continue
-            if 'ЛКШ' not in contest_name or 'template' in contest_name.lower():
+            if 'ЛКШ' not in contest.name or 'template' in contest.name.lower():
                 continue
-            if not year_regex.findall(contest_name):
+            if not year_regex.findall(contest.name):
                 year = 0
             else:
-                year = int(year_regex.findall(contest_name)[0])
-            if 'олимпиада' in contest_name.lower() or 'contest' in contest_name.lower() or 'соревнование' in contest_name.lower():
+                year = int(year_regex.findall(contest.name)[0])
+            if 'олимпиада' in contest.name.lower() or 'contest' in contest.name.lower() or 'соревнование' in contest.name.lower():
                 parallel = 'olymp'
-            elif not parallel_regex.findall(contest_name):
+            elif not parallel_regex.findall(contest.name):
                 parallel = ''
             else:  # Please, think twice, if you want to change this replaces.
-                parallel = re.sub('\s', '', parallel_regex.findall(contest_name)[0].replace('.', ''))
+                parallel = re.sub('\\s', '', parallel_regex.findall(contest.name)[0].replace('.', ''))
                 parallel = re.sub('prime', '\'', parallel)
                 parallel = re.sub('python', 'py', parallel)
                 parallel = re.sub(re.escape('c++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('С'), 'C', parallel)  # Russian letters!
                 parallel = re.sub(re.escape('А'), 'A', parallel)
-            if not season_regex.findall(contest_name):
+                parallel = parallel.rstrip('+')
+                if parallel.startswith('D') and parallel != 'D':
+                    parallel = 'D'
+            if not season_regex.findall(contest.name):
                 season = ''
             else:
-                season = season_regex.findall(contest_name)[0]
+                season = season_regex.findall(contest.name)[0]
+            if not day_regex.findall(contest.name):
+                day = ''
+                if 'зачет' in contest.name.lower() or 'зачёт' in contest.name.lower() or 'зачот' in contest.name.lower() or 'exam' in contest.name.lower():
+                    day = 'exam'
+            else:  # This replaces is also dangerous.
+                day = day_regex.findall(contest.name)[0]
+                day = re.sub('\\s', '', day)
+                day = re.sub('\\.', '', day)
+                day = re.sub('(?:день|day)', '', day, flags=re.I)
+                day = day.lstrip('D')
+                day = day.lstrip('d')
 
-            self.contests[os.path.basename(contest_xml_filename)[:-4]] = _Contest(year, season, parallel)
+            self.contests[contest.contest_id] = _Contest(year, season, day, parallel)
+            parallels.update({parallel})
 
     def get_contest_year_by_id(self, contest_id):
         return self.contests[contest_id].year
@@ -60,6 +77,9 @@ class ProblemsGrouper:
 
     def get_contest_parallel_by_id(self, contest_id):
         return self.contests[contest_id].parallel
+
+    def get_contest_day_by_id(self, contest_id):
+        return self.contests[contest_id].day
 
     def _group_contests_by_key(self, contest_ids, attr):
         result = dict()
@@ -79,6 +99,9 @@ class ProblemsGrouper:
 
     def group_contests_by_parallel(self, contest_ids):
         return self._group_contests_by_key(contest_ids, 'parallel')
+
+    def group_contests_by_day(self, contest_ids):
+        return self._group_contests_by_key(contest_ids, 'day')
 
     def get_all_known_contests(self):
         return self.contests.keys()
