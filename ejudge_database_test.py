@@ -28,5 +28,11 @@ class TestEjudgeDatabase(unittest.TestCase):
         self.assertEqual(info.lang_id, '3')
         self.assertEqual(info.timestamp, 4)
 
+    def test_empty_response(self):
+        db = EjudgeDatabase(Mock(fetchone=Mock(return_value=None)))
+        info = db.get_submit_info('ci', 'si')
+        self.assertIsNone(info)
+
+
 if __name__ == "__main__":
     unittest.main()
