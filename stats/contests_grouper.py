@@ -16,12 +16,14 @@ class ContestsGrouper:
 
         year_regex = re.compile('20[0-9]{2}')
         parallel_regex = re.compile('(?:' + re.escape('.') + '|\\s)' +
-                                    '(?:[ABCDPSKMZСА]|AS|AA|AY)(?:py|python|prime|' +
+                                    '(?:[ABCDZСА]|AS|AA|AY)(?:py|python|prime|' +
                                     re.escape('c++') + '|' + re.escape('++') + '|cpp|[0-9]+|' +
                                     re.escape('\'') + ')?' + re.escape('+') +
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)
-        day_regex = re.compile('(?:день(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.)[0-9]{1,2}(?:\\s|\\.|$))(?!день))', re.I)
+        day_regex = re.compile('(?:(?:день|day)(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.|D)[0-9]{1,2}(?:\\s|\\.|[^0-9]|$))(?!(?:день|day)))', re.I)
+
+        parallels = set()
 
         for contest in contests:
 
@@ -45,20 +47,27 @@ class ContestsGrouper:
                 parallel = re.sub(re.escape('++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('С'), 'C', parallel)  # Russian letters!
                 parallel = re.sub(re.escape('А'), 'A', parallel)
+                parallel = parallel.rstrip('+')
+                if parallel.startswith('D') and parallel != 'D':
+                    parallel = 'D'
             if not season_regex.findall(contest.name):
                 season = ''
             else:
                 season = season_regex.findall(contest.name)[0]
             if not day_regex.findall(contest.name):
-                day = -1
+                day = ''
+                if 'зачет' in contest.name.lower() or 'зачёт' in contest.name.lower() or 'зачот' in contest.name.lower() or 'exam' in contest.name.lower():
+                    day = 'exam'
             else:  # This replaces is also dangerous.
                 day = day_regex.findall(contest.name)[0]
                 day = re.sub('\\s', '', day)
                 day = re.sub('\\.', '', day)
-                day = re.sub('день', '', day, flags=re.I)
-                day = int(day)
+                day = re.sub('(?:день|day)', '', day, flags=re.I)
+                day = day.lstrip('D')
+                day = day.lstrip('d')
 
             self.contests[contest.contest_id] = _Contest(year, season, day, parallel)
+            parallels.update({parallel})
 
     def get_contest_year_by_id(self, contest_id):
         return self.contests[contest_id].year

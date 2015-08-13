@@ -13,7 +13,10 @@ class ProblemsTree:
                 for problem_2_test in problem_2.cases:
                     if problem_2_test in problem_1_tests:
                         same_tests_count += 1
-                similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
+                try:
+                    similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
+                except ZeroDivisionError:
+                    similarity = 0.0
                 if similarity > SIMILAR_PROBLEMS_MIN_RATIO:
                     if problem_2 not in self.problem_previous or\
                        similarity > self.problem_previous[problem_2][1] - EPS:
@@ -31,7 +34,10 @@ class ProblemsTree:
             return None
 
     def get_relation_to_parent(self, problem):
-        return self.problem_previous[problem]
+        if problem in self.problem_previous:
+            return self.problem_previous[problem]
+        else:
+            return None
 
     def __str__(self):
         resulting_string = ''
