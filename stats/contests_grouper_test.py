@@ -8,7 +8,7 @@ import os
 
 class ProblemsGrouperTest(PestoTestCase):
     def setUp(self):
-        contests = [Contest('123456', 'lksh', 'ЛКШ.2013.Зима.  P.День 3', 'ACM'),
+        contests = [Contest('123456', 'lksh', 'ЛКШ.2013.Зима.  A\'.День 3', 'ACM'),
                     Contest('789012', 'lksh', 'ЛКШ .Олимпиада.День3', 'Kirov'),
                     Contest('345678', 'lksh', 'ЛКШ.2011 . Июль', 'ACM'),
                     Contest('666666', 'hell', 'Левый контест', 'Kirov'),
@@ -31,7 +31,7 @@ class ProblemsGrouperTest(PestoTestCase):
     def test_getters_spaces(self):
         self.assertEqual(self.grouper.get_contest_year_by_id('345678'), 2011)
         self.assertEqual(self.grouper.get_contest_season_by_id('345678'), 'Июль')
-        self.assertEqual(self.grouper.get_contest_parallel_by_id('123456'), 'P')
+        self.assertEqual(self.grouper.get_contest_parallel_by_id('123456'), 'A\'')
         self.assertEqual(self.grouper.get_contest_day_by_id('789012'), '3')
 
     def test_getters_no_values(self):
@@ -61,8 +61,8 @@ class ProblemsGrouperTest(PestoTestCase):
 
         grouped_by_parallel = self.grouper.group_contests_by_parallel(self.grouper.get_all_known_contests())
         self.assertEqual(len(grouped_by_parallel), 3)
-        self.assertTrue('P' in grouped_by_parallel)
-        self.assertEqual(grouped_by_parallel['P'], ['123456'])
+        self.assertTrue('A\'' in grouped_by_parallel)
+        self.assertEqual(grouped_by_parallel['A\''], ['123456'])
         self.assertTrue('olymp' in grouped_by_parallel)
         self.assertEqual(grouped_by_parallel['olymp'], ['789012'])
         self.assertTrue('' in grouped_by_parallel)

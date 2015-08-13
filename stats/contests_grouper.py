@@ -58,10 +58,6 @@ class ContestsGrouper:
                 day = ''
                 if 'зачет' in contest.name.lower() or 'зачёт' in contest.name.lower() or 'зачот' in contest.name.lower() or 'exam' in contest.name.lower():
                     day = 'exam'
-                else:
-                    # print('Can\'t handle day for contest {}.'.format(contest.contest_id))
-                    # print(contest.name)
-                    pass
             else:  # This replaces is also dangerous.
                 day = day_regex.findall(contest.name)[0]
                 day = re.sub('\\s', '', day)
@@ -70,7 +66,6 @@ class ContestsGrouper:
 
             self.contests[contest.contest_id] = _Contest(year, season, day, parallel)
             parallels.update({parallel})
-        print('\n'.join(sorted(list(parallels))))
 
     def get_contest_year_by_id(self, contest_id):
         return self.contests[contest_id].year
