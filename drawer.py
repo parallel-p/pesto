@@ -26,9 +26,15 @@ class Image:
     def draw_rectangle(self, begin, size, border_thickness, border_color, rectangle_color):
         self.draw.rectangle(begin + (begin[0] + size[0], begin[1] + size[1]), rectangle_color, border_color)
 
-    def draw_text(self, text, begin, font, size, color):
-        self.draw.setfont(PIL.ImageFont.truetype(font, size))
-        self.draw.text(begin, text, color)
+    def draw_text(self, text, begin, font, size, color, align="left"):
+        font = PIL.ImageFont.truetype(font, size)
+        self.draw.setfont(font)
+        size_x, size_y = self.draw.textsize(text, font)
+        if align == "left":
+            coords = (begin[0], begin[1] - size_y // 2)
+        else:
+            coords = (begin[0] - size_x // 2, begin[1] - size_y // 2)
+        self.draw.text(coords, text, color)
 
     def save_png(self, file_name):
         self.image.save(file_name, 'BMP')
