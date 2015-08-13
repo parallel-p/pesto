@@ -16,7 +16,7 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
 
         contest_ref = contest_response[0]
         problem_in_db = len(cursor.execute('SELECT id FROM Problems WHERE contest_ref = ? AND problem_id = ?',
-                                        (contest_ref, problem.problem_id[1])))
+                                        (contest_ref, problem.problem_id[1])).fetchall())
         if problem_in_db:
             cursor.execute('UPDATE Problems SET name = ? WHERE contest_ref = ? AND problem_id = ?',
                                         (problem.name, contest_ref, problem.problem_id[1]))
