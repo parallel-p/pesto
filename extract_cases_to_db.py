@@ -9,7 +9,7 @@ def extract_cases_to_db(contest_dirs, cursor, origin, start_from='1'):
         return
 
     for problem in problems:
-        if problem.problem_id[0].rjust(6, '0') > start_from.rjust(6, '0'):
+        if problem.problem_id[0].rjust(6, '0') < start_from.rjust(6, '0'):
             continue
 
         print('Filling in cases for problem #{0} from contest #{1}'.format(problem.problem_id[1],
