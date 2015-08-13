@@ -1,7 +1,7 @@
 from problem_generator import problem_generator
 
 
-def extract_cases_to_db(contest_dirs, cursor, origin):
+def extract_cases_to_db(contest_dirs, cursor, origin, start_from):
     problems = problem_generator(contest_dirs)
     contests_len = cursor.execute('SELECT COUNT(id) FROM Contests').fetchone()
     if contests_len is None or contests_len[0] == 0:
@@ -9,6 +9,9 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
         return
 
     for problem in problems:
+        if problem.problem_id[0] < start_from:
+            continue
+
         print('Filling in cases for problem #{0} from contest #{1}'.format(problem.problem_id[1],
                                                                            problem.problem_id[0]))
         contest_response = cursor.execute('SELECT id FROM Contests WHERE origin = ? AND contest_id = ?',
