@@ -16,5 +16,9 @@ class TextGetName(unittest.TestCase):
     def test_not_xml(self):
         self.assertIsNone(ejudge_get_contest_name('nope'))
 
+    @patch('builtins.open', side_effect=UnicodeError)
+    def test_not_utf8(self, op):
+        self.assertIsNone(ejudge_get_contest_name('nope'))
+
 if __name__ == "__main__":
     unittest.main()
