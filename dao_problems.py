@@ -49,7 +49,7 @@ class DAOProblems:
 
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Problems WHERE id = ?'.format(self.columns), ref)
+        cursor.execute('SELECT {} FROM Problems WHERE id = ?'.format(self.columns), [ref])
         old = self.load(cursor.fetchone())
         new_def = {'contest_ref': old.contest_ref, 'problem_id': old.problem_id[1], 'name': old.name}
         for key, value in update_def.items():

@@ -33,7 +33,7 @@ class DAOSubmitsTest(unittest.TestCase):
         self.cursor.fetchall.return_value = ['row1', 'row2']
         res = self.dao.deep_load(self.row)
         self.assertEqual(self.cursor.mock_calls,
-                         [call.execute('SELECT kek FROM Runs WHERE submit_ref = ?', 1), call.fetchall()])
+                         [call.execute('SELECT kek FROM Runs WHERE submit_ref = ?', [1]), call.fetchall()])
         self.assertEqual(dao_runs.mock_calls, [call.deep_load('row1'), call.deep_load('row2')])
         self.assertEqual(res.runs, [1, 2])
         self.assertEqual(res.mock_calls, [call.count_results()])
@@ -78,14 +78,14 @@ class DAOSubmitsTest(unittest.TestCase):
         self.dao.update(1, {'submit_id': 'submit_id3', 'lang_id': 'lang_id3', 'problem_ref': 'problem_ref3'})
         self.dao.update(2, {'user_ref': 'user_ref3', 'outcome': 'outcome3', 'timestamp': 'timestamp3'})
         calls = [call.execute('SELECT id, submit_id, lang_id, problem_ref, user_ref, outcome, '
-                              'timestamp FROM Submits WHERE id = ?', 1), call.fetchone(),
+                              'timestamp FROM Submits WHERE id = ?', [1]), call.fetchone(),
                  call.execute('UPDATE Submits SET submit_id = :submit_id, lang_id = :lang_id,'
                               ' problem_ref = :problem_ref, user_ref = :user_ref, outcome = :outcome,'
                               ' timestamp = :timestamp WHERE id = :id',
                               {'submit_id': 'submit_id3', 'lang_id': 'lang_id3', 'problem_ref': 'problem_ref3',
                                'user_ref': 'user_ref1', 'outcome': 'outcome1', 'timestamp': 'timestamp1', 'id': 1}),
                  call.execute('SELECT id, submit_id, lang_id, problem_ref, user_ref, outcome, '
-                              'timestamp FROM Submits WHERE id = ?', 2), call.fetchone(),
+                              'timestamp FROM Submits WHERE id = ?', [2]), call.fetchone(),
                  call.execute('UPDATE Submits SET submit_id = :submit_id, lang_id = :lang_id,'
                               ' problem_ref = :problem_ref, user_ref = :user_ref, outcome = :outcome,'
                               ' timestamp = :timestamp WHERE id = :id',

@@ -41,7 +41,7 @@ class DAORuns:
 
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Runs WHERE id = ?'.format(self.columns), ref)
+        cursor.execute('SELECT {} FROM Runs WHERE id = ?'.format(self.columns), [ref])
         old = self.load(cursor.fetchone())
         new_def = {'submit_ref': old.submit_ref, 'case_ref': old.case_ref, 'realtime': old.real_time,
                    'time': old.time, 'outcome': old.outcome}

@@ -45,7 +45,7 @@ class DAOSubmits:
 
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Submits WHERE id = ?'.format(self.columns), ref)
+        cursor.execute('SELECT {} FROM Submits WHERE id = ?'.format(self.columns), [ref])
         old = self.load(cursor.fetchone())
         new_def = {'submit_id': old.submit_id, 'lang_id': old.lang_id, 'problem_ref': old.problem_ref,
                    'user_ref': old.user_ref, 'outcome': old.outcome, 'timestamp': old.timestamp}
