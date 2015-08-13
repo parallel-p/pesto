@@ -1,24 +1,24 @@
 import unittest
 from unittest.mock import Mock
 from pesto_testcase import PestoTestCase
-from stats.problems_grouper import ProblemsGrouper
+from model import Contest
+from stats.contests_grouper import ContestsGrouper
 import os
 
 
 class ProblemsGrouperTest(PestoTestCase):
-    @unittest.mock.patch('stats.problems_grouper.ejudge_get_contest_name',
-                        side_effect=['ЛКШ.2013.Зима.  P', 'ЛКШ .Олимпиада', 'ЛКШ.2011 . Июль', 'Левый контест', None, 'ЛКШ.Template'])
-    @unittest.mock.patch('stats.problems_grouper.AllFilesWalker',
-                        return_value=Mock(walk=Mock(return_value=[(None, os.path.join('a', '123456.xml')),
-                                                    (None, os.path.join('a', '789012.xml')),
-                                                    (None, os.path.join('a', '345678.xml')),
-                                                    (None, None),
-                                                    (None, None),
-                                                    (None, None)])))
-    def setUp(self, useless, args):
-        self.grouper = ProblemsGrouper('dir_name')
+    def setUp(self):
+        with unittest.mock.patch('stats.contests_grouper.DAOContests',
+                                load=Mock(
+                                        side_effect=[Contest('123456', 'lksh', 'ЛКШ.2013.Зима.  P', 'ACM'),
+                                                    Contest('789012', 'lksh', 'ЛКШ .Олимпиада', 'Kirov'),
+                                                    Contest('345678', 'lksh', 'ЛКШ.2011 . Июль', 'ACM'),
+                                                    Contest('666666', 'hell', 'Левый контест', 'Kirov'),
+                                                    Contest('666666', 'hell', None, 'ACM'),
+                                                    Contest('127001', 'lksh', 'ЛКШ.Template', 'ACM')])):
+            self.grouper = ContestsGrouper([None] * 6)
 
-    def test_get_all(self): 
+    def test_get_all(self):
         self.assertEqual(len(self.grouper.get_all_known_contests()), 3)
         self.assertTrue('123456' in self.grouper.get_all_known_contests())
         self.assertTrue('789012' in self.grouper.get_all_known_contests())
