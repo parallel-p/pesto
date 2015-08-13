@@ -15,7 +15,10 @@ class SimilarProblemsFinder:
                 for problem_2_test in problem_2.cases:
                     if problem_2_test in problem_1_tests:
                         same_tests_count += 1
-                similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
+                try:
+                    similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
+                except ZeroDivisionError:
+                    similarity = 0.0
                 if similarity > SIMILAR_PROBLEMS_MIN_RATIO:
                     self.result.append((problem_1, problem_2))
                 self.same_tests_count_dict[(problem_1, problem_2)] = same_tests_count

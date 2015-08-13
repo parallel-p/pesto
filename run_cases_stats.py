@@ -6,6 +6,7 @@ from problem_generator import sqlite_problem_generator, sqlite_contest_generator
 from problems_tree import ProblemsTree
 from tree_drawer import TreeDrawer
 from stats.contests_grouper import ContestsGrouper
+import problems_tree_json
 import sqlite_connector
 import toollib
 
@@ -15,8 +16,9 @@ def display_stats_list():
     print('0. cases_count - Count cases for each problem.')
     print('1. same_problems - Find same problems.')
     print('2. similar_problems - Find similar problems (problems with many same tests)')
-    print('3. problems_tree - Build tree of similar problems')
-    print('4. draw_tree - Build tree of similar problems and draw it to file')
+    print('3. draw_tree - Build tree of similar problems and draw it to file')
+    print('4. build_problems_tree - Build tree of similar problems and write it to json file')
+    print('5. draw_saved_tree - load tree from json and draw it to file')
 
 
 def parse_args():
@@ -71,16 +73,17 @@ def main():
     elif args['statistic'] in ['2', 'similar_problems']:
         finder = SimilarProblemsFinder(problems_generator)
         print_result(str(finder), output_file)
-    elif args['statistic'] in ['3', 'problems_tree']:
-        tree = ProblemsTree(problems_generator)
-        print_result(str(tree), output_file)
-    elif args['statistic'] in ['4', 'draw_tree']:
+    elif args['statistic'] in ['3', 'draw_tree']:
         if output_file is None:
             print('Sorry, I can\'t draw tree to console')
             exit()
         tree = ProblemsTree(problems_generator)
         drawer = TreeDrawer(tree, ContestsGrouper(contests_generator))
         drawer.save_image_to_file(output_file)
+    elif args['statistic'] in ['4', 'build_problems_tree']:
+        tree = ProblemsTree(problems_generator)
+        contests_grouper = ContestsGrouper(contests_generator)
+        print_result(problems_tree_json.save_tree(tree, contests_grouper), output_file)
     else:
         print('Incorrect statistic specified.')
         display_stats_list()
