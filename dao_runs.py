@@ -16,7 +16,7 @@ class DAORuns:
     def deep_load(self, row):
         run = self.load(row)
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT case_id FROM Cases WHERE id = ?', (row['case_ref'], ))
+        cursor.execute('SELECT case_id FROM Cases WHERE id = ?', [row['case_ref']])
         run.case_id = cursor.fetchone()['case_id']
         return run
 
