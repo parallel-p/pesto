@@ -1,7 +1,7 @@
 from problem_generator import problem_generator
 
 
-def extract_cases_to_db(contest_dirs, cursor, origin, start_from):
+def extract_cases_to_db(contest_dirs, cursor, origin, start_from='1'):
     problems = problem_generator(contest_dirs)
     contests_len = cursor.execute('SELECT COUNT(id) FROM Contests').fetchone()
     if contests_len is None or contests_len[0] == 0:
