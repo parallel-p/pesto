@@ -21,7 +21,7 @@ class ContestsGrouper:
                                     re.escape('\'') + ')?' + re.escape('+') +
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)
-        day_regex = re.compile('(?:(?:день|day)(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.)[0-9]{1,2}(?:\\s|\\.|[^0-9]|$))(?!(?:день|day)))', re.I)
+        day_regex = re.compile('(?:(?:день|day)(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.|D)[0-9]{1,2}(?:\\s|\\.|[^0-9]|$))(?!(?:день|day)))', re.I)
 
         parallels = set()
 
@@ -63,6 +63,8 @@ class ContestsGrouper:
                 day = re.sub('\\s', '', day)
                 day = re.sub('\\.', '', day)
                 day = re.sub('(?:день|day)', '', day, flags=re.I)
+                day = day.lstrip('D')
+                day = day.lstrip('d')
 
             self.contests[contest.contest_id] = _Contest(year, season, day, parallel)
             parallels.update({parallel})
