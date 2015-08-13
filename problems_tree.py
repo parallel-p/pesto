@@ -7,7 +7,6 @@ class ProblemsTree:
         self.problems = list(problems)
         self.problem_previous = dict()  # problem -> (previous, similarity, same, added, removed)
         for index, problem_1 in enumerate(self.problems):
-            print(index)
             problem_1_tests = set(problem_1.cases)
             for problem_2 in self.problems[index + 1:]:
                 same_tests_count = 0
