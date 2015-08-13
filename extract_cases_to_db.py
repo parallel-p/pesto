@@ -15,8 +15,14 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
             continue
 
         contest_ref = contest_response[0]
-        cursor.execute('UPDATE Problems SET name = ? WHERE contest_ref = ? AND problem_id = ?',
-                      (problem.name, contest_ref, problem.problem_id[1]))
+        problem_in_db = len(cursor.execute('SELECT id FROM Problems WHERE contest_ref = ? AND problem_id = ?',
+                                        (contest_ref, problem.problem_id[1])))
+        if problem_in_db:
+            cursor.execute('UPDATE Problems SET name = ? WHERE contest_ref = ? AND problem_id = ?',
+                                        (problem.name, contest_ref, problem.problem_id[1]))
+        else:
+            cursor.execute('INSERT INTO Problems (id, contest_ref, problem_id, name) VALUES (NULL, ?, ?, ?)',
+                           (contest_ref, problem.problem_id[1], problem.name))
         problem_response = cursor.execute('SELECT id FROM Problems WHERE contest_ref = ? AND problem_id = ?',
                                     (contest_ref, problem.problem_id[1])).fetchone()
         if problem_response is None:
