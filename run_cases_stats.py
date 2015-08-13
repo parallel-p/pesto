@@ -2,9 +2,11 @@ from argparse import ArgumentParser
 from case_counter import CasesCounter
 from find_same_problems import SameProblemsFinder
 from find_similar_problems import SimilarProblemsFinder
-from problem_generator import problem_generator, sqlite_problem_generator
+from problem_generator import sqlite_problem_generator, sqlite_contest_generator
 from problems_tree import ProblemsTree
 from tree_drawer import TreeDrawer
+from stats.contests_grouper import ContestsGrouper
+import sqlite_connector
 import toollib
 
 
@@ -33,6 +35,7 @@ def print_result(result, filename):
         with open(filename, 'w') as outfile:
             outfile.write(result)
 
+
 def main():
     args = parse_args()
     
@@ -54,26 +57,29 @@ def main():
         print('Database is not specified.')
         exit()
 
-    generator = sqlite_problem_generator(sqlite_db)
+    conn = sqlite_connector.SQLiteConnector()
+    conn.create_connection(sqlite_db)
+    problems_generator = sqlite_problem_generator(conn)
+    contests_generator = sqlite_contest_generator(conn)
 
     if args['statistic'] in ['0', 'cases_count']:
-        counter = CasesCounter(generator)
+        counter = CasesCounter(problems_generator)
         print_result(str(counter), output_file)
     elif args['statistic'] in ['1', 'same_problems']:
-        finder = SameProblemsFinder(generator)
+        finder = SameProblemsFinder(problems_generator)
         print_result(str(finder), output_file)
     elif args['statistic'] in ['2', 'similar_problems']:
-        finder = SimilarProblemsFinder(generator)
+        finder = SimilarProblemsFinder(problems_generator)
         print_result(str(finder), output_file)
     elif args['statistic'] in ['3', 'problems_tree']:
-        tree = ProblemsTree(generator)
+        tree = ProblemsTree(problems_generator)
         print_result(str(tree), output_file)
     elif args['statistic'] in ['4', 'draw_tree']:
         if output_file is None:
             print('Sorry, I can\'t draw tree to console')
             exit()
-        tree = ProblemsTree(generator)
-        drawer = TreeDrawer(tree)
+        tree = ProblemsTree(problems_generator)
+        drawer = TreeDrawer(tree, ContestsGrouper(contests_generator))
         drawer.save_image_to_file(output_file)
     else:
         print('Incorrect statistic specified.')

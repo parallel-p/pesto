@@ -84,7 +84,7 @@ def _point_rectangle_distance_sqr(point, rect_begin, rect_size):
 
 
 class TreeDrawer:
-    def __init__(self, tree):
+    def __init__(self, tree, contests_grouper):
         self.tree = tree
         self.problems = self.tree.get_problems()
         self.contests = []
