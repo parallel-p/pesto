@@ -26,12 +26,8 @@ def sqlite_problem_generator(conn):
     result = cursor.fetchall()
 
     dao = DAOProblems(conn)
-    i = 0
     for row in result:
         yield dao.deep_load(row)
-        i += 1
-        if i == 20:
-            break
 
 
 def sqlite_contest_generator(conn):
