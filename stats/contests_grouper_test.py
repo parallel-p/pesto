@@ -8,15 +8,13 @@ import os
 
 class ProblemsGrouperTest(PestoTestCase):
     def setUp(self):
-        with unittest.mock.patch('stats.contests_grouper.DAOContests',
-                                load=Mock(
-                                        side_effect=[Contest('123456', 'lksh', 'ЛКШ.2013.Зима.  P', 'ACM'),
-                                                    Contest('789012', 'lksh', 'ЛКШ .Олимпиада', 'Kirov'),
-                                                    Contest('345678', 'lksh', 'ЛКШ.2011 . Июль', 'ACM'),
-                                                    Contest('666666', 'hell', 'Левый контест', 'Kirov'),
-                                                    Contest('666666', 'hell', None, 'ACM'),
-                                                    Contest('127001', 'lksh', 'ЛКШ.Template', 'ACM')])):
-            self.grouper = ContestsGrouper([None] * 6)
+        contests = [Contest('123456', 'lksh', 'ЛКШ.2013.Зима.  P', 'ACM'),
+                    Contest('789012', 'lksh', 'ЛКШ .Олимпиада', 'Kirov'),
+                    Contest('345678', 'lksh', 'ЛКШ.2011 . Июль', 'ACM'),
+                    Contest('666666', 'hell', 'Левый контест', 'Kirov'),
+                    Contest('666666', 'hell', None, 'ACM'),
+                    Contest('127001', 'lksh', 'ЛКШ.Template', 'ACM')]
+        self.grouper = ContestsGrouper(contests)
 
     def test_get_all(self):
         self.assertEqual(len(self.grouper.get_all_known_contests()), 3)
