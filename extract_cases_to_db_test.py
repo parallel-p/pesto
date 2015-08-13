@@ -12,7 +12,7 @@ class ExtractCasesToDBTest(PestoTestCase):
     def test_common(self, pr):
         cursor = Mock()
         cursor.execute.return_value.fetchone = Mock(side_effect=[(1,), (1,), (2,)])
-        cursor.execute.return_value.__len__ = Mock(return_value=1)
+        cursor.execute.return_value.fetchall.return_value.__len__ = Mock(return_value=1)
         problem = Mock(problem_id=['3', '4'], cases=['qwer', 'asdf', 'zxcv'])
         problem.name = 'A'
         # problem_generator = Mock(return_value=problem)
@@ -44,7 +44,7 @@ class ExtractCasesToDBTest(PestoTestCase):
     def test_no_problem(self, pr):
         cursor = Mock()
         cursor.execute.return_value.fetchone = Mock(side_effect=[(1,), (1,), (2,)])
-        cursor.execute.return_value.__len__ = Mock(return_value=0)
+        cursor.execute.return_value.fetchall.return_value.__len__ = Mock(return_value=0)
         problem = Mock(problem_id=['3', '4'], cases=['qwer', 'asdf', 'zxcv'])
         problem.name = 'A'
         with unittest.mock.patch('extract_cases_to_db.problem_generator', return_value=[problem]):

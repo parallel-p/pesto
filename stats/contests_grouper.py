@@ -10,7 +10,7 @@ class _Contest:
 
 
 class ContestsGrouper:
-    def __init__(self, contests_rows):
+    def __init__(self, contests):
         self.contests = dict()
 
         year_regex = re.compile('20[0-9]{2}')
@@ -21,8 +21,8 @@ class ContestsGrouper:
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)
 
-        for row in contests_rows:
-            contest = DAOContests.load(row)
+        for contest in contests:
+
             if contest.name is None:
                 continue
             if 'ЛКШ' not in contest.name or 'template' in contest.name.lower():
