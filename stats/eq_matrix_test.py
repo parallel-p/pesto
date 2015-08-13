@@ -15,7 +15,7 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(10):
-            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM'))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM', 37))
 
         for submit in submits:
             self.matrix.visit(submit)
@@ -38,7 +38,7 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(10):
-            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM'))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM', 37))
 
         sample = ("\t" + "".join("{:>9}".format(elem) for elem in [10, 10, 10, 10]) + "\n" +
                   "0\t" + "".join("{:>9}".format(elem) for elem in [1, 2, 3, 4]) + "\n" +
@@ -61,7 +61,7 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(10):
-            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM'))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM', 37))
 
         for submit in submits:
             self.matrix.visit(submit)
@@ -87,10 +87,10 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(4):
-            submits.append(Submit(i, (0, 0), 0, 0, runs[:2], 0, 'ACM'))
-            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM'))
-        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM'))
-        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM'))
+            submits.append(Submit(i, (0, 0), 0, 0, runs[:2], 0, 'ACM', 37))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM', 37))
+        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM', 37))
+        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM', 37))
 
         for submit in submits:
             self.matrix.visit(submit)
@@ -118,10 +118,10 @@ class PositiveTests(unittest.TestCase):
 
         submits = []
         for i in range(4):
-            submits.append(Submit(i, (0, 0), 0, 0, runs[:2], 0, 'ACM'))
-            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM'))
-        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM'))
-        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM'))
+            submits.append(Submit(i, (0, 0), 0, 0, runs[:2], 0, 'ACM', 37))
+            submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM', 37))
+        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM', 37))
+        submits.append(Submit(i, (0, 0), 0, 0, runs[:1], 0, 'ACM', 37))
 
         for submit in submits:
             self.matrix.visit(submit)

@@ -1,0 +1,52 @@
+CREATE TABLE `Cases` (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `case_id`    TEXT,
+                    `problem_ref`    INTEGER,
+                    `io_hash`    TEXT
+                );
+CREATE INDEX `cases_index` ON `Cases` (`problem_ref`, `case_id`);
+ 
+CREATE TABLE "Contests" (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `contest_id`    TEXT,
+                    `origin`    TEXT,
+                    `scoring`    TEXT,
+                    `name`    TEXT
+                );
+CREATE INDEX `contests_index` ON `Contests` (`origin` ,`scoring` ,`contest_id` );
+
+CREATE TABLE `Problems` (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                	`problem_id`    TEXT,
+                    `contest_ref`    INTEGER,
+                    `name`    TEXT
+                );
+CREATE INDEX `problems_index` ON `Problems` (`contest_ref` ,`problem_id`);
+
+CREATE TABLE `Runs` (
+	`id`	INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`submit_ref`	INTEGER,
+	`case_ref`	INTEGER,
+	`time`	TEXT,
+	`realtime`	TEXT,
+	`outcome`	TEXT
+);
+CREATE INDEX `runs_index` ON `Runs` (`submit_ref` ,`case_ref`);
+CREATE INDEX `runs2_index` ON `Runs` (`realtime` ,`time`, `outcome`);
+CREATE TABLE `Submits` (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `submit_id`    TEXT,
+                    `problem_ref`    INTEGER,
+                    `user_ref`    INTEGER,
+                    `lang_id`    TEXT,
+                    `timestamp`    TEXT,
+                    `outcome`    TEXT
+                );
+CREATE INDEX `submits_index` ON `Submits` (`lang_id`, `outcome`, `timestamp`, `user_ref`);
+CREATE INDEX `submits_index_2` ON `Submits` (`submit_id`, `problem_ref`);
+CREATE TABLE `Users` (
+                    `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    `user_id`    TEXT,
+                    `origin`    TEXT
+                );
+CREATE INDEX `users_index` ON `Users` (`origin`, `user_id`);

@@ -8,8 +8,7 @@ def parse_args_filters(parser):
     parser.add_argument('--filter-contest', help='process only submits in the selected contest')
 
 def parse_args_input(parser):
-    parser.add_argument('-m', '--multicontest', help='base_dir contains several contests', action='store_true')
-    parser.add_argument('--dir', help="directory containing xml's/pickles")
+    parser.add_argument('--database', help="database csv file")
 
 def parse_args_output(parser):
     parser.add_argument('-c', '--console', help='output to console', action='store_true')

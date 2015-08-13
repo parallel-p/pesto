@@ -1,5 +1,5 @@
 class Submit:
-    def __init__(self, submit_id, problem_id, user_id, lang_id, runs, outcome, scoring):
+    def __init__(self, submit_id, problem_id, user_id, lang_id, runs, outcome, scoring, timestamp):
 
         self.problem_id = problem_id
         self.submit_id = submit_id
@@ -8,6 +8,11 @@ class Submit:
         self.user_id = user_id
         self.lang_id = lang_id
         self.scoring = scoring
+        self.timestamp = timestamp
+        self.runs_results = ''
+        self.count_results()
+
+    def count_results(self):
         self.runs_results = ''.join([str(run.outcome) for run in self.runs])
 
     def __str__(self):
@@ -42,3 +47,24 @@ class Problem:
 
     def __str__(self):
         return 'Problem #{0} ("{1}") from contest #{2}'.format(self.problem_id[1], self.name, self.problem_id[0])
+
+
+class User:
+    def __init__(self, user_id, origin):    
+        self.user_id = user_id
+        self.origin = origin
+
+    def __str__(self):
+        return 'User #{} from {}'.format(self.user_id, self.origin)
+
+
+class Contest:
+    def __init__(self, contest_id, origin, name, scoring):
+        self.contest_id = contest_id
+        self.origin = origin
+        self.name = name
+        self.scoring = scoring
+
+    def __str__(self):
+        return 'Contest {} (#{}) from {}, scoring {}'.format(self.name, self.contest_id, self.origin, self.scoring)
+

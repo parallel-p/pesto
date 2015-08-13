@@ -19,9 +19,9 @@ class MaxTestCountTest(unittest.TestCase):
         for i in range(5):
             self.lit_runs_WA.append(Run(None, '2', i, '100', '100', answer[1]))
 
-        self.submit1 = Submit('1', ('1', '1'), '1', '0', self.many_runs_OK, '0', 'ACM')
-        self.submit2 = Submit('2', ('2', '1'), '1', '0', self.lit_runs_WA, '1', 'ACM')
-        self.submit3 = Submit('3', ('1', '1'), '1', '0', self.mixed, '1', 'ACM')
+        self.submit1 = Submit('1', ('1', '1'), '1', '0', self.many_runs_OK, '0', 'ACM', 37)
+        self.submit2 = Submit('2', ('2', '1'), '1', '0', self.lit_runs_WA, '1', 'ACM', 37)
+        self.submit3 = Submit('3', ('1', '1'), '1', '0', self.mixed, '1', 'ACM', 37)
 
     def test_get_data(self):
         visitor1 = MaxTestCasesCount()

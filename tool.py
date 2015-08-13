@@ -1,19 +1,21 @@
 import tool_config
 import argparse
-import filter_visitor
-import walker
+from dao_problems import DAOProblems
+from dao_submits import DAOSubmits
 import toollib
+from sqlite_connector import SQLiteConnector
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Calculate some statistics")
+    parser = argparse.ArgumentParser(description="Load database and calculate some statistics")
     toollib.parse_args_config(parser)
     toollib.parse_args_input(parser)
     toollib.parse_args_output(parser)
-    toollib.parse_args_filters(parser)
-    parser.add_argument('-p', '--pickle', help='contest dirs contains pickles instead of xmls', action='store_true')
-    parser.add_argument('--database', help="database csv file")
+
+    parser.add_argument('--scoring', help="contest scoring (acm, kirov)", nargs='?')
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
+
+
     return vars(parser.parse_args())
 
 
@@ -26,83 +28,77 @@ def get_arguments():
             print('Incorrect config filename.')
             exit()
     else:
-        config = dict(pickle_dir='pickle', database=None, base_dir=None, trash='trash', output='output.txt')
+        config = dict(pickle_dir='pickle', database=None, base_dir=None, trash='trash', output='output.txt', scoring='acm')
 
-    base_dir, output, csv_filename = None, None, None
+    output, database_filename = None, None
     try:
-        if args['preset_name'] in ['7', 'gen_pickles']:
-            if args['pickle']:
-                print('You want to gen pickles from pickles, seriously?')
-                exit()
-            if args['console']:
-                print('Can you imagine pickles inside the console?')
-                exit()
-            output = config['pickle_dir']
-        else:
-            output = (args['output'] if args['output'] else config['output']) if not args['console'] else None
+        output = (args['output'] if args['output'] else config['output']) if not args['console'] else None
         output = output.rstrip('/').rstrip('\\') if output else None
-        base_dir = args['dir'] if args['dir'] else (config['pickle_dir'] if args['pickle'] else config['base_dir'])
-        base_dir = base_dir.rstrip('/').rstrip('\\') if base_dir else None
-        csv_filename = args['database'] if args['database'] else config['database']
+        database_filename = args['database'] if args['database'] else config['database']
     except KeyError:
         print('Invalid config, see config.ini.example')
         exit()
-    if base_dir is None:
-        print('Directory is not defined.')
-        exit()
-    if not args['pickle'] and csv_filename is None:
+    if database_filename is None:
         print('Database file is not defined.')
         exit()
-    stats_counter = tool_config.get_visitor_by_preset(args['preset_name'], output)
+
+    if args['scoring']:
+        scoring = args['scoring'].upper()
+
+    if scoring not in ('KIROV', 'ACM'):
+        print('Unknown scoring ' + scoring)
+        exit()
+    stats_counter = tool_config.get_factory_by_preset(args['preset_name'], output)
     if stats_counter is None:
         print('Preset name is not defined or invalid.')
         print('Presets available:', tool_config.get_presets_info())
         exit()
 
     optional = dict()
-    if output and not (args['preset_name'] in ['7', 'gen_pickles']):
+    if output and not (args['preset_name'] in ['6', 'gen_pickles']):
         optional['outfile'] = output
-    if args.get('filter_problem'):
-        optional['filter_problem'] = args['filter_problem']
-    if args.get('filter_user'):
-        optional['filter_user'] = args['filter_user']
-    if args.get('filter_contest'):
-        optional['filter_contest'] = args['filter_contest']
+    if args['preset_name'] in ['6', 'gen_pickles']:
+        optional['preset_name'] = 'gen_pickles'
+    else:
+        optional['preset_name'] = args['preset_name']
+    return database_filename, stats_counter, optional, scoring
 
-    return base_dir, args['multicontest'], args['pickle'], csv_filename, stats_counter, optional
+
+def count_stat(connector, scoring, visitor_factory):
+    problem_cursor = connector.get_cursor()
+    submit_cursor = connector.get_cursor()
+    visitor_by_problem = dict()
+    dao_submits = DAOSubmits(connector)
+    dao_problems = DAOProblems(connector)
+    for problem_row in problem_cursor.execute('SELECT problems.id, contest_ref, problem_id, problems.name '
+                                              'FROM Problems, Contests '
+                                              'WHERE contest_id=contest_ref AND scoring=? ORDER BY contest_id', (scoring, )):
+        problem = dao_problems.deep_load(problem_row)
+        visitor_by_problem[problem] = visitor_factory.create(problem)
+        for submit_row in submit_cursor.execute('SELECT * '
+                                                'FROM Submits '
+                                                'WHERE problem_ref=?', (problem_row['id'], )):
+            submit = dao_submits.deep_load(submit_row)
+            submit.problem_id = problem.problem_id
+            visitor_by_problem[problem].visit(submit)
+        visitor_by_problem[problem].close()
+    return visitor_by_problem
 
 
 def main():
-    base_dir, is_multicontest, is_pickle, csv_filename, visitor, optional = get_arguments()
-    if is_multicontest:
-        home_dirs = toollib.get_contests_from_dir(base_dir)
-    else:
-        home_dirs = [base_dir]
-    if 'filter_user' in optional:
-        visitor = filter_visitor.FilterByUserVisitor(visitor, optional['filter_user'])
-    if 'filter_problem' in optional:
-        visitor = filter_visitor.FilterByProblemVisitor(visitor, optional['filter_problem'])
-    if 'filter_contest' in optional:
-        visitor = filter_visitor.FilterByContestVisitor(visitor, optional['filter_contest'])
-    if is_multicontest:
-        contest_walker = walker.MultipleContestWalker()
-    else:
-        contest_walker = walker.SingleContestWalker()
+    database_filename, visitor_factory, optional, scoring = get_arguments()
 
-    if is_pickle:
-        file_walker = walker.PickleWorker()
-    else:
-        file_walker = walker.AllFilesWalker()
+    connector = SQLiteConnector()
+    connector.create_connection(database_filename)
 
-    for contest in contest_walker.walk(base_dir):
-        obj_walker = walker.SubmitWalker(csv_filename, contest[0])
-        for file in file_walker.walk(contest[1]):
-            for submit in obj_walker.walk(file[1]):
-                if submit:
-                    visitor.visit(submit)
+    stat = count_stat(connector, scoring, visitor_factory)
+    result = []
+    for problem in stat:
+        result.append(stat[problem].pretty_print())
+        stat[problem].close()
 
-    result = visitor.pretty_print()
-    visitor.close()
+    connector.close_connection()
+    result = '\n'.join(result)
     if 'outfile' in optional:
         with open(optional['outfile'], 'w') as outfile:
             outfile.write(result)

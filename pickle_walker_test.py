@@ -19,7 +19,7 @@ class Tester(PestoTestCase):
             rmtree(self.pickle_submit.default_path)
 
     def test_mk_many_pickles(self):
-        submit = Submit('0', '0', '179', '0', [], '1', "kirov")
+        submit = Submit('0', '0', '179', '0', [], '1', "kirov", 37)
         submit.problem_id = ("17", "0")
         for i in range(103):
             self.pickle_submit.visit(submit)
@@ -33,11 +33,11 @@ class Tester(PestoTestCase):
 
     def test_many_contests(self):
         for i in range(101):
-            self.pickle_submit.visit(Submit(str(i), ('17', '0'), '179', '0', [], '1', "kirov"))
+            self.pickle_submit.visit(Submit(str(i), ('17', '0'), '179', '0', [], '1', "kirov", 37))
         for i in range(103):
-            self.pickle_submit.visit(Submit(str(i + 101), ('18', '0'), '179', '0', [], '1', "kirov"))
+            self.pickle_submit.visit(Submit(str(i + 101), ('18', '0'), '179', '0', [], '1', "kirov", 37))
         for i in range(2):
-            self.pickle_submit.visit(Submit(str(i + 204), ('19', '0'), '179', '0', [], '1', "kirov"))
+            self.pickle_submit.visit(Submit(str(i + 204), ('19', '0'), '179', '0', [], '1', "kirov", 37))
         self.pickle_submit.write_file()
 
         parsed_submits = [parsed_submit for parsed_submit in pickle_walker(self.pickle_submit.default_path)]
@@ -48,7 +48,7 @@ class Tester(PestoTestCase):
         self.assertEqual(check_set, {"17", "18", "19"})
 
     def test_wrong_pickles(self):
-        submit = Submit('0', '0', '179', '0', [], '1', "kirov")
+        submit = Submit('0', '0', '179', '0', [], '1', "kirov", 37)
         submit.problem_id = ("17", "0")
         self.pickle_submit.visit(submit)
         self.pickle_submit.write_file()
