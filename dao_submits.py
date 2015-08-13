@@ -17,7 +17,7 @@ class DAOSubmits:
     def deep_load(self, row):
         submit = self.load(row)
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), row['id'])
+        cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), (row['id'], ))
         runs_dao = DAORuns(self.connector)
         for run_row in cursor.fetchall():
             submit.runs.append(runs_dao.deep_load(run_row))
