@@ -49,7 +49,7 @@ class ContestsGrouper:
                 parallel = re.sub(re.escape('А'), 'A', parallel)
                 parallel = parallel.rstrip('+')
                 if parallel.startswith('D') and parallel != 'D':
-                    parallel = ''
+                    parallel = 'D'
             if not season_regex.findall(contest.name):
                 season = ''
             else:
