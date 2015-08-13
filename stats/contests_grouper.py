@@ -1,7 +1,5 @@
-from ejudge_contest_xml import ejudge_get_contest_name
-from walker import AllFilesWalker
+from dao_contests import DAOContests
 import re
-import os
 
 
 class _Contest:
@@ -11,8 +9,8 @@ class _Contest:
         self.parallel = parallel
 
 
-class ProblemsGrouper:
-    def __init__(self, contests_dir):
+class ContestsGrouper:
+    def __init__(self, contests):
         self.contests = dict()
 
         year_regex = re.compile('20[0-9]{2}')
@@ -22,35 +20,35 @@ class ProblemsGrouper:
                                     re.escape('\'') + ')?' + re.escape('+') +
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)
-        files_walker = AllFilesWalker()
-        for _, contest_xml_filename in files_walker.walk(contests_dir):
-            contest_name = ejudge_get_contest_name(contest_xml_filename)
-            if contest_name is None:
+
+        for contest in contests:
+
+            if contest.name is None:
                 continue
-            if 'ЛКШ' not in contest_name or 'template' in contest_name.lower():
+            if 'ЛКШ' not in contest.name or 'template' in contest.name.lower():
                 continue
-            if not year_regex.findall(contest_name):
+            if not year_regex.findall(contest.name):
                 year = 0
             else:
-                year = int(year_regex.findall(contest_name)[0])
-            if 'олимпиада' in contest_name.lower() or 'contest' in contest_name.lower() or 'соревнование' in contest_name.lower():
+                year = int(year_regex.findall(contest.name)[0])
+            if 'олимпиада' in contest.name.lower() or 'contest' in contest.name.lower() or 'соревнование' in contest.name.lower():
                 parallel = 'olymp'
-            elif not parallel_regex.findall(contest_name):
+            elif not parallel_regex.findall(contest.name):
                 parallel = ''
             else:  # Please, think twice, if you want to change this replaces.
-                parallel = re.sub('\s', '', parallel_regex.findall(contest_name)[0].replace('.', ''))
+                parallel = re.sub('\s', '', parallel_regex.findall(contest.name)[0].replace('.', ''))
                 parallel = re.sub('prime', '\'', parallel)
                 parallel = re.sub('python', 'py', parallel)
                 parallel = re.sub(re.escape('c++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('С'), 'C', parallel)  # Russian letters!
                 parallel = re.sub(re.escape('А'), 'A', parallel)
-            if not season_regex.findall(contest_name):
+            if not season_regex.findall(contest.name):
                 season = ''
             else:
-                season = season_regex.findall(contest_name)[0]
+                season = season_regex.findall(contest.name)[0]
 
-            self.contests[os.path.basename(contest_xml_filename)[:-4]] = _Contest(year, season, parallel)
+            self.contests[contest.contest_id] = _Contest(year, season, parallel)
 
     def get_contest_year_by_id(self, contest_id):
         return self.contests[contest_id].year
