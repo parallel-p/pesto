@@ -8,7 +8,6 @@ from mysql_connector import MySQLConnector
 from fill_database import fill_from_xml, fill_from_pickles
 
 
-
 def parse_args():
     parser = argparse.ArgumentParser(description="Dump all the data to the database\n"
                                                  "You need to fill the config file first")
@@ -18,10 +17,12 @@ def parse_args():
                         action='store_true')
     parser.add_argument('--clean', help='Create new or overwrite existing database',
                         action='store_true')
+    parser.add_argument('--hashes-only', help='Fill cases i/o hashes only',
+                        action='store_true')
+    parser.add_argument('--no-hashes', help='Do not fill cases i/o hashes',
+                        action='store_true')
     parser.add_argument('--update', help='Update an existing database. Used by default',
                         action='store_true')
-
-
     return vars(parser.parse_args())
 
 
@@ -50,7 +51,6 @@ def get_arguments():
         print('Origin is not specified')
         exit()
 
-
     try:
         mysql_config = {
             'user': config['mysql_user'],
@@ -64,10 +64,12 @@ def get_arguments():
         exit()
     return base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir
 
+
 def create_tables(cursor, filename):
     script_file = open(filename)
     script = script_file.read()
     cursor.executescript(script)
+
 
 def create_new_database(path, tables_script_filename):
     db_file = open(path, 'w')
@@ -75,6 +77,7 @@ def create_new_database(path, tables_script_filename):
     connection = sqlite3.connect(path)
     create_tables(connection.cursor(), tables_script_filename)
     return connection, connection.cursor()
+
 
 def update_database(path):
     connection = sqlite3.connect(path)
@@ -85,17 +88,32 @@ def update_database(path):
     return connection, connection.cursor()
 
 
+def fill_cases_hashes(cursor, base_dir, origin):
+    print("Filling cases...")
+    contests_dir = []
+    for c_dir in MultipleContestWalker().walk(base_dir):
+        contests_dir.append(c_dir[1])
+        print("Retrieving cases for contest #{}".format(c_dir[0]))
+    extract_cases_to_db(contests_dir, cursor, origin)
+    print('Cases were filled')
+
+
+def fill_submits(sqlite_cursor, base_dir, origin, mysql_config):
+    if '' in mysql_config.values():
+        print('MySQL parameters are not specified')
+        exit()
+    print('Now connecting to MySQL')
+    mysql_connector = MySQLConnector()
+    mysql_connector.create_connection(mysql_config)
+    print('Connected to MySQL database')
+    ej_cursor = mysql_connector.get_cursor()
+    print("Filling database from XML's and MySQL database")
+    fill_from_xml(sqlite_cursor, ej_cursor, base_dir, origin)
+    mysql_connector.close()
+
+
 def main():
     base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir = get_arguments()
-
-
-
-    # except OperationalError:
-    #     print(OperationalError)
-
-
-
-
     if args['clean']:
         connection, sqlite_cursor = create_new_database(output_database, 'tables_script.txt')
         print("Database created successfully")
@@ -105,30 +123,23 @@ def main():
 
     if contests_info_dir == '':
         print("WARNING. Contests info directory is not specified. Contests name won't be filled")
+    if args['hashes_only']:
+        fill_cases_hashes(sqlite_cursor, base_dir, origin)
+        connection.commit()
+        connection.close()
+        print('Connection closed')
+        exit()
+
     if args['p']:
         print('Filling database from pickles...')
         fill_from_pickles(sqlite_cursor, pickle_dir, origin)
         connection.commit()
     else:
-        if '' in mysql_config.values():
-            print('MySQL parameters are not specified')
-            exit()
-        print('Now connecting to MySQL')
-        mysql_connector = MySQLConnector()
-        mysql_connector.create_connection(mysql_config)
-        print('Connected to MySQL database')
-        ej_cursor = mysql_connector.get_cursor()
-        print("Filling database from XML's and MySQL database")
-        fill_from_xml(sqlite_cursor, ej_cursor, base_dir, origin)
-        mysql_connector.close()
+        fill_submits(sqlite_cursor, base_dir, origin, mysql_config)
         connection.commit()
-    print("Filling cases...")
-    contests_dir = []
-    for c_dir in MultipleContestWalker().walk(base_dir):
-        contests_dir.append(c_dir[1])
-        print("Retrieving cases for contest #{}".format(c_dir[0]))
-    extract_cases_to_db(contests_dir, sqlite_cursor, origin)
-    print('Cases were filled')
+
+    if not args['no_hashes']:
+        fill_cases_hashes(sqlite_cursor, base_dir, origin)
 
     if contests_info_dir != '':
         print('Filling contests names')
