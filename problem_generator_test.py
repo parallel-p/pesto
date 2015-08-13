@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock, patch
-from problem_generator import problem_generator, sqlite_problem_generator, connect
+from problem_generator import problem_generator, sqlite_problem_generator
 import ejudge_contest
 import md5_hasher
 

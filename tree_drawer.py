@@ -11,10 +11,6 @@ PROBLEM_FILL_COLOR = "yellow"
 PROBLEM_BORDER_COLOR = "black"
 PROBLEM_BORDER_THICKNESS = 2
 
-PROBLEM_Y_INTERVAL = 180
-PROBLEM_X_MIN_INTERVAL = 200
-TOP_BOTTOM_SPACE = 50
-
 LINE_THICKNESS = 4
 
 LOCATE_LINES_MAX_SPEED = 8.0
@@ -86,19 +82,13 @@ def _point_rectangle_distance_sqr(point, rect_begin, rect_size):
 class TreeDrawer:
     def __init__(self, tree, contests_grouper):
         self.tree = tree
+        self.contests_grouper = contests_grouper
         self.problems = self.tree.get_problems()
-        self.contests = []
-        current_contest_id = ''
-        for problem in self.problems:
-            if problem.problem_id[0] != current_contest_id:
-                current_contest_id = problem.problem_id[0]
-                self.contests.append([])
-            self.contests[-1].append(problem)
+        self.seasons = dict()
+        self._create_seasons()
 
-        self.size_y = TOP_BOTTOM_SPACE*2 +\
-            len(self.contests) * (PROBLEM_DIAMETER + PROBLEM_Y_INTERVAL) - PROBLEM_Y_INTERVAL
-        self.size_x = PROBLEM_X_MIN_INTERVAL +\
-            len(max(self.contests, key=lambda x: len(x))) * (PROBLEM_DIAMETER + PROBLEM_X_MIN_INTERVAL)
+        self.size_y = ...
+        self.size_x = ...
 
         self.image = drawer.Image((self.size_x, self.size_y), BACKGROUND_COLOR)
 
@@ -108,19 +98,26 @@ class TreeDrawer:
         self._draw_tree()
 
     def _locate_problems(self):
+        """some usefull work"""
         self.problem_coords = dict()
         self.problems_and_coords = []
-        current_y = TOP_BOTTOM_SPACE + PROBLEM_RADIUS
-        for contest_index, contest in enumerate(self.contests):
-            x_interval = (self.size_x - len(contest) * PROBLEM_DIAMETER) / (len(contest) + 1)
-            for problem_index, problem in enumerate(contest):
-                problem_x = int((x_interval + PROBLEM_DIAMETER) * (problem_index + 1) - PROBLEM_RADIUS)
-                self.problem_coords[problem] = (problem_x, current_y)
-                self.problems_and_coords.append((problem, (problem_x, current_y)))
-            current_y += PROBLEM_DIAMETER + PROBLEM_Y_INTERVAL
+        self.texts = []
+
+    def _create_seasons(self):
+        for problem in self.problems:
+            contest_id = problem.problem_id[0]
+
+            parallel = self.contests_grouper.get_contest_parallel_by_id(contest_id)
+            season = self.contests_grouper.get_contest_season_by_id(contest_id)
+            day = self.contests_grouper.det_contest_day_by_id(contest_id)
+
+            if season not in self.seasons:
+                self.seasons[season] = Season(season)
+            self.seasons[season].add_problem(problem, day, parallel)
+
 
     def _get_line_color(self, problem):
-        similarity, same, removed, added = self.tree.get_relation_to_parent(problem)
+        parent, similarity, same, added, removed = self.tree.get_relation_to_parent(problem)
         if removed == 0 and added == 0:
             return LINE_COLOR_SAME
         color_k = (similarity - MIN_SIMILARITY) / (1.0 - MIN_SIMILARITY)
@@ -249,4 +246,30 @@ class TreeDrawer:
 
     def save_image_to_file(self, filename):
         self.image.save_png(filename)
+
+
+class Season:
+    def __init__(self, name):
+        #dict of days
+        #day is dict of list with id of problem
+        self.days = dict()
+
+        #max number of problems in one day in season
+        self.parallels = dict()
+        self.name = name
+
+    def add_problem(self, problem, day, parallel):
+        if day in self.days:
+            if parallel in self.days[day]:
+                self.days[day][parallel].append(problem)
+            else:
+                self.days[day] = {parallel : problem}
+        else:
+            self.days[day] = {parallel : problem}
+
+        if parallel in self.max_num_in_parallels:
+            self.max_num_in_parallels[parallel] = max(self.max_num_in_parallels[parallel], len(self.days[day][parallel]))
+        else:
+            self.max_num_in_parallels[parallel] = len(self.days[day][parallel])
+
 

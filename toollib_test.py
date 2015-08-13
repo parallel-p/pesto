@@ -20,7 +20,7 @@ class ToollibTest(PestoTestCase):
         parser = Mock()
         toollib.parse_args_input(parser)
         good_parser = Mock()
-        good_parser.add_argument('--database', help="database csv file")
+        good_parser.add_argument('--database', help="database file")
         self.assertEqual(parser.add_argument.call_args_list, good_parser.add_argument.call_args_list)
 
     def test_parse_args_output(self):

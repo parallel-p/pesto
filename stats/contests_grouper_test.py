@@ -8,8 +8,8 @@ import os
 
 class ProblemsGrouperTest(PestoTestCase):
     def setUp(self):
-        contests = [Contest('123456', 'lksh', 'ЛКШ.2013.Зима.  P', 'ACM'),
-                    Contest('789012', 'lksh', 'ЛКШ .Олимпиада', 'Kirov'),
+        contests = [Contest('123456', 'lksh', 'ЛКШ.2013.Зима.  P.День 3', 'ACM'),
+                    Contest('789012', 'lksh', 'ЛКШ .Олимпиада.День3', 'Kirov'),
                     Contest('345678', 'lksh', 'ЛКШ.2011 . Июль', 'ACM'),
                     Contest('666666', 'hell', 'Левый контест', 'Kirov'),
                     Contest('666666', 'hell', None, 'ACM'),
@@ -26,16 +26,19 @@ class ProblemsGrouperTest(PestoTestCase):
         self.assertEqual(self.grouper.get_contest_year_by_id('123456'), 2013)
         self.assertEqual(self.grouper.get_contest_season_by_id('123456'), 'Зима')
         self.assertEqual(self.grouper.get_contest_parallel_by_id('789012'), 'olymp')
+        self.assertEqual(self.grouper.get_contest_day_by_id('123456'), 3)
 
     def test_getters_spaces(self):
         self.assertEqual(self.grouper.get_contest_year_by_id('345678'), 2011)
         self.assertEqual(self.grouper.get_contest_season_by_id('345678'), 'Июль')
         self.assertEqual(self.grouper.get_contest_parallel_by_id('123456'), 'P')
+        self.assertEqual(self.grouper.get_contest_day_by_id('789012'), 3)
 
     def test_getters_no_values(self):
         self.assertEqual(self.grouper.get_contest_year_by_id('789012'), 0)
         self.assertEqual(self.grouper.get_contest_season_by_id('789012'), '')
         self.assertEqual(self.grouper.get_contest_season_by_id('789012'), '')
+        self.assertEqual(self.grouper.get_contest_day_by_id('345678'), -1)
 
     def test_group_common(self):
         grouped_by_year = self.grouper.group_contests_by_year(self.grouper.get_all_known_contests())

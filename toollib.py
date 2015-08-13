@@ -8,7 +8,7 @@ def parse_args_filters(parser):
     parser.add_argument('--filter-contest', help='process only submits in the selected contest')
 
 def parse_args_input(parser):
-    parser.add_argument('--database', help="database csv file")
+    parser.add_argument('--database', help="database file")
 
 def parse_args_output(parser):
     parser.add_argument('-c', '--console', help='output to console', action='store_true')
