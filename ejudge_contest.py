@@ -36,6 +36,7 @@ class EjudgeContest:
 
     def parse_config(self, cfg_string):
         cfg = cfg_string.splitlines(keepends=False)
+        cfg = [line for line in cfg if not line.startswith('#')]
         self.contest_id = self.get_param(cfg, 'contest_id') or os.path.basename(self.dir_name).lstrip('0')
         self.scoring = self.get_param(cfg, 'score_system')
         self.languages = self.get_languages(cfg)

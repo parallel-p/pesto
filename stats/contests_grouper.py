@@ -3,9 +3,10 @@ import re
 
 
 class _Contest:
-    def __init__(self, year, season, parallel):
+    def __init__(self, year, season, day, parallel):
         self.year = year
         self.season = season
+        self.day = day
         self.parallel = parallel
 
 
@@ -20,6 +21,7 @@ class ContestsGrouper:
                                     re.escape('\'') + ')?' + re.escape('+') +
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)
+        day_regex = re.compile('(?:день(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.)[0-9]{1,2}(?:\\s|\\.|$))(?!день))', re.I)
 
         for contest in contests:
 
@@ -36,7 +38,7 @@ class ContestsGrouper:
             elif not parallel_regex.findall(contest.name):
                 parallel = ''
             else:  # Please, think twice, if you want to change this replaces.
-                parallel = re.sub('\s', '', parallel_regex.findall(contest.name)[0].replace('.', ''))
+                parallel = re.sub('\\s', '', parallel_regex.findall(contest.name)[0].replace('.', ''))
                 parallel = re.sub('prime', '\'', parallel)
                 parallel = re.sub('python', 'py', parallel)
                 parallel = re.sub(re.escape('c++'), 'cpp', parallel)
@@ -47,8 +49,16 @@ class ContestsGrouper:
                 season = ''
             else:
                 season = season_regex.findall(contest.name)[0]
+            if not day_regex.findall(contest.name):
+                day = -1
+            else:  # This replaces is also dangerous.
+                day = day_regex.findall(contest.name)[0]
+                day = re.sub('\\s', '', day)
+                day = re.sub('\\.', '', day)
+                day = re.sub('день', '', day, flags=re.I)
+                day = int(day)
 
-            self.contests[contest.contest_id] = _Contest(year, season, parallel)
+            self.contests[contest.contest_id] = _Contest(year, season, day, parallel)
 
     def get_contest_year_by_id(self, contest_id):
         return self.contests[contest_id].year
@@ -58,6 +68,9 @@ class ContestsGrouper:
 
     def get_contest_parallel_by_id(self, contest_id):
         return self.contests[contest_id].parallel
+
+    def get_contest_day_by_id(self, contest_id):
+        return self.contests[contest_id].day
 
     def _group_contests_by_key(self, contest_ids, attr):
         result = dict()
@@ -77,6 +90,9 @@ class ContestsGrouper:
 
     def group_contests_by_parallel(self, contest_ids):
         return self._group_contests_by_key(contest_ids, 'parallel')
+
+    def group_contests_by_day(self, contest_ids):
+        return self._group_contests_by_key(contest_ids, 'day')
 
     def get_all_known_contests(self):
         return self.contests.keys()

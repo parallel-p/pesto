@@ -3,6 +3,7 @@ import model
 import md5_hasher
 import sqlite_connector
 from dao_problems import DAOProblems
+from dao_contests import DAOContests
 
 
 def problem_generator(contest_dirs):
@@ -18,17 +19,22 @@ def problem_generator(contest_dirs):
                 tests_hashes.append(md5_hasher.get_hash(test_path[0], test_path[1]))
             yield model.Problem(problem_id, problem_name, tests_hashes)
 
-def connect(conn, file):
-    conn.create_connection(file)
-    cursor = conn.get_cursor()
-    return cursor
 
-def sqlite_problem_generator(sqlite_filename):
-    conn = sqlite_connector.SQLiteConnector()
-    cursor = connect(conn, sqlite_filename)
+def sqlite_problem_generator(conn):
+    cursor = conn.get_cursor()
     cursor.execute('SELECT {} FROM Problems'.format(DAOProblems.columns))
     result = cursor.fetchall()
 
     dao = DAOProblems(conn)
+    for row in result:
+        yield dao.deep_load(row)
+
+
+def sqlite_contest_generator(conn):
+    cursor = conn.get_cursor()
+    cursor.execute('SELECT {} FROM Contests'.format(DAOContests.columns))
+    result = cursor.fetchall()
+
+    dao = DAOContests(conn)
     for row in result:
         yield dao.deep_load(row)
