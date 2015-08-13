@@ -84,7 +84,7 @@ class TreeDrawer:
         self.tree = tree
         self.contests_grouper = contests_grouper
         self.problems = self.tree.get_problems()
-        self.seasons = dict()
+        self.seasons = []
         self._create_seasons()
 
         self.size_y = ...
@@ -104,16 +104,21 @@ class TreeDrawer:
         self.texts = []
 
     def _create_seasons(self):
+        seasons_dict = dict()
         for problem in self.problems:
             contest_id = problem.problem_id[0]
 
-            parallel = self.contests_grouper.get_contest_parallel_by_id(contest_id)
-            season = self.contests_grouper.get_contest_season_by_id(contest_id)
+            group = self.contests_grouper.get_contest_parallel_by_id(contest_id)
+            season_name = self.contests_grouper.get_contest_season_by_id(contest_id)
             day = self.contests_grouper.det_contest_day_by_id(contest_id)
+            year = self.contests_grouper.get_contest_year_by_id(contest_id)
 
-            if season not in self.seasons:
-                self.seasons[season] = Season(season)
-            self.seasons[season].add_problem(problem, day, parallel)
+            if season_name not in self.seasons_dict:
+                seasons_dict[season_name] = Season(season_name, year)
+            seasons_dict[season_name].add_day_and_problem(problem, day, group, contest_id)
+        for season_name in seasons_dict:
+            self.seasons.append(seasons_dict[season_name])
+        self.seasons = self.seasons.sort(key=lambda x: x.order)
 
 
     def _get_line_color(self, problem):
@@ -249,27 +254,79 @@ class TreeDrawer:
 
 
 class Season:
-    def __init__(self, name):
+    def __init__(self, name, year):
         #dict of days
         #day is dict of list with id of problem
-        self.days = dict()
+        self.days_dict = dict()
+        self.groups_dict = dict()
 
-        #max number of problems in one day in season
-        self.parallels = dict()
+        self.groups = []
+        self.days = []
+        self.order = self._get_order(name, year)
         self.name = name
 
-    def add_problem(self, problem, day, parallel):
-        if day in self.days:
-            if parallel in self.days[day]:
-                self.days[day][parallel].append(problem)
-            else:
-                self.days[day] = {parallel : problem}
+    def add_day_and_problem(self, problem, day, group, contest_id):
+        if day not in self.days_dict:
+            self.days_dict[day] = Day(day, contest_id)
+        self.days_dict[day].add_problem(problem, group)
+
+        if group not in self.groups_dict:
+            self.groups_dict[group] = Group(group)
+        self.groups_dict[group].max_len = max(self.groups_dict[group].max_len, len(self.days_dict[day].problems))
+
+    def create_days_list(self):
+        for day in self.days_dict:
+            self.days.append(self.days_dict[day])
+        self.days.sort(key=lambda x: x.order)
+
+    def create_group_list(self):
+        for group in self.groups_dict:
+            self.groups.append(self.groups_dict[group])
+        self.groups.sort(key=lambda x: x.order)
+
+    def _get_order(self, name, year):
+        pos = {'июль' : 0, 'август' : 1, 'зима' : 2}
+        order_2 = 3
+        if name in pos:
+            order_2 = pos[name.lower()]
+        order_1 = int(year)
+        return tuple(order_1, order_2)
+
+
+class Group:
+    def __init__(self, group):
+        self.max_len = 0
+        self.name = group
+        self.order = self._get_order(group)
+
+    def _get_order(self, group):
+        order_dict  = {'A':0,
+                'A\'':1,
+                'A0':2,
+                'AA':3,
+                'AS':4,
+                'AY':5,
+                'B':6,
+                'B\'':7,
+                'C':8,
+                'C\'':9,
+                'Ccpp':8,
+                'Cpy':10,
+                'D':11,
+                'olymp':12}
+        if group in order_dict:
+            return order_dict[group]
         else:
-            self.days[day] = {parallel : problem}
-
-        if parallel in self.max_num_in_parallels:
-            self.max_num_in_parallels[parallel] = max(self.max_num_in_parallels[parallel], len(self.days[day][parallel]))
-        else:
-            self.max_num_in_parallels[parallel] = len(self.days[day][parallel])
+            return 13
 
 
+class Day:
+    def __init__(self, name, contest_id):
+        self.name = name
+        self.order = int(contest_id)
+        self.problems = dict()
+
+    def add_problem(self, problem, group):
+        if group not in self.problems:
+            self.problems[group] = []
+        self.problems[group].append(problem)
