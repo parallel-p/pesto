@@ -12,11 +12,10 @@ PROBLEM_BORDER_COLOR = "black"
 PROBLEM_BORDER_THICKNESS = 2
 
 PROBLEM_Y_INTERVAL = 180
-PROBLEM_X_MIN_INTERVAL = 180
+PROBLEM_X_MIN_INTERVAL = 200
 TOP_BOTTOM_SPACE = 50
 
-TREE_LINE_THICKNESS = 4
-TREE_LINE_COLOR = "red"
+LINE_THICKNESS = 4
 
 LOCATE_LINES_MAX_SPEED = 8.0
 LOCATE_LINES_MAX_SPEED_SQR = LOCATE_LINES_MAX_SPEED ** 2
@@ -26,6 +25,14 @@ LOCATE_LINES_MAX_ITERATIONS = 3000
 
 LOCATE_LINES_LINE_CONSTANT_FORCE = 1.0
 LOCATE_LINES_LINE_FORCE_DISTANCE = 20
+
+LINE_COLOR_SAME = (0, 255, 0)
+LINE_COLOR_MIN = (255, 0, 0)
+LINE_COLOR_MAX = (255, 255, 0)
+MIN_SIMILARITY = 0.5
+
+LINE_ARROW_ANGLE = math.pi / 18.0
+LINE_ARROW_LENGTH = 60.0
 
 
 def _is_point_in_rectangle(point, rect_start, rect_size):
@@ -46,6 +53,12 @@ def _vector_length_sqr(v):
 def _normalize(v):
     length = _vector_length_sqr(v) ** 0.5
     return (v[0] / length, v[1] / length)
+
+
+def _vector_rotate(v, angle):
+    s = math.sin(angle)
+    c = math.cos(angle)
+    return (v[0] * c - v[1] * s, v[1] * c + v[0] * s)
 
 
 def _point_rectangle_distance_sqr(point, rect_begin, rect_size):
@@ -106,8 +119,19 @@ class TreeDrawer:
                 self.problems_and_coords.append((problem, (problem_x, current_y)))
             current_y += PROBLEM_DIAMETER + PROBLEM_Y_INTERVAL
 
+    def _get_line_color(self, problem):
+        similarity, same, removed, added = self.tree.get_relation_to_parent(problem)
+        if removed == 0 and added == 0:
+            return LINE_COLOR_SAME
+        color_k = (similarity - MIN_SIMILARITY) / (1.0 - MIN_SIMILARITY)
+        return (int(LINE_COLOR_MIN[0] + color_k * (LINE_COLOR_MAX[0] - LINE_COLOR_MIN[0])),
+                int(LINE_COLOR_MIN[1] + color_k * (LINE_COLOR_MAX[1] - LINE_COLOR_MIN[1])),
+                int(LINE_COLOR_MIN[2] + color_k * (LINE_COLOR_MAX[2] - LINE_COLOR_MIN[2])))
+
     def _locate_lines(self):
         self.lines = []
+        self.arrows = []
+        self.lines_colors = []
         force_field = [[0.0, 0.0] for j in range(self.size_x * self.size_y)]
         force_field_last_added = [-1 for j in range(self.size_x * self.size_y)]
         for problem_2 in self.problems:
@@ -118,6 +142,7 @@ class TreeDrawer:
             destination = tuple(map(float, self.problem_coords[problem_2]))
             curr_vx, curr_vy = 0.0, 0.0
             self.lines.append([])
+            self.lines_colors.append(self._get_line_color(problem_2))
             steps = 0
             while True:
                 steps += 1
@@ -184,13 +209,41 @@ class TreeDrawer:
                                     force_field[cxcy][1] -= line_b * LOCATE_LINES_LINE_CONSTANT_FORCE
                 point_1 = point_2
 
+            self.arrows.append([])
+            if len(self.lines[-1]) > 1:
+                point_1 = self.lines[-1][-2]
+                point_2 = self.lines[-1][-1]
+                bs_l, bs_r = 0.0, 1.0
+                while bs_r - bs_l > 0.001:
+                    bs_mid = (bs_l + bs_r) * 0.5
+                    point_3 = (point_1[0] + bs_mid * (point_2[0] - point_1[0]),
+                               point_1[1] + bs_mid * (point_2[1] - point_1[1]))
+                    if _distance_sqr(point_3, destination) < PROBLEM_RADIUS ** 2:
+                        bs_r = bs_mid
+                    else:
+                        bs_l = bs_mid
+                point_3 = (point_1[0] + bs_l * (point_2[0] - point_1[0]),
+                           point_1[1] + bs_l * (point_2[1] - point_1[1]))
+                arrow_vector = _normalize((point_1[0] - point_2[0], point_1[1] - point_2[1]))
+                arrow_vector = (arrow_vector[0] * LINE_ARROW_LENGTH, arrow_vector[1] * LINE_ARROW_LENGTH)
+                arrow_vector_1 = _vector_rotate(arrow_vector, LINE_ARROW_ANGLE)
+                self.arrows[-1].append((point_3[0] + arrow_vector_1[0], point_3[1] + arrow_vector_1[1]))
+                self.arrows[-1].append(point_3)
+                arrow_vector_2 = _vector_rotate(arrow_vector, -LINE_ARROW_ANGLE)
+                self.arrows[-1].append((point_3[0] + arrow_vector_2[0], point_3[1] + arrow_vector_2[1]))
+
+
     def _draw_problem(self, problem, coords):
         self.image.draw_circle(coords, PROBLEM_RADIUS,  PROBLEM_BORDER_THICKNESS,
                                PROBLEM_BORDER_COLOR, PROBLEM_FILL_COLOR)
 
     def _draw_tree(self):
-        for line in self.lines:
-            self.image.draw_line_strip(line, TREE_LINE_THICKNESS, TREE_LINE_COLOR)
+        for index in range(len(self.lines)):
+            line = self.lines[index]
+            arrow = self.arrows[index]
+            line_color = self.lines_colors[index]
+            self.image.draw_line_strip(line, LINE_THICKNESS, line_color)
+            self.image.draw_line_strip(arrow, LINE_THICKNESS, line_color)
         for problem, problem_coords in self.problems_and_coords:
             self._draw_problem(problem, problem_coords)
 
