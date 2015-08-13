@@ -110,5 +110,5 @@ class EjudgeContest:
 
     def parse_section(self, sect):
         sect = sect.strip().splitlines()
-        sect = [line.split(' = ') for line in sect if ' = ' in line]
+        sect = [line.split(' = ', maxsplit=1) for line in sect if ' = ' in line]
         return dict(sect)
