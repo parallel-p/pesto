@@ -9,7 +9,6 @@ def parse_args_filters(parser):
 
 def parse_args_input(parser):
     parser.add_argument('--database', help="database file")
-    parser.add_argument('--tree-json', help="saved tree (only for draw_saved_tree)")
 
 def parse_args_output(parser):
     parser.add_argument('-c', '--console', help='output to console', action='store_true')

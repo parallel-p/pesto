@@ -1,4 +1,7 @@
 import json
+import problems_tree
+import stats.contests_grouper
+import model
 
 
 def save_tree(tree, contest_grouper):
@@ -19,3 +22,21 @@ def save_tree(tree, contest_grouper):
                                                      contest_data.day, contest_data.parallel)})
     return json.dumps(result, indent=4)
 
+
+def load_tree(json_str):
+    data = json.loads(json_str)
+    tree = problems_tree.ProblemsTree([])
+    tree.problems = []
+    tree.problem_previous = dict()
+    for problem in data[0]:
+        tree.problems.append(model.Problem(problem["id"], problem["name"], (None, ) * problem["cases_count"]))
+        relation_to_parent = problem["parent"]
+        print(problem)
+        if relation_to_parent != "None":
+            relation_to_parent = (tree.problems[int(relation_to_parent[0])], ) + tuple(relation_to_parent[1:])
+            tree.problem_previous[tree.problems[-1]] = relation_to_parent
+    contests_grouper = stats.contests_grouper.ContestsGrouper([])
+    contests_grouper.contests = dict()
+    for contest in data[1]:
+        contests_grouper.contests[contest[0]] = stats.contests_grouper._Contest(*contest[1])
+    return tree, contests_grouper
