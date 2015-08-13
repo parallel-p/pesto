@@ -98,7 +98,6 @@ class TreeDrawer:
         self._draw_tree()
 
     def _locate_problems(self):
-        """some usefull work"""
         self.problem_coords = dict()
         self.problems_and_coords = []
         self.texts = []
@@ -117,6 +116,9 @@ class TreeDrawer:
                 seasons_dict[season_name] = Season(season_name, year)
             seasons_dict[season_name].add_day_and_problem(problem, day, group, contest_id)
         for season_name in seasons_dict:
+            seasons_dict[season_name].create_group_list()
+            seasons_dict[season_name].create_days_list()
+            seasons_dict[season_name].count_max_len()
             self.seasons.append(seasons_dict[season_name])
         self.seasons = self.seasons.sort(key=lambda x: x.order)
 
@@ -262,6 +264,7 @@ class Season:
 
         self.groups = []
         self.days = []
+        self.problems_cnt_by_day_by_group = dict()
         self.order = self._get_order(name, year)
         self.name = name
 
@@ -270,9 +273,23 @@ class Season:
             self.days_dict[day] = Day(day, contest_id)
         self.days_dict[day].add_problem(problem, group)
 
+        if group in self.problems_cnt_by_day_by_group:
+            if day in self.problems_cnt_by_day_by_group[group]:
+                self.problems_cnt_by_day_by_group[group][day] += 1
+            else:
+                self.problems_cnt_by_day_by_group[group][day] = 1
+        else:
+            self.problems_cnt_by_day_by_group[group] = {day:1}
+
         if group not in self.groups_dict:
             self.groups_dict[group] = Group(group)
-        self.groups_dict[group].max_len = max(self.groups_dict[group].max_len, len(self.days_dict[day].problems))
+
+    def count_max_len(self):
+        for group in self.problems_cnt_by_day_by_group:
+            max_res = 0
+            for day in self.problems_cnt_by_day_by_group[group]:
+                max_res = max(max_res, self.problems_cnt_by_day_by_group[group][day])
+            self.groups_dict[group].max_len = max_res
 
     def create_days_list(self):
         for day in self.days_dict:
@@ -285,12 +302,12 @@ class Season:
         self.groups.sort(key=lambda x: x.order)
 
     def _get_order(self, name, year):
-        pos = {'Ë˛Î¸' : 0, '‡‚„ÛÒÚ' : 1, 'ÁËÏ‡' : 2}
+        pos = {'–∏—é–ª—å' : 0, '–∞–≤–≥—É—Å—Ç' : 1, '–∑–∏–º–∞' : 2}
         order_2 = 3
         if name in pos:
             order_2 = pos[name.lower()]
         order_1 = int(year)
-        return tuple(order_1, order_2)
+        return (order_1, order_2)
 
 
 class Group:
