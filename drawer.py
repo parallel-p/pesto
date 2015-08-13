@@ -14,6 +14,10 @@ class Image:
     def draw_line(self, begin, end, line_thickness, line_color):
         self.draw.line(begin + end, line_color, line_thickness)
 
+    def draw_circle(self, center, radius, border_thickness, border_color, circle_color):
+        self.draw.ellipse((center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius),
+                          circle_color, border_color)
+
     def draw_line_strip(self, points, line_thickness, line_color):
         for start_point, end_point in zip(points, points[1:]):
             self.draw_line(start_point, end_point, line_thickness, line_color)
