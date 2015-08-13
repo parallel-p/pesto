@@ -17,7 +17,7 @@ class DAOSubmits:
     def deep_load(self, row):
         submit = self.load(row)
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), row['id'])
+        cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), (row['id'], ))
         runs_dao = DAORuns(self.connector)
         for run_row in cursor.fetchall():
             submit.runs.append(runs_dao.deep_load(run_row))
@@ -45,7 +45,7 @@ class DAOSubmits:
 
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Submits WHERE id = ?'.format(self.columns), ref)
+        cursor.execute('SELECT {} FROM Submits WHERE id = ?'.format(self.columns), [ref])
         old = self.load(cursor.fetchone())
         new_def = {'submit_id': old.submit_id, 'lang_id': old.lang_id, 'problem_ref': old.problem_ref,
                    'user_ref': old.user_ref, 'outcome': old.outcome, 'timestamp': old.timestamp}

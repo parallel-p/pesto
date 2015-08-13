@@ -36,7 +36,7 @@ class DAOContests:
 
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Contests WHERE id = ?'.format(DAOContests.columns), ref)
+        cursor.execute('SELECT {} FROM Contests WHERE id = ?'.format(DAOContests.columns), [ref])
         old = DAOContests.load(cursor.fetchone())
         new_def = {'origin': old.origin, 'name': old.name, 'scoring': old.scoring, 'contest_id': old.contest_id}
         for key, value in update_def.items():

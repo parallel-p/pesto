@@ -1,5 +1,6 @@
 from model import Problem
 from dao_cases import DAOCases
+import sys
 
 
 class DAOProblems:
@@ -17,9 +18,9 @@ class DAOProblems:
     def deep_load(self, row):
         result = self.load(row)
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT contest_id FROM Contests WHERE id = ?', row['contest_ref'])
+        cursor.execute('SELECT contest_id FROM Contests WHERE id = ?', (row['contest_ref'], ))
         result.problem_id = (cursor.fetchone()['contest_id'], row['problem_id'])
-        cursor.execute('SELECT {} FROM Cases WHERE problem_ref = ?'.format(DAOCases.columns), row['id'])
+        cursor.execute('SELECT {} FROM Cases WHERE problem_ref = ?'.format(DAOCases.columns), (row['id'], ))
         cases_row = cursor.fetchone()
         while cases_row:
             hash = DAOCases.load(cases_row)
@@ -48,7 +49,7 @@ class DAOProblems:
 
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Problems WHERE id = ?'.format(self.columns), ref)
+        cursor.execute('SELECT {} FROM Problems WHERE id = ?'.format(self.columns), [ref])
         old = self.load(cursor.fetchone())
         new_def = {'contest_ref': old.contest_ref, 'problem_id': old.problem_id[1], 'name': old.name}
         for key, value in update_def.items():

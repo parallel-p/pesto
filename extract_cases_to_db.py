@@ -10,7 +10,7 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
 
     for problem in problems:
         contest_response = cursor.execute('SELECT id FROM Contests WHERE origin = ? AND contest_id = ?',
-                                    (origin, problem.problem_id[0].rjust(6, '0'))).fetchone()
+                                         (origin, problem.problem_id[0].rjust(6, '0'))).fetchone()
         if contest_response is None:
             continue
 
@@ -29,21 +29,15 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
             continue
 
         problem_ref = problem_response[0]
-        hashed_cases = 0
 
-        if problem.problem_id in [5, '5']:
-            print(problem.cases)
-            print(problem.problem_id)
         for case_num in range(len(problem.cases)):
-
             cursor.execute('UPDATE Cases SET io_hash = ? WHERE problem_ref = ? AND case_id = ?',
                             (problem.cases[case_num], problem_ref, case_num + 1))
-            if hashed_cases % 10 == 0:
-                print('Filled in {0} cases of problem # {1} from contest #{2}'.format(hashed_cases,
+            if case_num % 50 == 0 and case_num != 0:
+                print('Filled in {0} cases of problem # {1} from contest #{2}'.format(case_num,
                                                                                       problem.problem_id[1],
                                                                                       problem.problem_id[0]))
-            hashed_cases += 1
 
-        print('Filled in {0} cases of problem # {1} from contest #{2}'.format(hashed_cases,
+        print('Filled in {0} cases of problem # {1} from contest #{2}'.format(case_num,
                                                                               problem.problem_id[1],
                                                                               problem.problem_id[0]))
