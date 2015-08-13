@@ -120,7 +120,7 @@ class TreeDrawer:
             current_y += PROBLEM_DIAMETER + PROBLEM_Y_INTERVAL
 
     def _get_line_color(self, problem):
-        similarity, same, removed, added = self.tree.get_relation_to_parent(problem)
+        parent, similarity, same, added, removed = self.tree.get_relation_to_parent(problem)
         if removed == 0 and added == 0:
             return LINE_COLOR_SAME
         color_k = (similarity - MIN_SIMILARITY) / (1.0 - MIN_SIMILARITY)
