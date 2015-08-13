@@ -9,6 +9,8 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
         return
 
     for problem in problems:
+        print('Filling in cases for problem #{0} from contest #{1}'.format(problem.problem_id[1],
+                                                                           problem.problem_id[0]))
         contest_response = cursor.execute('SELECT id FROM Contests WHERE origin = ? AND contest_id = ?',
                                          (origin, problem.problem_id[0].rjust(6, '0'))).fetchone()
         if contest_response is None:
@@ -38,6 +40,6 @@ def extract_cases_to_db(contest_dirs, cursor, origin):
                                                                                       problem.problem_id[1],
                                                                                       problem.problem_id[0]))
 
-        print('Filled in {0} cases of problem # {1} from contest #{2}'.format(case_num,
+        print('Filled in {0} cases of problem #{1} from contest #{2}'.format(case_num,
                                                                               problem.problem_id[1],
                                                                               problem.problem_id[0]))

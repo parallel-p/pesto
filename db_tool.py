@@ -91,10 +91,10 @@ def update_database(path):
 def fill_cases_hashes(cursor, base_dir, origin):
     print("Filling cases...")
     contests_dir = []
-    for c_dir in MultipleContestWalker().walk(base_dir):
-        contests_dir.append(c_dir[1])
-        print("Retrieving cases for contest #{}".format(c_dir[0]))
-    extract_cases_to_db(contests_dir, cursor, origin)
+    # for c_dir in MultipleContestWalker().walk(base_dir):
+    #     contests_dir.append(c_dir[1])
+    #     print("Retrieving cases for contest #{}".format(c_dir[0]))
+    extract_cases_to_db(MultipleContestWalker().walk(base_dir, path_only=True), cursor, origin)
     print('Cases were filled')
 
 
@@ -114,6 +114,7 @@ def fill_submits(sqlite_cursor, base_dir, origin, mysql_config):
 
 def main():
     base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir = get_arguments()
+
     if args['clean']:
         connection, sqlite_cursor = create_new_database(output_database, 'tables_script.txt')
         print("Database created successfully")
@@ -123,28 +124,35 @@ def main():
 
     if contests_info_dir == '':
         print("WARNING. Contests info directory is not specified. Contests name won't be filled")
-    if args['hashes_only']:
-        fill_cases_hashes(sqlite_cursor, base_dir, origin)
+    try:
+        if args['hashes_only']:
+            fill_cases_hashes(sqlite_cursor, base_dir, origin)
+            connection.commit()
+            connection.close()
+            print('Connection closed')
+            exit()
+
+        if args['p']:
+            print('Filling database from pickles...')
+            fill_from_pickles(sqlite_cursor, pickle_dir, origin)
+            connection.commit()
+        else:
+            fill_submits(sqlite_cursor, base_dir, origin, mysql_config)
+            connection.commit()
+
+        if not args['no_hashes']:
+            fill_cases_hashes(sqlite_cursor, base_dir, origin)
+
+        if contests_info_dir != '':
+            print('Filling contests names')
+            fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
+            print('Contests names were filled')
+
+    except SystemExit:
+        raise
+    except:
         connection.commit()
         connection.close()
-        print('Connection closed')
-        exit()
-
-    if args['p']:
-        print('Filling database from pickles...')
-        fill_from_pickles(sqlite_cursor, pickle_dir, origin)
-        connection.commit()
-    else:
-        fill_submits(sqlite_cursor, base_dir, origin, mysql_config)
-        connection.commit()
-
-    if not args['no_hashes']:
-        fill_cases_hashes(sqlite_cursor, base_dir, origin)
-
-    if contests_info_dir != '':
-        print('Filling contests names')
-        fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
-        print('Contests names were filled')
 
     connection.commit()
     connection.close()

@@ -1,10 +1,10 @@
 [tool]
 #If you want to use your own config, use config.ini, which is added to git ignore
-base_dir = my_data
-database = my_data/file.csv
+database = my_data/database_file.db
 pickle_dir = pickle
 trash_dir = trash
 output = trash/output.txt
+scoring = ACM
 
 [cases_stats]
 database = database.db
