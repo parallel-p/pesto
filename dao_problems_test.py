@@ -29,9 +29,9 @@ class DAOProblemsTest(unittest.TestCase):
         self.assertEqual(self.dao.deep_load(self.row), res)
         self.assertEqual(res.problem_id, ('1', 'problem_id'))
         self.assertEqual(res.cases, ['hash1', 'hash2'])
-        calls = [call.execute('SELECT contest_id FROM Contests WHERE id = ?', 1),
+        calls = [call.execute('SELECT contest_id FROM Contests WHERE id = ?', [1]),
                  call.fetchone(),
-                 call.execute('SELECT kek FROM Cases WHERE problem_ref = ?', 2),
+                 call.execute('SELECT kek FROM Cases WHERE problem_ref = ?', [2]),
                  call.fetchone(), call.fetchone(), call.fetchone()]
         self.assertEqual(self.cursor.mock_calls, calls)
         self.assertEqual(DAOCases.load.mock_calls, [call(1), call(2)])
@@ -73,12 +73,12 @@ class DAOProblemsTest(unittest.TestCase):
         self.dao.load = Mock(side_effect=[problem1, problem2])
         self.dao.update(1, {'contest_ref': 'contest_ref3'})
         self.dao.update(2, {'name': 'name3', 'problem_id': 'problem_id3'})
-        calls = [call.execute('SELECT id, contest_ref, problem_id, name FROM Problems WHERE id = ?', 1),
+        calls = [call.execute('SELECT id, contest_ref, problem_id, name FROM Problems WHERE id = ?', [1]),
                  call.fetchone(),
                  call.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id '
                               'WHERE id = :id', {'contest_ref': 'contest_ref3',
                                                  'name': 'name1', 'problem_id': 'problem_id1', 'id': 1}),
-                 call.execute('SELECT id, contest_ref, problem_id, name FROM Problems WHERE id = ?', 2),
+                 call.execute('SELECT id, contest_ref, problem_id, name FROM Problems WHERE id = ?', [2]),
                  call.fetchone(),
                  call.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id '
                               'WHERE id = :id', {'contest_ref': 'contest_ref2',

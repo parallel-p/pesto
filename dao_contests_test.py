@@ -62,13 +62,13 @@ class DAOContestsTest(unittest.TestCase):
         DAOContests.load = Mock(side_effect=[contest1, contest2])
         self.dao.update(1, {'name': 'name3'})
         self.dao.update(2, {'scoring': 'scoring3', 'contest_id': 'contest_id3'})
-        calls = [call.execute('SELECT contest_id, origin, name, scoring FROM Contests WHERE id = ?', 1),
+        calls = [call.execute('SELECT contest_id, origin, name, scoring FROM Contests WHERE id = ?', [1]),
                  call.fetchone(),
                  call.execute('UPDATE Contests SET origin = :origin, name = :name, scoring = :scoring, '
                               'contest_id = :contest_id WHERE id = :id', {'origin': 'origin1', 'name': 'name3',
                                                                           'scoring': 'scoring1',
                                                                           'contest_id': 'contest_id1', 'id': 1}),
-                 call.execute('SELECT contest_id, origin, name, scoring FROM Contests WHERE id = ?', 2),
+                 call.execute('SELECT contest_id, origin, name, scoring FROM Contests WHERE id = ?', [2]),
                  call.fetchone(),
                  call.execute('UPDATE Contests SET origin = :origin, name = :name, scoring = :scoring, '
                               'contest_id = :contest_id WHERE id = :id', {'origin': 'origin2', 'name': 'name2',

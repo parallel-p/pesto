@@ -34,7 +34,7 @@ class DAOUsers:
 
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Users WHERE id = ?'.format(self.columns), ref)
+        cursor.execute('SELECT {} FROM Users WHERE id = ?'.format(self.columns), [ref])
         old = self.load(cursor.fetchone())
         new_def = {'origin': old.origin, 'user_id': old.user_id}
         for key, value in update_def.items():

@@ -27,7 +27,7 @@ class RunsDaoTest(PestoTestCase):
         res = self.dao.deep_load(self.row)
         self.assertEqual(res.case_id, 'case_id')
         self.assertEqual(self.cursor.mock_calls,
-                         [call.execute('SELECT case_id FROM Cases WHERE id = ?', 'case_ref'), call.fetchone()])
+                         [call.execute('SELECT case_id FROM Cases WHERE id = ?', ['case_ref']), call.fetchone()])
 
     def test_define(self):
         self.dao.lookup = Mock(side_effect=[None, 2])
@@ -68,13 +68,13 @@ class RunsDaoTest(PestoTestCase):
         self.dao.load = Mock(side_effect=[run1, run2])
         self.dao.update(1, {'realtime': 'realtime3', 'time': 'time3', 'outcome': 'outcome3'})
         self.dao.update(2, {'submit_ref': 'submit_ref3', 'case_ref': 'case_ref3'})
-        calls = [call.execute('SELECT realtime, time, outcome, submit_ref, case_ref FROM Runs WHERE id = ?', 1),
+        calls = [call.execute('SELECT realtime, time, outcome, submit_ref, case_ref FROM Runs WHERE id = ?', [1]),
                  call.fetchone(),
                  call.execute('UPDATE Runs SET submit_ref = :submit_ref, case_ref = :case_ref, realtime = :realtime, '
                               'time = :time, outcome = :outcome WHERE id = :id',
                               {'realtime': 'realtime3', 'time': 'time3', 'outcome': 'outcome3',
                                'submit_ref': 'submit_ref1', 'case_ref': 'case_ref1', 'id': 1}),
-                 call.execute('SELECT realtime, time, outcome, submit_ref, case_ref FROM Runs WHERE id = ?', 2),
+                 call.execute('SELECT realtime, time, outcome, submit_ref, case_ref FROM Runs WHERE id = ?', [2]),
                  call.fetchone(),
                  call.execute('UPDATE Runs SET submit_ref = :submit_ref, case_ref = :case_ref, realtime = :realtime, '
                               'time = :time, outcome = :outcome WHERE id = :id',

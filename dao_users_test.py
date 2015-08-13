@@ -59,11 +59,11 @@ class DAOUsersTest(unittest.TestCase):
         self.dao.load = Mock(side_effect=[user1, user2])
         self.dao.update(1, {'origin': 'origin3'})
         self.dao.update(2, {'user_id': 'user_id3'})
-        calls = [call.execute('SELECT origin, user_id FROM Users WHERE id = ?', 1),
+        calls = [call.execute('SELECT origin, user_id FROM Users WHERE id = ?', [1]),
                  call.fetchone(),
                  call.execute('UPDATE Users SET origin = :origin, user_id = :user_id '
                               'WHERE id = :id', {'origin': 'origin3', 'user_id': 'user_id1', 'id': 1}),
-                 call.execute('SELECT origin, user_id FROM Users WHERE id = ?', 2),
+                 call.execute('SELECT origin, user_id FROM Users WHERE id = ?', [2]),
                  call.fetchone(),
                  call.execute('UPDATE Users SET origin = :origin, user_id = :user_id '
                               'WHERE id = :id', {'origin': 'origin2', 'user_id': 'user_id3', 'id': 2})]
