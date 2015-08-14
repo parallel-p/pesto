@@ -1,6 +1,43 @@
 from visitor import Visitor
 
 
+class SameRunsBigStat(Visitor):
+    def __init__(self):
+        super().__init__()
+        self.cases = 0
+        self.cases_to_del = 0
+        self.time = 0
+        self.time_to_del = 0
+
+        self.base = {}
+
+    def visit(self, submit):
+        name = submit.problem_id
+        if name not in self.base:
+            if submit.scoring == 'ACM':
+                self.base[name] = SameRunsACM()
+            else:
+                self.base[name] = SameRunsKirov()
+        self.base[name].visit(submit)
+
+    def pretty_print(self):
+        print(self.base)
+        for same_runs in self.base.values():
+            same_runs.calc()
+            same_runs.xcalc()
+            self.cases += same_runs.cases
+            self.cases_to_del += same_runs.cases_to_del
+            self.time += same_runs.time
+            self.time_to_del += same_runs.time_to_del
+
+        result = ''
+        if self.cases != 0 and self.time != 0:
+            # result += 'PROBLEMS - {0}'.format(len(self.base)) + '\n'
+            result += 'WE RECOMMEND REMOVING: {0}/{1} ({2}%)'.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '\n'
+            result += 'IT WILL SAVE: {0}SEC/{1}SEC ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
+        return result
+
+
 class SameRuns(Visitor):
     def __init__(self):
         super().__init__()
@@ -9,28 +46,35 @@ class SameRuns(Visitor):
         self.strong_runs = set()
         self.times = {}
 
+        self.bad_cases = set()
+
+        self.cases = 0
+        self.cases_to_del = 0
+        self.time = 0
+        self.time_to_del = 0
+
     def get_stat_data(self):
-        return [self.run_number, self.connected_components, self.strong_runs]  # int, list of sets of ints, set of ints
+        """int, list of sets of ints, set of ints"""
+        return [self.run_number, self.connected_components, self.strong_runs]
 
     def pre_visit(self, submit):
+        self.cases = max(self.cases, len(submit.runs))
         self.submit_number += 1
         for run in submit.runs:
+            self.time += int(run.time)
             if run.case_id not in self.times.keys():
                 self.times[run.case_id] = [1, int(run.time)]
             else:
                 self.times[run.case_id][0] += 1
                 self.times[run.case_id][1] += int(run.time)
 
-    def pretty(self):
-        result = 'Submits - {0}\n'.format(self.submit_number)
-        if len(self.connected_components) > 0:
-            result += 'Equivalent tests: ' + ' '.join(map(lambda component: '{' + (' '.join(map(str, sorted(component))) + '}'),
-                                                          sorted(self.connected_components))) + '\n'
-        if len(self.strong_runs) > 0:
-            result += 'Unique tests: {' + ' '.join(map(str, sorted(self.strong_runs))) + '}\n'
+    def calc(self):
+        pass
 
-        bad_cases = set()
-        big_sum = 0
+    def xcalc(self):
+        self.cases_to_del = self.cases - len(self.strong_runs) - len(self.connected_components)
+        self.bad_cases = set()
+        self.time_to_del = 0
         for component in self.connected_components:
             mn = float('Inf')
             sm = 0
@@ -41,12 +85,26 @@ class SameRuns(Visitor):
                     boss = run
             for case in component:
                 if case != boss:
-                    bad_cases.add(case)
-            big_sum += sm - self.times[boss][1]
+                    self.bad_cases.add(case)
+            self.time_to_del += sm - self.times[boss][1]
 
-        if bad_cases:
-            result += 'we recommend removing: {' + ' '.join(map(str, sorted(bad_cases))) + '}\n'
-            result += 'it will save: {0}sec'.format(big_sum / 1000)
+        self.time = 0
+        for time in self.times.values():
+            self.time += time[1]
+
+    def pretty(self):
+        result = 'Submits - {0}\n'.format(self.submit_number)
+        if len(self.connected_components) > 0:
+            result += 'Equivalent tests: ' + ' '.join(map(lambda component: '{' + (' '.join(map(str, sorted(component))) + '}'),
+                                                          sorted(self.connected_components))) + '\n'
+        if len(self.strong_runs) > 0:
+            result += 'Unique tests: {' + ' '.join(map(str, sorted(self.strong_runs))) + '}\n'
+
+        self.xcalc()
+
+        if self.bad_cases:
+            result += 'we recommend removing: {0}/{1} ({2}%) '.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '{' + ' '.join(map(str, sorted(self.bad_cases))) + '}\n'
+            result += 'it will save: {0}sec/{1}sec ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
 
         return result
 
@@ -104,6 +162,8 @@ class SameRunsACM(SameRuns):
             self.runs = [x.case_id for x in submit.runs]
 
     def calc(self):
+        self.connected_components = []
+        self.strong_runs = set()
         self.runs.append(self.runs[-1] + 1)
         left = 0
         for right in sorted(self.base):
