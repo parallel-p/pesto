@@ -37,6 +37,28 @@ class TestToolConfig(unittest.TestCase):
         factory = tool_config.SameRunsACMFactory()
         self.assertIsInstance(factory.create(1), tool_config.SameRunsACM)
 
+    def test_same_runs_big_stat(self):
+        factory = tool_config.SameRunsBigStatFactory()
+        self.assertIsInstance(factory.create(1), tool_config.SameRunsBigStat)
+
+    @patch('tool_config.PickleWriter')
+    def test_pickle_writer(self, pw):
+        factory = tool_config.PickleWriterFactory('1337')
+        result = factory.create(1)
+        self.assertEqual(result.default_path, '1337')
+
+    def test_custom_sharding_factory(self):
+        shard = Mock(return_value=42)
+        vis = Mock()
+        factory = tool_config.CustomShardingFactory(shard, vis)
+        self.assertEqual(factory.create(1), 42)
+        vis.assert_any_call()
+
+    def test_custom_visitor_factory(self):
+        vis = Mock(return_value=42)
+        factory = tool_config.CustomVisitorFactory(vis)
+        self.assertEqual(factory.create(1), 42)
+
     @patch('tool_config.SameRunsKirovFactory2')
     def test_same_runs_kirov(self, ki):
         factory = tool_config.SameRunsKirovFactory()
