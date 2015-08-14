@@ -79,12 +79,35 @@ def main():
         if output_file is None:
             print('Sorry, I can\'t draw tree to console')
             exit()
-        tree = ProblemsTree(problems_generator)
-        drawer = TreeDrawer(tree, ContestsGrouper(contests_generator))
+        contests_grouper = ContestsGrouper(contests_generator)
+        contests = contests_grouper.get_contests_sorted()
+        contest_to_problems = dict()
+        for contest in contests:
+            contest_to_problems[contest.contest_id] = []
+        for problem in problems_generator:
+            contest_id = problem.problem_id[0]
+            if contest_id in contest_to_problems:
+                contest_to_problems[contest_id].append(problem)
+        problems = []
+        for contest in contests:
+            problems += contest_to_problems[contest.contest_id]
+        tree = ProblemsTree(problems)
+        drawer = TreeDrawer(tree, contests_grouper)
         drawer.save_image_to_file(output_file)
     elif args['statistic'] in ['4', 'build_problems_tree']:
-        tree = ProblemsTree(problems_generator)
         contests_grouper = ContestsGrouper(contests_generator)
+        contests = contests_grouper.get_contests_sorted()
+        contest_to_problems = dict()
+        for contest in contests:
+            contest_to_problems[contest.contest_id] = []
+        for problem in problems_generator:
+            contest_id = problem.problem_id[0]
+            if contest_id in contest_to_problems:
+                contest_to_problems[contest_id].append(problem)
+        problems = []
+        for contest in contests:
+            problems += contest_to_problems[contest.contest_id]
+        tree = ProblemsTree(problems)
         print_result(problems_tree_json.save_tree(tree, contests_grouper), output_file)
     elif args['statistic'] in ['5', 'draw_saved_tree']:
         if output_file is None:
