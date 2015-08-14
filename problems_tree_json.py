@@ -37,5 +37,5 @@ def load_tree(json_str):
     contests_grouper = stats.contests_grouper.ContestsGrouper([])
     contests_grouper.contests = dict()
     for contest in data[1]:
-        contests_grouper.contests[contest[0]] = stats.contests_grouper._Contest(*contest[1])
+        contests_grouper.contests[contest["id"]] = stats.contests_grouper._Contest(*contest["data"])
     return tree, contests_grouper
