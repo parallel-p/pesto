@@ -30,6 +30,15 @@ MIN_SIMILARITY = 0.5
 LINE_ARROW_ANGLE = math.pi / 18.0
 LINE_ARROW_LENGTH = 60.0
 
+DAY_HEIGHT = 40
+DAY_NAME_WIDTH = 100
+GROUP_NAME_HEIGHT = 60
+PROBLEM_WIDTH = 30
+SEASON_NAME_WIDTH = 250
+COLUMNS_SPACING = 60
+END_SPACE = 100
+MAX_GROUP_COUNT = 35
+
 
 def _is_point_in_rectangle(point, rect_start, rect_size):
     return rect_start[0] <= point[0] <= rect_start[0] + rect_size[0] and \
@@ -102,44 +111,39 @@ class TreeDrawer:
         day_text = ('fonts/Arial.ttf', 16, 'black', 'left')
         season_text = ('fonts/Arial.ttf', 22, 'black', 'center')
 
-        day_height = 40
-        day_name_width = 100
-        group_name_height = 60
-        problem_width = 30
-        season_name_width = 250
-        columns_spacing = 60
-
-        column_width = [0] * 35
+        column_width = [0] * MAX_GROUP_COUNT
         row_height = [0] * len(self.seasons)
         for i, season in enumerate(self.seasons):
-            row_height[i] = group_name_height + len(season.days) * day_height
+            row_height[i] = GROUP_NAME_HEIGHT + len(season.days) * DAY_HEIGHT
             for group in season.groups:
-                column_width[group.order] = max(column_width[group.order], group.max_len * problem_width)
-        column_x = [season_name_width + day_name_width]
-        for i in range(1, 35):
-            column_x.append(column_x[i - 1] + column_width[i - 1] + columns_spacing)
+                column_width[group.order] = max(column_width[group.order], group.max_len * PROBLEM_WIDTH)
+        column_x = [SEASON_NAME_WIDTH + DAY_NAME_WIDTH]
+        for i in range(1, MAX_GROUP_COUNT):
+            column_x.append(column_x[i - 1] + column_width[i - 1])
+            if column_x[i - 1] > 0:
+                column_x[i] += COLUMNS_SPACING
 
         y = 0
         self.size_x, self.size_y = 0, 0
         for i, season in enumerate(self.seasons):
-            self.texts.append((season.name, (season_name_width / 2, y + row_height[i] / 2)) + season_text)
-            ty = y + group_name_height / 2
+            self.texts.append((season.name, (SEASON_NAME_WIDTH / 2, y + row_height[i] / 2)) + season_text)
+            ty = y + GROUP_NAME_HEIGHT / 2
             for group in season.groups:
                 tx = column_x[group.order] + column_width[group.order] / 2
                 self.texts.append((group.name, (tx, ty)) + group_text)
-            y += group_name_height
+            y += GROUP_NAME_HEIGHT
             for day in season.days:
-                tx = season_name_width
-                ty = y + day_height / 2
+                tx = SEASON_NAME_WIDTH
+                ty = y + DAY_HEIGHT / 2
                 self.texts.append((day.name, (tx, ty)) + day_text)
                 for group in season.groups:
                     for j, problem in enumerate(day.problems[group.name]):
-                        tx = column_x[group.order] + (j + 0.5) * problem_width
+                        tx = column_x[group.order] + (j + 0.5) * PROBLEM_WIDTH
                         self.problems_and_coords.append((problem, (tx, ty)))
                         self.problem_coords[problem] = (tx, ty)
-                        self.size_x = max(self.size_x, int(tx + 100))
-                        self.size_y = max(self.size_y, int(ty + 100))
-                y += day_height
+                        self.size_x = max(self.size_x, int(tx + END_SPACE))
+                        self.size_y = max(self.size_y, int(ty + END_SPACE))
+                y += DAY_HEIGHT
 
     def _create_seasons(self):
         seasons_dict = dict()
