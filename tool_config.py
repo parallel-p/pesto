@@ -1,7 +1,7 @@
 from stats.count_submits import SubmitsCounter
 from stats.eq_matrix import EqMatrix
 from stats.max_test_cases_count import MaxTestCasesCount
-from stats.same_runs import SameRunsKirov, SameRunsACM
+from stats.same_runs import SameRunsKirov, SameRunsACM, SameRunsBigStat
 from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
 from pickle_submits import PickleWriter
@@ -21,7 +21,8 @@ def get_presets_info():
         3.same_runs - Counts for each problem lists of runs that were launched together.
         4.submits_by_signature - Counts submits with each outcome for each problem for each language.
         5.submits_by_tests - Counts submits with each number of launched tests for each problem.
-        6.gen_pickles - Generates fast access information for next use.
+        6.same_runs_big_stat - beta
+        7.gen_pickles - Generates fast access information for next use.
     """
 
 
@@ -36,11 +37,20 @@ def get_factory_by_preset(preset, output):
         return CustomShardingFactory(ShardingByProblemVisitor, SubmitsIdsBySignatureFactory)
     if preset in ['5', 'submits_by_tests']:
         return CustomVisitorFactory(SubmitsOverTestCasesNumbers)
-    if preset in ['6', 'gen_pickles']:
+    if preset in ['6', 'same_runs_big_stat']:
+        return SameRunsBigStatFactory()
+    if preset in ['7', 'gen_pickles']:
         default_path = path.join('.', output)
         return PickleWriterFactory(default_path)
     return None
 
+
+class SameRunsBigStatFactory(VisitorFactory):
+    def __init__(self):
+        self.obj = SameRunsBigStat()
+
+    def create(self, key):
+        return self.obj
 
 class PickleWriterFactory(VisitorFactory):
     def __init__(self, default_path):
