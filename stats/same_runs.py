@@ -13,7 +13,7 @@ class SameRunsBigStat(Visitor):
 
     def visit(self, submit):
         name = submit.problem_id
-        if name not in self.base:
+        if name not in self.base.keys():
             if submit.scoring == 'ACM':
                 self.base[name] = SameRunsACM()
             else:
