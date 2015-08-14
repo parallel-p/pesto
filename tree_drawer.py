@@ -352,7 +352,7 @@ class Season:
     def _get_order(self, name, year):
         pos = {'июль' : 0, 'август' : 1, 'зима' : 2}
         order_2 = 3
-        if name in pos:
+        if name.lower() in pos:
             order_2 = pos[name.lower()]
         order_1 = int(year)
         return (order_1, order_2)
