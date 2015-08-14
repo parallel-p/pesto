@@ -33,7 +33,7 @@ LINE_ARROW_LENGTH = 15.0
 DAY_HEIGHT = 40
 DAY_NAME_WIDTH = 70
 GROUP_NAME_HEIGHT = 60
-PROBLEM_WIDTH = 30
+PROBLEM_WIDTH = 50
 SEASON_NAME_WIDTH = 200
 COLUMNS_SPACING = 30
 END_SPACE = 50
@@ -129,7 +129,7 @@ class TreeDrawer:
             self.texts.append((season.name, (SEASON_NAME_WIDTH / 2, y + row_height[i] / 2)) + season_text)
             ty = y + GROUP_NAME_HEIGHT / 2
             for group in season.groups:
-                tx = column_x[group.order] + column_width[group.order] / 2
+                tx = column_x[group.order] + PROBLEM_WIDTH / 2
                 self.texts.append((group.name, (tx, ty)) + group_text)
             y += GROUP_NAME_HEIGHT
             for day in season.days:
