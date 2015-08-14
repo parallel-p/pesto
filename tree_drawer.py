@@ -107,7 +107,7 @@ class TreeDrawer:
         self._draw_tree()
 
     def _locate_problems_and_texts(self):
-        group_text = ('fonts/Arial.ttf', 25, 'black', 'center')
+        group_text = ('fonts/Arial.ttf', 25, 'black', 'left')
         day_text = ('fonts/Arial.ttf', 16, 'black', 'left')
         season_text = ('fonts/Arial.ttf', 22, 'black', 'center')
 
@@ -129,7 +129,7 @@ class TreeDrawer:
             self.texts.append((season.name, (SEASON_NAME_WIDTH / 2, y + row_height[i] / 2)) + season_text)
             ty = y + GROUP_NAME_HEIGHT / 2
             for group in season.groups:
-                tx = column_x[group.order] + PROBLEM_WIDTH / 2
+                tx = column_x[group.order] + PROBLEM_WIDTH * 0.3
                 self.texts.append((group.name, (tx, ty)) + group_text)
             y += GROUP_NAME_HEIGHT
             for day in season.days:
