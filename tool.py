@@ -87,6 +87,7 @@ def count_stat(connector, scoring, visitor_factory):
                                                 'WHERE problem_ref=?', (problem_row['id'], )):
             submit = dao_submits.deep_load(submit_row)
             submit.problem_id = problem.problem_id
+            submit.scoring = scoring
             visitor_by_problem[problem].visit(submit)
         visitor_by_problem[problem].close()
     return visitor_by_problem

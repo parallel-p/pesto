@@ -172,7 +172,7 @@ class SameRunsACM(SameRuns):
     def calc(self):
         self.connected_components = []
         self.strong_runs = set()
-        self.runs.append(self.runs[-1] + 1)
+        self.runs.append(int(self.runs[-1]) + 1)
         left = 0
         for right in sorted(self.base):
             if right == 0:
