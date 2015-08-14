@@ -139,6 +139,8 @@ class TreeDrawer:
                         tx = column_x[group.order] + (j + 0.5) * problem_width
                         self.problems_and_coords.append((problem, (tx, ty)))
                         self.problem_coords[problem] = (tx, ty)
+                        self.size_x = max(self.size_x, tx + 100)
+                        self.size_y = max(self.size_y, ty + 100)
                 y += day_height
 
     def _create_seasons(self):
