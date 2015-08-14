@@ -22,8 +22,7 @@ class MySQLConnector():
 
     def create_connection(self, config):
         self.config = config
-        if self.connection.is_connected():
-            self.connection.close()
+        self.close()
         self.connection = self.connector.connect(**self.config)
 
     def get_cursor(self):
