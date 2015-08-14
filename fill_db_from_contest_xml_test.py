@@ -11,9 +11,10 @@ class FillDBFromContestXMLTest(PestoTestCase):
 
     @unittest.mock.patch('fill_db_from_contest_xml.AllFilesWalker', return_value=Mock(walk=Mock(return_value=[(None, os.path.join('asdf', '123456')),\
                                                                                 (None, os.path.join('asdf', '179179')),\
+                                                                                (None, os.path.join('asdf', 'notnum')),
                                                                                 (None, os.path.join('asdf', '031337'))])))
     @unittest.mock.patch('fill_db_from_contest_xml.ejudge_get_contest_name', side_effect=['I am contest name #1', 'Contest name #2', 'Yo, i am contest name #3!'])
-    @unittest.mock.patch('os.path.basename', side_effect=['123456', '179179', '031337'])
+    @unittest.mock.patch('os.path.basename', side_effect=['123456', '179179', 'notnum', '031337'])
     @unittest.mock.patch('builtins.print', Mock())
     def test_common(self, some, useless, args):
         cursor = Mock()
