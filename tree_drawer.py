@@ -5,7 +5,7 @@ import sys
 
 BACKGROUND_COLOR = "white"
 
-PROBLEM_RADIUS = 60
+PROBLEM_RADIUS = 10
 PROBLEM_DIAMETER = PROBLEM_RADIUS * 2
 PROBLEM_FILL_COLOR = "yellow"
 PROBLEM_BORDER_COLOR = "black"
@@ -87,23 +87,20 @@ class TreeDrawer:
         self.seasons = []
         self._create_seasons()
 
-        self.size_y = ...
-        self.size_x = ...
-
-        self.image = drawer.Image((self.size_x, self.size_y), BACKGROUND_COLOR)
-
         self.problem_coords = dict()
         self.problems_and_coords = []
         self.texts = []
         self._locate_problems_and_texts()
+        self.lines, self.arrows = [], []
         self._locate_lines()
 
+        self.image = drawer.Image((self.size_x, self.size_y), BACKGROUND_COLOR)
         self._draw_tree()
 
     def _locate_problems_and_texts(self):
-        group_text = ('Arial', 25, 'black', 'center')
-        day_text = ('Arial', 16, 'black', 'left')
-        season_text = ('Arial', 22, 'black', 'center')
+        group_text = ('fonts/Arial.ttf', 25, 'black', 'center')
+        day_text = ('fonts/Arial.ttf', 16, 'black', 'left')
+        season_text = ('fonts/Arial.ttf', 22, 'black', 'center')
 
         day_height = 40
         day_name_width = 100
@@ -120,9 +117,10 @@ class TreeDrawer:
                 column_width[group.order] = max(column_width[group.order], group.max_len * problem_width)
         column_x = [season_name_width + day_name_width]
         for i in range(1, 35):
-            column_x[i] = column_x[i - 1] + column_width[i - 1] + columns_spacing
+            column_x.append(column_x[i - 1] + column_width[i - 1] + columns_spacing)
 
         y = 0
+        self.size_x, self.size_y = 0, 0
         for i, season in enumerate(self.seasons):
             self.texts.append((season.name, (season_name_width / 2, y + row_height[i] / 2)) + season_text)
             ty = y + group_name_height / 2
@@ -133,14 +131,14 @@ class TreeDrawer:
             for day in season.days:
                 tx = season_name_width
                 ty = y + day_height / 2
-                self.texts.append((day.name, (tx, ty), day_text))
+                self.texts.append((day.name, (tx, ty)) + day_text)
                 for group in season.groups:
                     for j, problem in enumerate(day.problems[group.name]):
                         tx = column_x[group.order] + (j + 0.5) * problem_width
                         self.problems_and_coords.append((problem, (tx, ty)))
                         self.problem_coords[problem] = (tx, ty)
-                        self.size_x = max(self.size_x, tx + 100)
-                        self.size_y = max(self.size_y, ty + 100)
+                        self.size_x = max(self.size_x, int(tx + 100))
+                        self.size_y = max(self.size_y, int(ty + 100))
                 y += day_height
 
     def _create_seasons(self):
@@ -154,11 +152,11 @@ class TreeDrawer:
             year = self.contests_grouper.get_contest_year_by_id(contest_id)
 
             if '' in [group, season_name]:
-               continue
+                continue
 
-            key = year + season_name
+            key = str(year) + season_name
 
-            if key not in self.seasons_dict:
+            if key not in seasons_dict:
                 seasons_dict[key] = Season(season_name, year)
             seasons_dict[key].add_day_and_problem(problem, day, group, contest_id)
         for key in seasons_dict:
@@ -166,7 +164,7 @@ class TreeDrawer:
             seasons_dict[key].create_days_list()
             seasons_dict[key].count_max_len()
             self.seasons.append(seasons_dict[key])
-        self.seasons = self.seasons.sort(key=lambda x: x.order)
+        self.seasons.sort(key=lambda x: x.order)
 
     def _get_line_color(self, problem):
         parent, similarity, same, added, removed = self.tree.get_relation_to_parent(problem)
@@ -181,8 +179,8 @@ class TreeDrawer:
         self.lines = []
         self.arrows = []
         self.lines_colors = []
-        force_field = [[0.0, 0.0] for j in range(self.size_x * self.size_y)]
-        force_field_last_added = [-1 for j in range(self.size_x * self.size_y)]
+        #force_field = [[0.0, 0.0] for j in range(self.size_x * self.size_y)]
+        #force_field_last_added = [-1 for j in range(self.size_x * self.size_y)]
         for problem_2 in self.problems:
             problem_1 = self.tree.get_previous_problem(problem_2)
             if problem_1 is None:
@@ -224,12 +222,12 @@ class TreeDrawer:
                 curr_vy += LOCATE_LINES_DESTINATION_CONSTANT_FORCE * destination_direction[1]
                 curr_x_int = int(curr_x)
                 curr_y_int = int(curr_y)
-                if 0 <= curr_x_int < self.size_x and 0 <= curr_y_int < self.size_y:
-                    curr_vx += force_field[curr_x_int * self.size_y + curr_y_int][0]
-                    curr_vy += force_field[curr_x_int * self.size_y + curr_y_int][1]
+                #if 0 <= curr_x_int < self.size_x and 0 <= curr_y_int < self.size_y:
+                #    curr_vx += force_field[curr_x_int * self.size_y + curr_y_int][0]
+                #    curr_vy += force_field[curr_x_int * self.size_y + curr_y_int][1]
             self.lines[-1].append((int(curr_x), int(curr_y)))
 
-            point_1 = (None, None)
+            """point_1 = (None, None)
             for point_2 in self.lines[-1]:
                 if point_1[0] is not None:
                     line_a = point_2[1] - point_1[1]
@@ -256,7 +254,7 @@ class TreeDrawer:
                                 else:
                                     force_field[cxcy][0] -= line_a * LOCATE_LINES_LINE_CONSTANT_FORCE
                                     force_field[cxcy][1] -= line_b * LOCATE_LINES_LINE_CONSTANT_FORCE
-                point_1 = point_2
+                point_1 = point_2"""
 
             self.arrows.append([])
             if len(self.lines[-1]) > 1:
