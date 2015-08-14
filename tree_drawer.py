@@ -136,7 +136,7 @@ class TreeDrawer:
                 tx = SEASON_NAME_WIDTH
                 ty = y + DAY_HEIGHT / 2
                 if day.name.isdigit():
-                    day.name = 'Day {}'.format(day.name)
+                    day.name = 'Day {}'.format(day.name.lstrip('0'))
                 self.texts.append((day.name, (tx, ty)) + day_text)
                 for group in season.groups:
                     if group.name not in day.problems:
