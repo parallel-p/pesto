@@ -92,15 +92,56 @@ class TreeDrawer:
 
         self.image = drawer.Image((self.size_x, self.size_y), BACKGROUND_COLOR)
 
-        self._locate_problems()
+        self.problem_coords = dict()
+        self.problems_and_coords = []
+        self.texts = []
+        self._locate_problems_and_texts()
         self._locate_lines()
 
         self._draw_tree()
 
-    def _locate_problems(self):
-        self.problem_coords = dict()
-        self.problems_and_coords = []
-        self.texts = []
+    def _locate_problems_and_texts(self):
+        group_text = ('Arial', 25, 'black', 'center')
+        day_text = ('Arial', 16, 'black', 'left')
+        season_text = ('Arial', 22, 'black', 'center')
+
+        day_height = 40
+        day_name_width = 100
+        group_name_height = 60
+        problem_width = 30
+        season_name_width = 250
+        columns_spacing = 60
+
+        column_width = [0] * 35
+        row_height = [0] * len(self.seasons)
+        for i, season in enumerate(self.seasons):
+            row_height[i] = group_name_height + len(season.days) * day_height
+            for group in season.groups:
+                column_width[group.order] = max(column_width[group.order], group.max_len * problem_width)
+        column_x = [season_name_width + day_name_width]
+        for i in range(1, 35):
+            column_x[i] = column_x[i - 1] + column_width[i - 1] + columns_spacing
+
+        y = 0
+        for i, season in enumerate(self.seasons):
+            self.texts.append((season.name, (season_name_width / 2, y + row_height[i] / 2)) + season_text)
+            ty = y + group_name_height / 2
+            for group in season.groups:
+                tx = column_x[group.order] + column_width[group.order] / 2
+                self.texts.append((group.name, (tx, ty)) + group_text)
+            y += group_name_height
+            for day in season.days:
+                tx = season_name_width
+                ty = y + day_height / 2
+                self.texts.append((day.name, (tx, ty), day_text))
+                for group in season.groups:
+                    for j, problem in enumerate(day.problems[group.name]):
+                        tx = column_x[group.order] + (j + 0.5) * problem_width
+                        self.problems_and_coords.append((problem, (tx, ty)))
+                        self.problem_coords[problem] = (tx, ty)
+                        self.size_x = max(self.size_x, tx + 100)
+                        self.size_y = max(self.size_y, ty + 100)
+                y += day_height
 
     def _create_seasons(self):
         seasons_dict = dict()
@@ -109,17 +150,22 @@ class TreeDrawer:
 
             group = self.contests_grouper.get_contest_parallel_by_id(contest_id)
             season_name = self.contests_grouper.get_contest_season_by_id(contest_id)
-            day = self.contests_grouper.det_contest_day_by_id(contest_id)
+            day = self.contests_grouper.get_contest_day_by_id(contest_id)
             year = self.contests_grouper.get_contest_year_by_id(contest_id)
 
-            if season_name not in self.seasons_dict:
-                seasons_dict[season_name] = Season(season_name, year)
-            seasons_dict[season_name].add_day_and_problem(problem, day, group, contest_id)
-        for season_name in seasons_dict:
-            seasons_dict[season_name].create_group_list()
-            seasons_dict[season_name].create_days_list()
-            seasons_dict[season_name].count_max_len()
-            self.seasons.append(seasons_dict[season_name])
+            if '' in [group, season_name]:
+               continue
+
+            key = year + season_name
+
+            if key not in self.seasons_dict:
+                seasons_dict[key] = Season(season_name, year)
+            seasons_dict[key].add_day_and_problem(problem, day, group, contest_id)
+        for key in seasons_dict:
+            seasons_dict[key].create_group_list()
+            seasons_dict[key].create_days_list()
+            seasons_dict[key].count_max_len()
+            self.seasons.append(seasons_dict[key])
         self.seasons = self.seasons.sort(key=lambda x: x.order)
 
     def _get_line_color(self, problem):
@@ -266,7 +312,7 @@ class Season:
         self.days = []
         self.problems_cnt_by_day_by_group = dict()
         self.order = self._get_order(name, year)
-        self.name = name
+        self.name = '{}.{}'.format(year, name)
 
     def add_day_and_problem(self, problem, day, group, contest_id):
         if day not in self.days_dict:

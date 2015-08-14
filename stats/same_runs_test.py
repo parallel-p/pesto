@@ -1,7 +1,6 @@
 import unittest
-from model import Submit
-from model import Run
-from stats.same_runs import SameRunsKirov, SameRunsACM
+from model import Submit, Run
+from stats.same_runs import SameRunsKirov, SameRunsACM, SameRunsBigStat
 from unittest.mock import Mock
 
 
@@ -27,7 +26,7 @@ class PositiveTestsKirov(unittest.TestCase):
         #           "10 10 10 10\n")
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 10\nEquivalent tests: {1 2 3 4}\n'
-                                                   'we recommend removing: {2 3 4}\nit will save: 3.0sec')
+                                                   'we recommend removing: 3/4 (75%) {2 3 4}\nit will save: 3sec/4sec (75%)\n')
 
     def test_mixed(self):
         runs = []
@@ -49,7 +48,7 @@ class PositiveTestsKirov(unittest.TestCase):
             self.same.visit(submit)
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 10\nEquivalent tests: {2 3 4}\nUnique tests: {1}\n'
-                                                   'we recommend removing: {3 4}\nit will save: 2.0sec')
+                                                   'we recommend removing: 2/4 (50%) {3 4}\nit will save: 2sec/4sec (50%)\n')
 
     def test_different(self):
         runs = []
@@ -71,7 +70,7 @@ class PositiveTestsKirov(unittest.TestCase):
         #           "0 10 0 10\n")
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 10\nEquivalent tests: {1 3} {2 4}\nwe recommend '
-                                                   'removing: {3 4}\nit will save: 2.0sec')
+                                                   'removing: 2/4 (50%) {3 4}\nit will save: 2sec/4sec (50%)\n')
 
     def test_difruns(self):
         runs = []
@@ -117,7 +116,7 @@ class TestsACM(unittest.TestCase):
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM', 37))
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 2\nEquivalent tests: {1 2}\nUnique tests: {3}\n'
-                                                   'we recommend removing: {2}\nit will save: 0.2sec')
+                                                   'we recommend removing: 1/3 (33%) {2}\nit will save: 0sec/0sec (33%)\n')
 
     def test_ACM_problem2(self):
         runs = []
@@ -133,7 +132,7 @@ class TestsACM(unittest.TestCase):
         self.same.visit(Submit(1, (0, 0), 0, 0, runs1, 0, 'ACM', 37))
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 2\nEquivalent tests: {2 3}\nUnique tests: {1}\n'
-                                                   'we recommend removing: {3}\nit will save: 0.1sec')
+                                                   'we recommend removing: 1/3 (33%) {3}\nit will save: 0sec/0sec (20%)\n')
 
     def test_ACM_problem_hard(self):
         runs1 = []
@@ -158,7 +157,7 @@ class TestsACM(unittest.TestCase):
         self.same.visit(Submit(1, (0, 0), 0, 0, runs3, 0, 'ACM', 37))
 
         self.assertEqual(self.same.pretty_print(), 'Submits - 3\nEquivalent tests: {1 3} {4 5}\nUnique tests: {2}\n'
-                                                   'we recommend removing: {3 5}\nit will save: 0.3sec')
+                                                   'we recommend removing: 2/5 (40%) {3 5}\nit will save: 0sec/1sec (27%)\n')
 
     def test_ACM_problem_1(self):
         runs1 = []
@@ -197,7 +196,52 @@ class TestsACM(unittest.TestCase):
 
         self.same.visit(submit)
         self.assertEqual(self.same.pretty_print(), 'Submits - 1\nEquivalent tests: {1 2 3}\n'
-                                                   'we recommend removing: {1 2}\nit will save: 6.5sec')
+                                                   'we recommend removing: 2/3 (66%) {1 2}\nit will save: 6sec/9sec (70%)\n')
+
+
+class TestingSameRunsFinalStats(unittest.TestCase):
+    def setUp(self):
+        self.srf = SameRunsBigStat()
+
+    def test_this_shit(self):
+        run1 = Mock()
+        run1.case_id = 1
+        run1.outcome = 'OK'
+        run1.time = 3000
+
+        run2 = Mock()
+        run2.case_id = 2
+        run2.outcome = 'OK'
+        run2.time = 3500
+
+        run3 = Mock()
+        run3.case_id = 3
+        run3.outcome = 'OK'
+        run3.time = 2700
+
+        submit = Mock()
+        submit.runs = [run1, run2, run3]
+
+        for i in range(10):
+            submit.problem_id = i
+            self.srf.visit(submit)
+            self.srf.visit(submit)
+
+        run4 = Mock()
+        run4.case_id = 1
+        run4.outcome = 'OK'
+        run4.time = 3000
+
+        run5 = Mock()
+        run5.case_id = 2
+        run5.outcome = 'WA'
+        run5.time = 3000
+
+        submit1 = Mock()
+        submit1.runs = [run4, run5]
+        self.srf.visit(submit1)
+
+        self.assertEqual(self.srf.pretty_print(), 'WE RECOMMEND REMOVING: 20/32 (62%)\nIT WILL SAVE: 130SEC/190SEC (68%)\n')
 
 if __name__ == "__main__":
     unittest.main()
