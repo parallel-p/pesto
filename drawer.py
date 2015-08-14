@@ -37,4 +37,4 @@ class Image:
         self.draw.text(coords, text, color)
 
     def save_png(self, file_name):
-        self.image.save(file_name, 'BMP')
+        self.image.save(file_name, 'PNG')
