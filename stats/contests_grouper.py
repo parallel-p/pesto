@@ -70,17 +70,16 @@ class ContestsGrouper:
                 parallel = re.sub(re.escape('++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('С'), 'C', parallel)  # Russian letters!
                 parallel = re.sub(re.escape('А'), 'A', parallel)
-                parallel = re.sub(re.escape('+'), '', parallel)
                 if parallel.startswith('D') and parallel != 'D':
                     parallel = 'D'
             if not season_regex.findall(contest.name):
                 season = ''
             else:
                 season = season_regex.findall(contest.name)[0]
-            if not day_regex.findall(contest.name):
-                day = ''
-                if 'зачет' in contest.name.lower() or 'зачёт' in contest.name.lower() or 'зачот' in contest.name.lower() or 'exam' in contest.name.lower():
+            if 'зачет' in contest.name.lower() or 'зачёт' in contest.name.lower() or 'зачот' in contest.name.lower() or 'exam' in contest.name.lower():
                     day = 'exam'
+            elif not day_regex.findall(contest.name):
+                day = ''
             else:  # This replaces is also dangerous.
                 day = day_regex.findall(contest.name)[0]
                 day = re.sub('\\s', '', day)
@@ -88,6 +87,8 @@ class ContestsGrouper:
                 day = re.sub('(?:день|day)', '', day, flags=re.I)
                 day = day.lstrip('D')
                 day = day.lstrip('d')
+                day = day.lstrip('0')
+                day = re.sub('[^0-9]', '', day)
 
             self.contests[contest.contest_id] = _Contest(year, season, day, parallel)
             self.contests_sorted.append(contest)
