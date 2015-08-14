@@ -383,7 +383,7 @@ class Group:
         self.order = self._get_order(group)
 
     def _get_order(self, group):
-        order_dict  = {'A':0,
+        order_dict = {'A':0, 'A+':0,
                 'A\'':1,
                 'A0':2,
                 'AA':3,
@@ -391,9 +391,8 @@ class Group:
                 'AY':5,
                 'B':6,
                 'B\'':7,
-                'C':8,
+                'C':8, 'Ccpp':8, 'C+':8, 'Ccpp+':8,
                 'C\'':9,
-                'Ccpp':8,
                 'Cpy':10,
                 'D':11,
                 'olymp':12}
