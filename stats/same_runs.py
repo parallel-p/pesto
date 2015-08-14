@@ -21,7 +21,6 @@ class SameRunsBigStat(Visitor):
         self.base[name].visit(submit)
 
     def pretty_print(self):
-        print(self.base)
         for same_runs in self.base.values():
             same_runs.calc()
             same_runs.xcalc()
