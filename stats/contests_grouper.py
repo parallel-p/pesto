@@ -2,6 +2,25 @@ from dao_contests import DAOContests
 import re
 
 
+SEASON_TO_INT = {'': -1, 'Июль': 0, 'Август': 1, 'Николаев': 2, 'Подмосковье': 3, 'Зима': 4}
+PARALLEL_TO_INT = {
+    '': -1,
+    'A': 0,
+    'A\'': 1,
+    'A0': 2,
+    'AA': 3,
+    'AS': 4,
+    'AY': 5,
+    'B': 6,
+    'B\'': 7,
+    'C': 8,
+    'C\'': 9,
+    'Ccpp': 8,
+    'Cpy': 10,
+    'D': 11,
+    'olymp': 12
+}
+
 class _Contest:
     def __init__(self, year, season, day, parallel):
         self.year = year
@@ -9,10 +28,14 @@ class _Contest:
         self.day = day
         self.parallel = parallel
 
+    def get_key(self):
+        return self.year, SEASON_TO_INT[self.season], self.day, PARALLEL_TO_INT[self.parallel]
+
 
 class ContestsGrouper:
     def __init__(self, contests):
         self.contests = dict()
+        self.contests_sorted = []
 
         year_regex = re.compile('20[0-9]{2}')
         parallel_regex = re.compile('(?:' + re.escape('.') + '|\\s)' +
@@ -47,7 +70,7 @@ class ContestsGrouper:
                 parallel = re.sub(re.escape('++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('С'), 'C', parallel)  # Russian letters!
                 parallel = re.sub(re.escape('А'), 'A', parallel)
-                parallel = parallel.rstrip('+')
+                parallel = re.sub(re.escape('+'), '', parallel)
                 if parallel.startswith('D') and parallel != 'D':
                     parallel = 'D'
             if not season_regex.findall(contest.name):
@@ -67,7 +90,10 @@ class ContestsGrouper:
                 day = day.lstrip('d')
 
             self.contests[contest.contest_id] = _Contest(year, season, day, parallel)
+            self.contests_sorted.append(contest)
             parallels.update({parallel})
+
+        self.contests_sorted.sort(key=lambda x: self.contests[x.contest_id].get_key())
 
     def get_contest_year_by_id(self, contest_id):
         return self.contests[contest_id].year
@@ -105,3 +131,6 @@ class ContestsGrouper:
 
     def get_all_known_contests(self):
         return self.contests.keys()
+
+    def get_contests_sorted(self):
+        return self.contests_sorted
