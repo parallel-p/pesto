@@ -31,12 +31,12 @@ LINE_ARROW_ANGLE = math.pi / 30.0
 LINE_ARROW_LENGTH = 15.0
 
 DAY_HEIGHT = 40
-DAY_NAME_WIDTH = 100
+DAY_NAME_WIDTH = 70
 GROUP_NAME_HEIGHT = 60
-PROBLEM_WIDTH = 50
-SEASON_NAME_WIDTH = 250
-COLUMNS_SPACING = 60
-END_SPACE = 100
+PROBLEM_WIDTH = 30
+SEASON_NAME_WIDTH = 200
+COLUMNS_SPACING = 30
+END_SPACE = 50
 MAX_GROUP_COUNT = 35
 
 
@@ -120,7 +120,7 @@ class TreeDrawer:
         column_x = [SEASON_NAME_WIDTH + DAY_NAME_WIDTH]
         for i in range(1, MAX_GROUP_COUNT):
             column_x.append(column_x[i - 1] + column_width[i - 1])
-            if column_x[i - 1] > 0:
+            if column_width[i - 1] > 0:
                 column_x[i] += COLUMNS_SPACING
 
         y = 0
@@ -135,6 +135,8 @@ class TreeDrawer:
             for day in season.days:
                 tx = SEASON_NAME_WIDTH
                 ty = y + DAY_HEIGHT / 2
+                if day.name.isdigit():
+                    day.name = 'Day {}'.format(day.name)
                 self.texts.append((day.name, (tx, ty)) + day_text)
                 for group in season.groups:
                     for j, problem in enumerate(day.problems[group.name]):
