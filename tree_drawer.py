@@ -150,19 +150,23 @@ class TreeDrawer:
 
             group = self.contests_grouper.get_contest_parallel_by_id(contest_id)
             season_name = self.contests_grouper.get_contest_season_by_id(contest_id)
-            day = self.contests_grouper.det_contest_day_by_id(contest_id)
+            day = self.contests_grouper.get_contest_day_by_id(contest_id)
             year = self.contests_grouper.get_contest_year_by_id(contest_id)
 
-            if season_name not in self.seasons_dict:
-                seasons_dict[season_name] = Season(season_name, year)
-            seasons_dict[season_name].add_day_and_problem(problem, day, group, contest_id)
-        for season_name in seasons_dict:
-            seasons_dict[season_name].create_group_list()
-            seasons_dict[season_name].create_days_list()
-            seasons_dict[season_name].count_max_len()
-            self.seasons.append(seasons_dict[season_name])
-        self.seasons = self.seasons.sort(key=lambda x: x.order)
+            if '' in [group, season_name]:
+               continue
 
+            key = year + season_name
+
+            if key not in self.seasons_dict:
+                seasons_dict[key] = Season(season_name, year)
+            seasons_dict[key].add_day_and_problem(problem, day, group, contest_id)
+        for key in seasons_dict:
+            seasons_dict[key].create_group_list()
+            seasons_dict[key].create_days_list()
+            seasons_dict[key].count_max_len()
+            self.seasons.append(seasons_dict[key])
+        self.seasons = self.seasons.sort(key=lambda x: x.order)
 
     def _get_line_color(self, problem):
         parent, similarity, same, added, removed = self.tree.get_relation_to_parent(problem)
@@ -277,7 +281,6 @@ class TreeDrawer:
                 arrow_vector_2 = _vector_rotate(arrow_vector, -LINE_ARROW_ANGLE)
                 self.arrows[-1].append((point_3[0] + arrow_vector_2[0], point_3[1] + arrow_vector_2[1]))
 
-
     def _draw_problem(self, problem, coords):
         self.image.draw_circle(coords, PROBLEM_RADIUS,  PROBLEM_BORDER_THICKNESS,
                                PROBLEM_BORDER_COLOR, PROBLEM_FILL_COLOR)
@@ -291,6 +294,8 @@ class TreeDrawer:
             self.image.draw_line_strip(arrow, LINE_THICKNESS, line_color)
         for problem, problem_coords in self.problems_and_coords:
             self._draw_problem(problem, problem_coords)
+        for text in self.texts:
+            self.image.draw_text(*text)
 
     def save_image_to_file(self, filename):
         self.image.save_png(filename)
@@ -307,7 +312,7 @@ class Season:
         self.days = []
         self.problems_cnt_by_day_by_group = dict()
         self.order = self._get_order(name, year)
-        self.name = name
+        self.name = '{}.{}'.format(year, name)
 
     def add_day_and_problem(self, problem, day, group, contest_id):
         if day not in self.days_dict:
