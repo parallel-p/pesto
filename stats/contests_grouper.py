@@ -42,7 +42,7 @@ class _Contest:
         self.parallel = parallel
 
     def get_key(self):
-        return self.year, SEASON_TO_INT[self.season], self.day, PARALLEL_TO_INT[self.parallel]
+        return self.year, SEASON_TO_INT[self.season], self.day, PARALLEL_TO_INT[self.parallel.rstrip('+')]
 
 
 class ContestsGrouper:
