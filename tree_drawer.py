@@ -136,7 +136,7 @@ class TreeDrawer:
                 tx = SEASON_NAME_WIDTH
                 ty = y + DAY_HEIGHT / 2
                 if day.name.isdigit():
-                    day.name = 'Day {}'.format(day.name)
+                    day.name = 'Day {}'.format(day.name.lstrip('0'))
                 self.texts.append((day.name, (tx, ty)) + day_text)
                 for group in season.groups:
                     if group.name not in day.problems:
@@ -386,16 +386,16 @@ class Group:
 
     def _get_order(self, group):
         order_dict = {'A':0, 'A+':0,
-                'A\'':1,
+                'A\'':1, 'A\'+':1,
                 'A0':2,
                 'AA':3,
                 'AS':4,
                 'AY':5,
-                'B':6,
-                'B\'':7,
+                'B':6, 'B+':6,
+                'B\'':7, 'B\'+':7,
                 'C':8, 'Ccpp':8, 'C+':8, 'Ccpp+':8,
-                'C\'':9,
-                'Cpy':10,
+                'C\'':9, 'C\'+':9,
+                'Cpy':10, 'Cpy+':10,
                 'D':11,
                 'olymp':12}
         if group in order_dict:
