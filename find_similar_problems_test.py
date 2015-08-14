@@ -16,6 +16,10 @@ class TestFindSimilarProblems(unittest.TestCase):
         self.problems[-1].name = '43b'
         self.problems.append(Mock(cases=['c2', 'c1', 'c3', 'c4'], problem_id=('44', '1')))
         self.problems[-1].name = '44a'
+        self.problems.append(Mock(cases=[], problem_id=('45', '1')))
+        self.problems[-1].name = '45a'
+        self.problems.append(Mock(cases=[], problem_id=('45', '2')))
+        self.problems[-1].name = '45b'
         self.finder = SimilarProblemsFinder(self.problems)
 
     def test_common(self):
