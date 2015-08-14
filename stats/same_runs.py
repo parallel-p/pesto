@@ -113,7 +113,6 @@ class SameRuns(Visitor):
                 result += 'it will save: {0}sec/{1}sec ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
             else:
                 result += 'DEV BY ZERO\n'
-        print(self.problem_id)
         return result
 
 
