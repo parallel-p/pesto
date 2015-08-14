@@ -27,6 +27,8 @@ def parse_args():
                         action='store_true')
     parser.add_argument('--start-from', help='Number of contest to start filling cases from',
                         default='1')
+    parser.add_argument('--contests-names', help='Fill in contests names only',
+                        action='store_true')
     return vars(parser.parse_args())
 
 
@@ -110,6 +112,13 @@ def fill_submits(sqlite_cursor, base_dir, origin, mysql_config):
     fill_from_xml(sqlite_cursor, ej_cursor, base_dir, origin)
     mysql_connector.close()
 
+def fill_contests_names(sqlite_cursor, contests_info_dir, origin):
+    if contests_info_dir != '':
+        print('Filling contests names')
+        fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
+        print('Contests names were filled')
+    else:
+        print('Contests info directory is not specified')
 
 def main():
     base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir = get_arguments()
@@ -124,6 +133,11 @@ def main():
     if contests_info_dir == '':
         print("WARNING. Contests info directory is not specified. Contests name won't be filled")
     try:
+        if args['contests_names']:
+            fill_contests_names(sqlite_cursor, contests_info_dir, origin)
+            connection.commit()
+            connection.close()
+            exit()
         if args['hashes_only']:
             fill_cases_hashes(sqlite_cursor, base_dir, origin, args['start_from'])
             connection.commit()
@@ -142,10 +156,7 @@ def main():
         if not args['no_hashes']:
             fill_cases_hashes(sqlite_cursor, base_dir, origin, args['start_from'])
 
-        if contests_info_dir != '':
-            print('Filling contests names')
-            fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
-            print('Contests names were filled')
+        fill_contests_names(sqlite_cursor, contests_info_dir, origin)
 
     except SystemExit:
         raise
