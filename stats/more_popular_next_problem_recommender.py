@@ -9,8 +9,8 @@ class MorePopularNextProblemRecommender:
 
     def get_recommendation(self, user_id):
         contest_id, problem_id = self._last_problem(user_id)
-        self.pesto_db_cursor.execute('SELECT recomended_contest_id, recomended_problem_id '
-                                            'FROM more_popular_next_problems_recomendations '
+        self.pesto_db_cursor.execute('SELECT recommended_contest_id, recommended_problem_id '
+                                            'FROM sis_most_popular_next_problems_recommendations '
                                             'WHERE contest_id = ? AND problem_id = ?',
                                             (contest_id, problem_id))
         recommendations_row = self.pesto_db_cursor.fetchall()
@@ -35,10 +35,9 @@ class MorePopularNextProblemRecommender:
                 problem_ref = problem_ref_row['problem_ref']
                 next_ref = sorted_problems_refs[list_id + 1]['problem_ref']
                 if problem_ref in number_of_sequences:
-                    if next_ref in number_of_sequences[problem_ref]:
-                        number_of_sequences[problem_ref][next_ref] += 1
-                    else:
-                        number_of_sequences[problem_ref][next_ref] = 1
+                    if next_ref not in number_of_sequences[problem_ref]:
+                        number_of_sequences[problem_ref][next_ref] = 0
+                    number_of_sequences[problem_ref][next_ref] += 1
                 else:
                     number_of_sequences[problem_ref] = {next_ref:1}
 
@@ -87,10 +86,10 @@ class MorePopularNextProblemRecommender:
         return problem_id
 
     def _clear_table(self):
-        self.pesto_db_cursor.execute('DELETE FROM more_popular_next_problems_recomendations')
+        self.pesto_db_cursor.execute('DELETE FROM sis_most_popular_next_problems_recommendations')
 
     def _write_to_db(self, contest_problem, recommended_cont_prob):
-        self.pesto_db_cursor.execute('INSERT INTO more_popular_next_problems_recomendations '
-                                     '(id,contest_id,problem_id,recomended_contest_id,recomended_problem_id) '
+        self.pesto_db_cursor.execute('INSERT INTO sis_most_popular_next_problems_recommendations '
+                                     '(id,contest_id,problem_id,recommended_contest_id,recommended_problem_id) '
                                      'VALUES (null,?,?,?,?)',
                                      (contest_problem[0], contest_problem[1], recommended_cont_prob[0], recommended_cont_prob[1]))
