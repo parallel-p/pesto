@@ -1,3 +1,6 @@
+import sys
+
+
 SIMILAR_PROBLEMS_MIN_RATIO = 0.5
 EPS = 1e-9
 
@@ -7,12 +10,11 @@ class ProblemsTree:
         self.problems = list(problems)
         self.problem_previous = dict()  # problem -> (previous, similarity, same, added, removed)
         for index, problem_1 in enumerate(self.problems):
+            if index % 100 == 99:
+                print("Build tree: ", index, "/", len(problems), file=sys.stderr, sep="")
             problem_1_tests = set(problem_1.cases)
             for problem_2 in self.problems[index + 1:]:
-                same_tests_count = 0
-                for problem_2_test in problem_2.cases:
-                    if problem_2_test in problem_1_tests:
-                        same_tests_count += 1
+                same_tests_count = len(problem_1_tests & set(problem_2.cases))
                 try:
                     similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
                 except ZeroDivisionError:
