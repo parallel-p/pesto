@@ -70,6 +70,7 @@ class ContestsGrouper:
                 parallel = re.sub(re.escape('++'), 'cpp', parallel)
                 parallel = re.sub(re.escape('С'), 'C', parallel)  # Russian letters!
                 parallel = re.sub(re.escape('А'), 'A', parallel)
+                parallel = re.sub(re.escape('+'), '', parallel)
                 if parallel.startswith('D') and parallel != 'D':
                     parallel = 'D'
             if not season_regex.findall(contest.name):

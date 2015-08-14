@@ -159,7 +159,9 @@ class SameRunsACM(SameRuns):
 
     def visit(self, submit):
         self.pre_visit(submit)
-        if submit.runs[-1].outcome != 'OK':
+        if len(submit.runs) == 0:
+            return
+        elif submit.runs[-1].outcome != 'OK':
             self.base.add(len(submit.runs) - 1)
         else:
             self.base.add(len(submit.runs))
