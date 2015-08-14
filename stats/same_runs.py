@@ -21,7 +21,6 @@ class SameRunsBigStat(Visitor):
         self.base[name].visit(submit)
 
     def pretty_print(self):
-        print(self.base)
         for same_runs in self.base.values():
             same_runs.calc()
             same_runs.xcalc()
@@ -53,11 +52,14 @@ class SameRuns(Visitor):
         self.time = 0
         self.time_to_del = 0
 
+        self.problem_id = ()
+
     def get_stat_data(self):
         """int, list of sets of ints, set of ints"""
         return [self.run_number, self.connected_components, self.strong_runs]
 
     def pre_visit(self, submit):
+        self.problem_id = submit.problem_id
         self.cases = max(self.cases, len(submit.runs))
         self.submit_number += 1
         for run in submit.runs:
@@ -103,9 +105,15 @@ class SameRuns(Visitor):
         self.xcalc()
 
         if self.bad_cases:
-            result += 'we recommend removing: {0}/{1} ({2}%) '.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '{' + ' '.join(map(str, sorted(self.bad_cases))) + '}\n'
-            result += 'it will save: {0}sec/{1}sec ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
-
+            if self.cases != 0:
+                result += 'we recommend removing: {0}/{1} ({2}%) '.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '{' + ' '.join(map(str, sorted(self.bad_cases))) + '}\n'
+            else:
+                result += 'DEV BY ZERO\n'
+            if self.time != 0:
+                result += 'it will save: {0}sec/{1}sec ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
+            else:
+                result += 'DEV BY ZERO\n'
+        print(self.problem_id)
         return result
 
 

@@ -79,7 +79,7 @@ def count_stat(connector, scoring, visitor_factory):
     dao_problems = DAOProblems(connector)
     for problem_row in problem_cursor.execute('SELECT problems.id, contest_ref, problem_id, problems.name '
                                               'FROM Problems, Contests '
-                                              'WHERE contest_id=contest_ref AND scoring=? ORDER BY contest_id', (scoring, )):
+                                              'WHERE Contests.id=Problems.contest_ref AND scoring=? ORDER BY contest_id', (scoring, )):
         problem = dao_problems.deep_load(problem_row)
         visitor_by_problem[problem] = visitor_factory.create(problem)
         for submit_row in submit_cursor.execute('SELECT * '
