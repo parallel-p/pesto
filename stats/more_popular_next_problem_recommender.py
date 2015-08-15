@@ -2,23 +2,17 @@ from sqlite_connector import SQLiteConnector
 
 
 class MorePopularNextProblemRecommender:
-    def __init__(self, our_db_cursor, pesto_db_cursor):
+    def __init__(self, our_db_cursor, stats_db_cursor):
         self.our_db_cursor = our_db_cursor
-        self.pesto_db_cursor = pesto_db_cursor
+        self.stats_db_cursor = stats_db_cursor
         self._problem_by_ref = dict()
 
-    def get_recommendation(self, user_id):
-        contest_id, problem_id = self._last_problem(user_id)
-        self.pesto_db_cursor.execute('SELECT recommended_contest_id, recommended_problem_id '
-                                            'FROM sis_most_popular_next_problems_recommendations '
-                                            'WHERE contest_id = ? AND problem_id = ?',
-                                            (contest_id, problem_id))
-        recommendations_row = self.pesto_db_cursor.fetchall()
-        recommendations = [tuple(rec) for rec in recommendations_row]
-        return recommendations
+    def fill_recommendations_table(self, limit=False):
+        if limit:
+            self.our_db_cursor.execute('SELECT id FROM users WHERE id > %(from)s AND id < %(to)s', {'from': limit[0], 'to': limit[1]})
+        else:
+            self.our_db_cursor.execute('SELECT id FROM users')
 
-    def fill_recommendations_table(self):
-        self.our_db_cursor.execute('SELECT id FROM users')
         database_users_ids = self.our_db_cursor.fetchall()
         #the number of such sequences is the problem_ref-problem_ref
         number_of_sequences = dict()
@@ -26,8 +20,8 @@ class MorePopularNextProblemRecommender:
         for user_id_row in database_users_ids:
             self.our_db_cursor.execute('SELECT problem_ref '
                                          'FROM submits '
-                                         'WHERE user_ref=? AND outcome=? '
-                                         'ORDER BY timestamp', (user_id_row['id'], 'OK'))
+                                         'WHERE user_ref=%(user_ref)s AND outcome=%(outcome)s '
+                                         'ORDER BY timestamp', {'user_ref': user_id_row['id'], 'outcome': 'OK'})
 
             sorted_problems_refs = self.our_db_cursor.fetchall()
 
@@ -53,34 +47,18 @@ class MorePopularNextProblemRecommender:
                     result[start_contest_problem].append(node)
                 else:
                     result[start_contest_problem] = [node]
-        self._clear_table()
         for key in result:
             result[key].sort()
             for some in result[key][:min(len(result[key]), 4)]:
                 self._write_to_db(key, some[1])
 
-    def _last_problem(self, user_id):
-        self.our_db_cursor.execute('SELECT id '
-                               'FROM users '
-                               'WHERE user_id=?', (user_id, ))
-
-        database_user_id = self.our_db_cursor.fetchone()[0]
-        self.our_db_cursor.execute('SELECT problem_ref '
-                               'FROM submits '
-                               'WHERE user_ref=? '
-                               'ORDER BY submits.timestamp DESC '
-                                   'LIMIT 1', (database_user_id, ))
-
-        problem_ref = self.our_db_cursor.fetchone()[0]
-        return self._get_problem_id_by_problem_ref(problem_ref)
-
     def _get_problem_id_by_problem_ref(self, problem_ref):
         if problem_ref in self._problem_by_ref:
             problem_id = self._problem_by_ref[problem_ref]
         else:
-            self.our_db_cursor.execute('SELECT contests.contest_id,problems.problem_id '
-                                         'FROM problems,contests '
-                                         'WHERE contest_ref=contests.id AND problems.id=?', (problem_ref, ))
+            self.our_db_cursor.execute('SELECT Contests.contest_id, Problems.problem_id '
+                                         'FROM problems, contests '
+                                         'WHERE contest_ref=Contests.id AND Problems.id=%(problem_ref)s', {'problem_ref': problem_ref})
             problem_id = tuple(self.our_db_cursor.fetchone())
             self._problem_by_ref[problem_ref] = problem_id
         return problem_id
@@ -91,5 +69,5 @@ class MorePopularNextProblemRecommender:
     def _write_to_db(self, contest_problem, recommended_cont_prob):
         self.pesto_db_cursor.execute('INSERT INTO sis_most_popular_next_problems_recommendations '
                                      '(id,contest_id,problem_id,recommended_contest_id,recommended_problem_id) '
-                                     'VALUES (null,?,?,?,?)',
+                                     'VALUES (null,%s,%s,%s,%s)',
                                      (contest_problem[0], contest_problem[1], recommended_cont_prob[0], recommended_cont_prob[1]))
