@@ -1,6 +1,17 @@
 from visitor import Visitor
 
 
+def sec_to_time(sec):
+    s = str(sec % 60) + 'S'
+    sec //= 60
+    m = str(sec % 60) + 'M '
+    sec //= 60
+    h = str(sec % 24) + 'H '
+    sec //= 24
+    d = str(sec % 365) + 'D '
+    return d + h + m + s
+
+
 class SameRunsBigStat(Visitor):
     def __init__(self):
         super().__init__()
@@ -38,7 +49,7 @@ class SameRunsBigStat(Visitor):
         else:
             result += 'DEV BY ZERO\n'
         if self.time != 0:
-            result += 'IT WILL SAVE: {0}SEC/{1}SEC ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
+            result += 'IT WILL SAVE: {0} / {1} ({2}%)'.format(sec_to_time(int(self.time_to_del / 1000)), sec_to_time(int(self.time / 1000)), int(100 * self.time_to_del / self.time)) + '\n'
         else:
             result += 'DEV BY ZERO\n'
         return result
