@@ -94,7 +94,7 @@ def main():
         informatics_connector.close()
         exit()
 
-    pesto_connector.connectionconnection.commit()
+    pesto_connector.connection.commit()
     pesto_connector.close()
     informatics_connector.close()
     print('Connection closed')
