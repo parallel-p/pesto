@@ -4,12 +4,12 @@ import sys
 import random
 
 
-BACKGROUND_COLOR = "white"
+BACKGROUND_COLOR = '#353535'
 
 PROBLEM_RADIUS = 10
 PROBLEM_DIAMETER = PROBLEM_RADIUS * 2
-PROBLEM_FILL_COLOR = "yellow"
-PROBLEM_BORDER_COLOR = "black"
+PROBLEM_FILL_COLOR = '#FF9347'
+PROBLEM_BORDER_COLOR = '#353535'
 PROBLEM_BORDER_THICKNESS = 2
 
 LINE_THICKNESS = 1
@@ -24,7 +24,7 @@ CHUNK_SIZE = 200
 LOCATE_LINES_LINE_CONSTANT_FORCE = 0.25
 LOCATE_LINES_LINE_FORCE_DISTANCE = 10
 
-LINE_COLOR_SAME = (0, 255, 0)
+LINE_COLOR_SAME = (0, 150, 0)
 LINE_COLOR_MIN = (255, 0, 0)
 LINE_COLOR_MAX = (255, 255, 0)
 MIN_SIMILARITY = 0.5
@@ -37,7 +37,7 @@ GROUP_NAME_HEIGHT = 30
 DAY_NAME_HEIGHT = 40
 DAY_NAME_WIDTH = 70
 DAY_SPACING = 30
-PROBLEM_WIDTH = 50
+PROBLEM_WIDTH = 40
 PROBLEM_HEIGHT = 30
 GROUPS_SPACING = 40
 END_SPACE = 50
@@ -112,9 +112,9 @@ class TreeDrawer:
         self._draw_tree()
 
     def _locate_problems_and_texts(self):
-        group_text = ('fonts/Arial.ttf', 25, 'black', 'left')
-        day_text = ('fonts/Arial.ttf', 16, 'black', 'left')
-        season_text = ('fonts/Arial.ttf', 22, 'black', 'center')
+        group_text = ('fonts/Arial.ttf', 25, 'white', 'left')
+        day_text = ('fonts/Arial.ttf', 16, 'white', 'left')
+        season_text = ('fonts/Arial.ttf', 22, 'white', 'center')
 
         column_width = [0] * MAX_GROUP_COUNT
         for season in self.seasons:
