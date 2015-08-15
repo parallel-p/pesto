@@ -1,6 +1,3 @@
-from sqlite_connector import SQLiteConnector
-
-
 class MorePopularNextProblemRecommender:
     def __init__(self, our_db_cursor, stats_db_cursor):
         self.our_db_cursor = our_db_cursor
@@ -8,6 +5,8 @@ class MorePopularNextProblemRecommender:
         self._problem_by_ref = dict()
 
     def fill_recommendations_table(self, limit=False):
+        processing = 0
+        log = 0
         if limit:
             self.our_db_cursor.execute('SELECT id FROM users WHERE id > %(from)s AND id < %(to)s', {'from': limit[0], 'to': limit[1]})
         else:
@@ -18,6 +17,11 @@ class MorePopularNextProblemRecommender:
         number_of_sequences = dict()
 
         for user_id_row in database_users_ids:
+            processing += 1
+            if processing > 1000:
+                log += 1
+                processing = 0
+                print(log, 'users were processed')
             self.our_db_cursor.execute('SELECT problem_ref '
                                          'FROM submits '
                                          'WHERE user_ref=%(user_ref)s AND outcome=%(outcome)s '
@@ -64,10 +68,10 @@ class MorePopularNextProblemRecommender:
         return problem_id
 
     def _clear_table(self):
-        self.pesto_db_cursor.execute('DELETE FROM sis_most_popular_next_problems_recommendations')
+        self.stats_db_cursor.execute('DELETE FROM sis_most_popular_next_problems_recommendations')
 
     def _write_to_db(self, contest_problem, recommended_cont_prob):
-        self.pesto_db_cursor.execute('INSERT INTO sis_most_popular_next_problems_recommendations '
+        self.stats_db_cursor.execute('INSERT INTO sis_most_popular_next_problems_recommendations '
                                      '(id,contest_id,problem_id,recommended_contest_id,recommended_problem_id) '
                                      'VALUES (null,%s,%s,%s,%s)',
                                      (contest_problem[0], contest_problem[1], recommended_cont_prob[0], recommended_cont_prob[1]))
