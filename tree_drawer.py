@@ -1,6 +1,7 @@
 import drawer
 import math
 import sys
+import random
 
 
 BACKGROUND_COLOR = "white"
@@ -17,9 +18,10 @@ LOCATE_LINES_MAX_SPEED = 3.0
 LOCATE_LINES_MAX_SPEED_SQR = LOCATE_LINES_MAX_SPEED ** 2
 LOCATE_LINES_PROBLEMS_FORCE = -150.0
 LOCATE_LINES_DESTINATION_CONSTANT_FORCE = 2.0
-LOCATE_LINES_MAX_ITERATIONS = 3000
+LOCATE_LINES_MAX_ITERATIONS = 40000
+CHUNK_SIZE = 200
 
-LOCATE_LINES_LINE_CONSTANT_FORCE = 0.5
+LOCATE_LINES_LINE_CONSTANT_FORCE = 0.25
 LOCATE_LINES_LINE_FORCE_DISTANCE = 10
 
 LINE_COLOR_SAME = (0, 255, 0)
@@ -30,10 +32,10 @@ MIN_SIMILARITY = 0.5
 LINE_ARROW_ANGLE = math.pi / 30.0
 LINE_ARROW_LENGTH = 15.0
 
-DAY_HEIGHT = 40
+DAY_HEIGHT = 70
 DAY_NAME_WIDTH = 70
 GROUP_NAME_HEIGHT = 60
-PROBLEM_WIDTH = 50
+PROBLEM_WIDTH = 60
 SEASON_NAME_WIDTH = 200
 COLUMNS_SPACING = 30
 END_SPACE = 50
@@ -101,7 +103,7 @@ class TreeDrawer:
         self.texts = []
         self._locate_problems_and_texts()
         self.lines, self.arrows = [], []
-        #self._locate_lines()
+        self._locate_lines()
 
         self.image = drawer.Image((self.size_x, self.size_y), BACKGROUND_COLOR)
         self._draw_tree()
@@ -151,18 +153,13 @@ class TreeDrawer:
 
     def _create_seasons(self):
         seasons_dict = dict()
-        self.erased_problems = set()
         for problem in self.problems:
             contest_id = problem.problem_id[0]
 
-            try:
-                group = self.contests_grouper.get_contest_parallel_by_id(contest_id)
-                season_name = self.contests_grouper.get_contest_season_by_id(contest_id)
-                day = self.contests_grouper.get_contest_day_by_id(contest_id)
-                year = self.contests_grouper.get_contest_year_by_id(contest_id)
-            except KeyError:
-                self.erased_problems.add(problem)
-                continue
+            group = self.contests_grouper.get_contest_parallel_by_id(contest_id)
+            season_name = self.contests_grouper.get_contest_season_by_id(contest_id)
+            day = self.contests_grouper.get_contest_day_by_id(contest_id)
+            year = self.contests_grouper.get_contest_year_by_id(contest_id)
 
             if '' in [group, season_name]:
                 continue
@@ -192,24 +189,32 @@ class TreeDrawer:
         self.lines = []
         self.arrows = []
         self.lines_colors = []
-        force_field = [[0.0, 0.0] for j in range(self.size_x * self.size_y)]
-        force_field_last_added = [-1 for j in range(self.size_x * self.size_y)]
-        lines_count = 0
+        # force_field = [[0.0, 0.0] for j in range(self.size_x * self.size_y)]
+        # force_field_last_added = [-1 for j in range(self.size_x * self.size_y)]
+
+        chunks_x, chunks_y = (self.size_x + CHUNK_SIZE - 1) // CHUNK_SIZE,\
+                             (self.size_y + CHUNK_SIZE - 1) // CHUNK_SIZE
+        chunks = [[] for i in range(chunks_x * chunks_y)]
+        for problem_and_coords in self.problems_and_coords:
+            coords = problem_and_coords[1]
+            chunk_x = int(coords[0]) // CHUNK_SIZE
+            chunk_y = int(coords[1]) // CHUNK_SIZE
+            chunks[chunk_x * chunks_y + chunk_y].append(problem_and_coords)
+
+        fails = 0
         for problem_2 in self.problems:
-            if problem_2 in self.erased_problems:
+            if problem_2 not in self.problem_coords:
+                with open("my_data/log.txt", "a") as log:
+                    print("wtf", problem_2.problem_id, problem_2.name, file=log)
                 continue
             problem_1 = self.tree.get_previous_problem(problem_2)
-            if problem_1 is None or problem_1 in self.erased_problems:
+            if problem_1 is None or problem_1 not in self.problem_coords:
+                if problem_1 is not None:
+                    with open("my_data/log.txt", "a") as log:
+                        print("wtf", problem_1.problem_id, problem_1.name, file=log)
                 continue
-            lines_count += 1
-        print("Will locate", lines_count, "lines", file=sys.stderr)
-        for problem_2 in self.problems:
-            if problem_2 in self.erased_problems:
-                continue
-            problem_1 = self.tree.get_previous_problem(problem_2)
-            if problem_1 is None or problem_1 in self.erased_problems:
-                continue
-            curr_x, curr_y = tuple(map(float, self.problem_coords[problem_1]))
+            curr_x, curr_y = tuple(map(lambda x: float(x) + random.random() * PROBLEM_RADIUS -
+                                       PROBLEM_RADIUS / 2, self.problem_coords[problem_1]))
             destination = tuple(map(float, self.problem_coords[problem_2]))
             curr_vx, curr_vy = 0.0, 0.0
             self.lines.append([])
@@ -219,6 +224,8 @@ class TreeDrawer:
                 steps += 1
                 if steps == LOCATE_LINES_MAX_ITERATIONS:
                     print("Failed to locate line", len(self.lines) - 1, file=sys.stderr)
+                    fails += 1
+                    self.lines[-1] = []
                     break
                 speed_sqr = _vector_length_sqr((curr_vx, curr_vy))
                 if speed_sqr > LOCATE_LINES_MAX_SPEED_SQR:
@@ -233,30 +240,38 @@ class TreeDrawer:
                 if _distance_sqr((curr_x, curr_y), destination) <= PROBLEM_RADIUS ** 2:
                     print("Line", len(self.lines) - 1, "located", file=sys.stderr)
                     break
-                for problem, problem_coords in self.problems_and_coords:
-                    if problem in (problem_1, problem_2):
-                        continue
-                    distance_sqr = (_distance_sqr((curr_x, curr_y), problem_coords) ** 0.5 - PROBLEM_RADIUS) ** 2
-                    inverse_distance_sqr = 1.0 / distance_sqr
-                    direction = _normalize((problem_coords[0] - curr_x, problem_coords[1] - curr_y))
-                    curr_vx += LOCATE_LINES_PROBLEMS_FORCE * inverse_distance_sqr * direction[0]
-                    curr_vy += LOCATE_LINES_PROBLEMS_FORCE * inverse_distance_sqr * direction[1]
+                chunk_x = int(curr_x) // CHUNK_SIZE
+                chunk_y = int(curr_y) // CHUNK_SIZE
+                for curr_chunk_x in range(chunk_x - 1, chunk_x + 2):
+                    for curr_chunk_y in range(chunk_y - 1, chunk_y + 2):
+                        if not (0 <= curr_chunk_x < chunks_x and 0 <= curr_chunk_y < chunks_y):
+                            continue
+                        for problem, problem_coords in chunks[curr_chunk_x * chunks_y + curr_chunk_y]:
+                            if problem in (problem_1, problem_2):
+                                continue
+                            distance_sqr = (_distance_sqr((curr_x, curr_y), problem_coords) ** 0.5 - PROBLEM_RADIUS) ** 2
+                            inverse_distance_sqr = 1.0 / distance_sqr
+                            direction = _normalize((problem_coords[0] - curr_x, problem_coords[1] - curr_y))
+                            curr_vx += LOCATE_LINES_PROBLEMS_FORCE * inverse_distance_sqr * direction[0]
+                            curr_vy += LOCATE_LINES_PROBLEMS_FORCE * inverse_distance_sqr * direction[1]
                 destination_direction = _normalize((destination[0] - curr_x, destination[1] - curr_y))
                 curr_vx += LOCATE_LINES_DESTINATION_CONSTANT_FORCE * destination_direction[0]
                 curr_vy += LOCATE_LINES_DESTINATION_CONSTANT_FORCE * destination_direction[1]
-                curr_x_int = int(curr_x)
-                curr_y_int = int(curr_y)
-                if 0 <= curr_x_int < self.size_x and 0 <= curr_y_int < self.size_y:
-                    curr_vx += force_field[curr_x_int * self.size_y + curr_y_int][0]
-                    curr_vy += force_field[curr_x_int * self.size_y + curr_y_int][1]
-            self.lines[-1].append((int(curr_x), int(curr_y)))
+                # curr_x_int = int(curr_x)
+                # curr_y_int = int(curr_y)
+                # if 0 <= curr_x_int < self.size_x and 0 <= curr_y_int < self.size_y:
+                #     curr_vx += force_field[curr_x_int * self.size_y + curr_y_int][0]
+                #     curr_vy += force_field[curr_x_int * self.size_y + curr_y_int][1]
 
-            point_1 = (None, None)
+            """point_1 = (None, None)
             for point_2 in self.lines[-1]:
                 if point_1[0] is not None:
                     line_a = point_2[1] - point_1[1]
                     line_b = point_1[0] - point_2[0]
-                    line_a, line_b = _normalize((line_a, line_b))
+                    try:
+                        line_a, line_b = _normalize((line_a, line_b))
+                    except ZeroDivisionError:
+                        continue
                     line_c = (point_1[0] * line_a + point_1[1] * line_b) * -1
                     for cx in range(min(point_1[0], point_2[0]) - LOCATE_LINES_LINE_FORCE_DISTANCE,
                                     max(point_1[0], point_2[0]) + LOCATE_LINES_LINE_FORCE_DISTANCE):
@@ -278,7 +293,7 @@ class TreeDrawer:
                                 else:
                                     force_field[cxcy][0] -= line_a * LOCATE_LINES_LINE_CONSTANT_FORCE
                                     force_field[cxcy][1] -= line_b * LOCATE_LINES_LINE_CONSTANT_FORCE
-                point_1 = point_2
+                point_1 = point_2"""
 
             self.arrows.append([])
             if len(self.lines[-1]) > 1:
@@ -302,6 +317,7 @@ class TreeDrawer:
                 self.arrows[-1].append(point_3)
                 arrow_vector_2 = _vector_rotate(arrow_vector, -LINE_ARROW_ANGLE)
                 self.arrows[-1].append((point_3[0] + arrow_vector_2[0], point_3[1] + arrow_vector_2[1]))
+        print("Lines located,", fails, "fails", file=sys.stder                                      r)
 
     def _draw_problem(self, problem, coords):
         self.image.draw_circle(coords, PROBLEM_RADIUS,  PROBLEM_BORDER_THICKNESS,
