@@ -25,8 +25,8 @@ LOCATE_LINES_LINE_CONSTANT_FORCE = 0.25
 LOCATE_LINES_LINE_FORCE_DISTANCE = 10
 
 LINE_COLOR_SAME = (0, 150, 0)
-LINE_COLOR_MIN = (255, 0, 0)
-LINE_COLOR_MAX = (255, 255, 0)
+LINE_COLOR_MIN = (150, 0, 0)
+LINE_COLOR_MAX = (150, 150, 0)
 MIN_SIMILARITY = 0.5
 
 LINE_ARROW_ANGLE = math.pi / 30.0
@@ -232,7 +232,7 @@ class TreeDrawer:
             curr_x, curr_y = tuple(map(lambda x: float(x) + random.random() * PROBLEM_RADIUS -
                                        PROBLEM_RADIUS / 2, self.problem_coords[problem_1]))
             destination = tuple(map(float, self.problem_coords[problem_2]))
-            curr_vx, curr_vy = 0.0, 0.0
+            curr_vx, curr_vy = 0.0, 3.0
             self.lines.append([])
             self.lines_colors.append(self._get_line_color(problem_2))
             steps = 0
