@@ -59,12 +59,12 @@ def get_arguments():
 
     optional = dict()
     is_pickle_writer = False
-    if args['preset_name'] in ['6', 'gen_pickles']:
+    if args['preset_name'] in ['7', 'gen_pickles']:
         is_pickle_writer = True
 
-    if output and not (args['preset_name'] in ['6', 'gen_pickles']):
+    if output and not (args['preset_name'] in ['7', 'gen_pickles']):
         optional['outfile'] = output
-    if args['preset_name'] in ['6', 'gen_pickles']:
+    if args['preset_name'] in ['7', 'gen_pickles']:
         optional['preset_name'] = 'gen_pickles'
     else:
         optional['preset_name'] = args['preset_name']
