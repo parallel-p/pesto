@@ -30,10 +30,14 @@ class SameRunsBigStat(Visitor):
             self.time_to_del += same_runs.time_to_del
 
         result = ''
-        if self.cases != 0 and self.time != 0:
-            # result += 'PROBLEMS - {0}'.format(len(self.base)) + '\n'
+        if self.cases != 0:
             result += 'WE RECOMMEND REMOVING: {0}/{1} ({2}%)'.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '\n'
+        else:
+            result += 'DEV BY ZERO\n'
+        if self.time != 0:
             result += 'IT WILL SAVE: {0}SEC/{1}SEC ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
+        else:
+            result += 'DEV BY ZERO\n'
         return result
 
 
@@ -161,7 +165,7 @@ class SameRunsACM(SameRuns):
         self.pre_visit(submit)
         if len(submit.runs) == 0:
             return
-        elif submit.runs[-1].outcome != 'OK':
+        if submit.runs[-1].outcome != 'OK':
             self.base.add(len(submit.runs) - 1)
         else:
             self.base.add(len(submit.runs))
@@ -181,7 +185,7 @@ class SameRunsACM(SameRuns):
             if right - left == 1:
                 self.strong_runs.add(self.runs[left])
             else:
-                self.connected_components.append(set(self.runs[i] for i in range(left, right)))
+                self.connected_components.append(set(self.runs[i] for i in range(left, right) if i < len(self.runs)))
             left = right
 
     def pretty_print(self):
