@@ -22,12 +22,15 @@ class SameRunsBigStat(Visitor):
 
     def pretty_print(self):
         for same_runs in self.base.values():
-            same_runs.calc()
-            same_runs.xcalc()
-            self.cases += same_runs.cases
-            self.cases_to_del += same_runs.cases_to_del
-            self.time += same_runs.time
-            self.time_to_del += same_runs.time_to_del
+            try:
+                same_runs.calc()
+                same_runs.xcalc()
+                self.cases += same_runs.cases
+                self.cases_to_del += same_runs.cases_to_del
+                self.time += same_runs.time
+                self.time_to_del += same_runs.time_to_del
+            except:
+                pass
 
         result = ''
         if self.cases != 0:
@@ -101,8 +104,7 @@ class SameRuns(Visitor):
     def pretty(self):
         result = 'Submits - {0}\n'.format(self.submit_number)
         if len(self.connected_components) > 0:
-            result += 'Equivalent tests: ' + ' '.join(map(lambda component: '{' + (' '.join(map(str, sorted(component))) + '}'),
-                                                          sorted(self.connected_components))) + '\n'
+            result += 'Equivalent tests: ' + ' '.join(map(lambda component: '{' + (' '.join(map(str, sorted(component))) + '}'), sorted(self.connected_components))) + '\n'  # if you can read this you are already dead
         if len(self.strong_runs) > 0:
             result += 'Unique tests: {' + ' '.join(map(str, sorted(self.strong_runs))) + '}\n'
 
@@ -189,5 +191,33 @@ class SameRunsACM(SameRuns):
             left = right
 
     def pretty_print(self):
-        self.calc()
-        return self.pretty()
+        try:
+            self.calc()
+            return self.pretty()
+        except:
+            pass
+
+"""
+   _        _
+  ( `-.__.-' )
+   `-.    .-'
+      \  /
+       ||
+       ||
+      //\\
+     //  \\
+    ||    ||
+    ||____||
+    ||====||
+     \\  //
+      \\//
+       ||
+       ||
+       ||
+       ||
+       ||
+       ||
+       ||
+       ||
+       []
+"""
