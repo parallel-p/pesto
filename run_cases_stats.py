@@ -113,9 +113,8 @@ def main():
         if output_file is None:
             print('Sorry, I can\'t draw tree to console')
             exit()
-        try:
-            saved_tree_filename = args['tree_json']
-        except KeyError:
+        saved_tree_filename = args['tree_json']
+        if not saved_tree_filename:
             print('Saved tree file is not specified')
             exit()
         with open(saved_tree_filename, 'r') as saved_tree_file:
