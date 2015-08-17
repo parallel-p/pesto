@@ -3,6 +3,7 @@ from model import Run
 
 class DAORuns:
     columns = 'realtime, time, outcome, submit_ref, case_ref'
+    case_cache = {}
 
     def __init__(self, sqlite_connector):
         self.connector = sqlite_connector
@@ -19,6 +20,21 @@ class DAORuns:
         cursor.execute('SELECT case_id FROM Cases WHERE id = ?', [row['case_ref']])
         run.case_id = cursor.fetchone()['case_id']
         return run
+
+    def load_all(self, rows, problem_ref):
+        cursor = self.connector.get_cursor()
+        runs = []
+        if problem_ref in self.case_cache:
+            cases = self.case_cache[problem_ref]
+        else:
+            cases = dict(cursor.execute('SELECT id,case_id FROM Cases WHERE problem_ref=?', (problem_ref,)).fetchall())
+            self.case_cache[problem_ref] = cases
+        for row in rows:
+            run = self.load(row)
+            run.case_id = cases[row['case_ref']]
+            runs.append(run)
+        return runs
+
 
     def define(self, submit_ref, case_ref):
         ref = self.lookup(submit_ref, case_ref)

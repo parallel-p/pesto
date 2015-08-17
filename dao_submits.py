@@ -19,8 +19,7 @@ class DAOSubmits:
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), [row['id']])
         runs_dao = DAORuns(self.connector)
-        for run_row in cursor.fetchall():
-            submit.runs.append(runs_dao.deep_load(run_row))
+        submit.runs = runs_dao.load_all(cursor.fetchall(), row['problem_ref'])
         submit.count_results()
         return submit
 
