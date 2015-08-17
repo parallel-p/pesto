@@ -115,15 +115,21 @@ class SameRuns(Visitor):
     def pretty(self):
         result = 'Submits - {0}\n'.format(self.submit_number)
         if len(self.connected_components) > 0:
-            result += 'Equivalent tests: ' + ' '.join(map(lambda component: '{' + (' '.join(map(str, sorted(component))) + '}'), sorted(self.connected_components))) + '\n'  # if you can read this you are already dead
+            components = [list(comp) for comp in self.connected_components]
+            components = [list(map(int, comp)) for comp in components]
+            components = [sorted(comp) for comp in components]
+            components.sort()
+            components = [list(map(str, comp)) for comp in components]
+            components = ['{' + ' '.join(comp) + '}' for comp in components]
+            result += 'Equivalent tests: ' + ' '.join(components) + '\n'  # so cute
         if len(self.strong_runs) > 0:
-            result += 'Unique tests: {' + ' '.join(map(str, sorted(self.strong_runs))) + '}\n'
+            result += 'Unique tests: {' + ' '.join(map(str, sorted(self.strong_runs, key=int))) + '}\n'
 
         self.xcalc()
 
         if self.bad_cases:
             if self.cases != 0:
-                result += 'we recommend removing: {0}/{1} ({2}%) '.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '{' + ' '.join(map(str, sorted(self.bad_cases))) + '}\n'
+                result += 'we recommend removing: {0}/{1} ({2}%) '.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '{' + ' '.join(map(str, sorted(self.bad_cases, key=int))) + '}\n'
             else:
                 result += 'DEV BY ZERO\n'
             if self.time != 0:
@@ -231,4 +237,6 @@ class SameRunsACM(SameRuns):
        ||
        ||
        []
+
+git kill --hard vanya
 """
