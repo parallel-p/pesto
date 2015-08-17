@@ -27,14 +27,14 @@ class DAOSubmitsTest(unittest.TestCase):
         res.runs = list()
         self.dao.load = Mock(return_value=res)
         dao_runs = Mock()
-        dao_runs.deep_load.side_effect = [1, 2]
+        dao_runs.load_all.return_value = [1, 2]
         dao_submits.DAORuns = Mock(return_value=dao_runs)
         dao_submits.DAORuns.columns = 'kek'
         self.cursor.fetchall.return_value = ['row1', 'row2']
         res = self.dao.deep_load(self.row)
         self.assertEqual(self.cursor.mock_calls,
                          [call.execute('SELECT kek FROM Runs WHERE submit_ref = ?', [1]), call.fetchall()])
-        self.assertEqual(dao_runs.mock_calls, [call.deep_load('row1'), call.deep_load('row2')])
+        self.assertEqual(dao_runs.mock_calls, [call.load_all(['row1', 'row2'], 'problem_ref')])
         self.assertEqual(res.runs, [1, 2])
         self.assertEqual(res.mock_calls, [call.count_results()])
 
