@@ -2,6 +2,7 @@ from stats.more_popular_next_problem_recommender import MorePopularNextProblemRe
 import argparse
 import toollib
 from mysql_connector import MySQLConnector
+from sqlite_connector import SQLiteConnector
 import sys
 from traceback import print_exception
 
@@ -22,6 +23,8 @@ def get_arguments():
     config = None
 
     config_name = args['cfg']
+    if not config_name:
+        config_name = 'config.ini'
     try:
         config = toollib.read_config(config_name, 'recommender_tool')
     except KeyError:
@@ -32,30 +35,24 @@ def get_arguments():
         exit()
 
     try:
-        pesto_mysql_config = {
-            'user': config['pesto_user'],
-            'password': config['pesto_password'],
-            'host': config['pesto_host'],
-            'port': config['pesto_port'],
-            'database': config['pesto_db_name']
-        }
+        input_sqlite_db_filename = config['input_db_filename']
     except KeyError:
-        print('Wrong config file:Pesto MySQL parameters are not specified')
+        print('Wrong config file:Pesto SQLite db parameters are not specified')
         exit()
 
     try:
-        informatics_mysql_config = {
-            'user': config['informatics_user'],
-            'password': config['informatics_password'],
-            'host': config['informatics_host'],
-            'port': config['informatics_port'],
-            'database': config['informatics_db_name']
+        output_mysql_db_config = {
+            'user': config['output_db_user'],
+            'password': config['output_db_password'],
+            'host': config['output_db_host'],
+            'port': config['output_db_port'],
+            'database': config['output_db_name']
         }
     except KeyError:
         print('Wrong config file:Informatics MySQL parameters are not specified')
         exit()
 
-    return args, pesto_mysql_config, informatics_mysql_config
+    return args, input_sqlite_db_filename, output_mysql_db_config
 
 def get_mysql_connector(mysql_config):
     if '' in mysql_config.values():
@@ -69,14 +66,17 @@ def get_mysql_connector(mysql_config):
 
 
 def main():
-    args, pesto_config, infromatics_config = get_arguments()
-    pesto_connector = get_mysql_connector(pesto_config)
-    informatics_connector = get_mysql_connector(infromatics_config)
+    args, input_db_config, output_db_config = get_arguments()
+
+    pesto_connector = SQLiteConnector()
+    pesto_connector.create_connection(input_db_config)
+    print('Connected to Pesto database')
+    output_connector = get_mysql_connector(output_db_config)
 
     try:
         pesto_cur = pesto_connector.get_cursor()
-        informatics_cur = informatics_connector.get_cursor()
-        recommender = MorePopularNextProblemRecommender(informatics_cur, pesto_cur)
+        informatics_cur = output_connector.get_cursor()
+        recommender = MorePopularNextProblemRecommender(pesto_cur, informatics_cur)
         if args['start_from']:
             between = (args['start_from'], args['end'])
             recommender.fill_recommendations_table(between)
@@ -88,15 +88,18 @@ def main():
     except:
         print('The following exception was caught:')
         print_exception(*sys.exc_info())
-        pesto_connector.connection.commit()
-        pesto_connector.connection.close()
+        pesto_connector.close_connection()
         print('Pesto connection closed')
-        informatics_connector.close()
+        output_connector.connection.commit()
+        output_connector.close()
+        print('Ouput connection closed')
         exit()
 
-    pesto_connector.connection.commit()
-    pesto_connector.close()
-    informatics_connector.close()
+    pesto_connector.close_connection
+    print('Pesto connection closed')
+    output_connector.connection.commit()
+    output_connector.close()
+    print('Ouput connection closed')
     print('Connection closed')
 
 

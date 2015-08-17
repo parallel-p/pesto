@@ -8,24 +8,26 @@ class MorePopularNextProblemRecommender:
         processing = 0
         log = 0
         if limit:
-            self.our_db_cursor.execute('SELECT id FROM users WHERE id > %(from)s AND id < %(to)s', {'from': limit[0], 'to': limit[1]})
+            self.our_db_cursor.execute('SELECT id FROM users WHERE id > ? AND id < ?', (limit[0], limit[1]))
         else:
             self.our_db_cursor.execute('SELECT id FROM users')
-
+        print('Loading users ids')
         database_users_ids = self.our_db_cursor.fetchall()
+        users_num = len(database_users_ids)
+        print('Loaded',users_num, 'users ids')
         #the number of such sequences is the problem_ref-problem_ref
         number_of_sequences = dict()
-
+        print('Users pocessing')
         for user_id_row in database_users_ids:
             processing += 1
-            if processing > 1000:
+            if processing >= 100:
                 log += 1
                 processing = 0
-                print('users were processed', log)
+                print(' Processed', log * 100, 'from', users_num)
             self.our_db_cursor.execute('SELECT problem_ref '
                                          'FROM submits '
-                                         'WHERE user_ref=%(user_ref)s AND outcome=%(outcome)s '
-                                         'ORDER BY timestamp', {'user_ref': user_id_row['id'], 'outcome': 'OK'})
+                                         'WHERE user_ref=? AND outcome=? '
+                                         'ORDER BY timestamp', (user_id_row['id'], 'OK'))
 
             sorted_problems_refs = self.our_db_cursor.fetchall()
 
@@ -38,9 +40,9 @@ class MorePopularNextProblemRecommender:
                     number_of_sequences[problem_ref][next_ref] += 1
                 else:
                     number_of_sequences[problem_ref] = {next_ref:1}
-        print('users were processed', log)
+        print(' Processed', log * 100 + processing, 'from', users_num)
         result = dict()
-        print('data processing')
+        print('Data processing')
         for problem_ref_start in number_of_sequences:
             for problem_ref_next in number_of_sequences[problem_ref_start]:
                 start_contest_problem = self._get_problem_id_by_problem_ref(problem_ref_start)
@@ -53,7 +55,7 @@ class MorePopularNextProblemRecommender:
                 else:
                     result[start_contest_problem] = [node]
 
-        print('writing to database')
+        print('Writing to database')
         for key in result:
             result[key].sort()
             for some in result[key][:min(len(result[key]), 4)]:
@@ -65,7 +67,7 @@ class MorePopularNextProblemRecommender:
         else:
             self.our_db_cursor.execute('SELECT Contests.contest_id, Problems.problem_id '
                                          'FROM problems, contests '
-                                         'WHERE contest_ref=Contests.id AND Problems.id=%(problem_ref)s', {'problem_ref': problem_ref})
+                                         'WHERE contest_ref=Contests.id AND Problems.id=?', (problem_ref, ))
             problem_id = tuple(self.our_db_cursor.fetchone())
             self._problem_by_ref[problem_ref] = problem_id
         return problem_id
