@@ -21,7 +21,7 @@ class MorePopularNextProblemRecommender:
             if processing > 1000:
                 log += 1
                 processing = 0
-                print(log, 'users were processed')
+                print('users were processed', log)
             self.our_db_cursor.execute('SELECT problem_ref '
                                          'FROM submits '
                                          'WHERE user_ref=%(user_ref)s AND outcome=%(outcome)s '
@@ -38,8 +38,9 @@ class MorePopularNextProblemRecommender:
                     number_of_sequences[problem_ref][next_ref] += 1
                 else:
                     number_of_sequences[problem_ref] = {next_ref:1}
-
+        print('users were processed', log)
         result = dict()
+        print('data processing')
         for problem_ref_start in number_of_sequences:
             for problem_ref_next in number_of_sequences[problem_ref_start]:
                 start_contest_problem = self._get_problem_id_by_problem_ref(problem_ref_start)
@@ -51,6 +52,8 @@ class MorePopularNextProblemRecommender:
                     result[start_contest_problem].append(node)
                 else:
                     result[start_contest_problem] = [node]
+
+        print('writing to database')
         for key in result:
             result[key].sort()
             for some in result[key][:min(len(result[key]), 4)]:
