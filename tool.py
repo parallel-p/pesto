@@ -148,6 +148,7 @@ def main():
         for problem in stat:
             result.append(stat[problem].pretty_print())
             stat[problem].close()
+        result.sort()
         result = '\n'.join(result)
         if 'outfile' in optional:
             with open(optional['outfile'], 'w') as outfile:
