@@ -55,7 +55,7 @@ def get_arguments():
             print('Unknown scoring: ' + scoring)
             exit()
 
-    stats_counter = tool_config.get_factory_by_preset(args['preset_name'], output, args['no_lang_sharding'])
+    stats_counter = tool_config.get_visitor_by_preset(args['preset_name'], output, args['no_lang_sharding'])
     if stats_counter is None:
         print('Preset name "{}" is not defined or invalid.'.format(args['preset_name']))
         print('Presets available:', tool_config.get_presets_info())
@@ -77,13 +77,12 @@ def get_arguments():
 
     return database_filename, stats_counter, optional, scoring, is_pickle_writer
 
-def count_stat(connector, scoring, visitor_factory, optional):
+def count_stat(connector, scoring, visitor, optional):
     problem_cursor = connector.get_cursor()
     submit_cursor = connector.get_cursor()
     no_scoring = scoring is None
     if no_scoring:
         contest_cursor = connector.get_cursor()
-    visitor = visitor_factory.create(None)
     dao_submits = DAOSubmits(connector)
     dao_problems = DAOProblems(connector)
     query = ('SELECT problems.id, contest_ref, problem_id, problems.name '
@@ -136,14 +135,14 @@ def pickles_mod(connector, visitor):
 
 
 def main():
-    database_filename, visitor_factory, optional, scoring, is_pickle = get_arguments()
+    database_filename, visitor, optional, scoring, is_pickle = get_arguments()
 
     connector = SQLiteConnector()
     connector.create_connection(database_filename)
     if is_pickle:
-        pickles_mod(connector, visitor_factory.create(None))
+        pickles_mod(connector, visitor)
     else:
-        stat = count_stat(connector, scoring, visitor_factory, optional)
+        stat = count_stat(connector, scoring, visitor, optional)
         result = stat.pretty_print()
         if 'outfile' in optional:
             with open(optional['outfile'], 'w') as outfile:
