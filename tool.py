@@ -12,6 +12,7 @@ def parse_args():
     toollib.parse_args_config(parser)
     toollib.parse_args_input(parser)
     toollib.parse_args_output(parser)
+    toollib.parse_args_filters(parser)
 
     parser.add_argument('--scoring', help="contest scoring (acm, kirov)", nargs='?')
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
@@ -70,10 +71,12 @@ def get_arguments():
         optional['preset_name'] = 'gen_pickles'
     else:
         optional['preset_name'] = args['preset_name']
+    optional['filter_problem'] = args['filter_problem']
+    optional['filter_contest'] = args['filter_contest']
 
     return database_filename, stats_counter, optional, scoring, is_pickle_writer
 
-def count_stat(connector, scoring, visitor_factory):
+def count_stat(connector, scoring, visitor_factory, optional):
     problem_cursor = connector.get_cursor()
     submit_cursor = connector.get_cursor()
     no_scoring = scoring is None
@@ -82,9 +85,21 @@ def count_stat(connector, scoring, visitor_factory):
     visitor_by_problem = dict()
     dao_submits = DAOSubmits(connector)
     dao_problems = DAOProblems(connector)
-    for problem_row in problem_cursor.execute('SELECT problems.id, contest_ref, problem_id, problems.name '
+    query = ('SELECT problems.id, contest_ref, problem_id, problems.name '
                                               'FROM Problems, Contests '
-                                              'WHERE Contests.id=Problems.contest_ref {} ORDER BY contest_id'.format('AND scoring=?' if scoring else ''), (scoring, ) if scoring else ()):
+                                              'WHERE Contests.id=Problems.contest_ref {} ORDER BY contest_id')
+    args = []
+    if scoring:
+        query = query.format('AND scoring=? {}')
+        args.append(scoring)
+    if optional['filter_contest']:
+        query = query.format('AND Contests.contest_id=? {}')
+        args.append(optional['filter_contest'].rjust(6, '0'))
+    if optional['filter_problem']:
+        query = query.format('AND Problems.problem_id=? {}')
+        args.append(optional['filter_problem'])
+    query = query.format('')
+    for problem_row in problem_cursor.execute(query, args):
         problem = dao_problems.deep_load(problem_row)
         if no_scoring:
             contest_row = contest_cursor.execute('SELECT {} FROM Contests WHERE Contests.id=?'.format(DAOContests.columns), (problem_row['contest_ref'],)).fetchone()
@@ -128,7 +143,7 @@ def main():
     if is_pickle:
         pickles_mod(connector, visitor_factory.create(None))
     else:
-        stat = count_stat(connector, scoring, visitor_factory)
+        stat = count_stat(connector, scoring, visitor_factory, optional)
         result = []
         for problem in stat:
             result.append(stat[problem].pretty_print())

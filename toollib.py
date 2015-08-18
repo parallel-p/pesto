@@ -4,7 +4,6 @@ import os
 
 def parse_args_filters(parser):
     parser.add_argument('--filter-problem', help='process only submits for the problem selected')
-    parser.add_argument('--filter-user', help='process only submits by the selected user')
     parser.add_argument('--filter-contest', help='process only submits in the selected contest')
 
 def parse_args_input(parser):

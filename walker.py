@@ -23,7 +23,7 @@ class SingleContestWalker(Walker):
 
 class MultipleContestWalker(Walker):
     def walk(self, start_dir = os.path.dirname(__file__), path_only=False):
-        for root, dirs, files in os.walk(start_dir):
+        for root, dirs, files in os.walk(start_dir, followlinks=True):
             contest_id = os.path.split(root)[1]
             is_contest = ('conf' in dirs and ('problems' in dirs or 'tests' in dirs)
                                          and contest_id.isdigit()
