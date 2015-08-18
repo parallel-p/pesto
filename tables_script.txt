@@ -44,6 +44,7 @@ CREATE TABLE `Submits` (
                 );
 CREATE INDEX `submits_index` ON `Submits` (`lang_id`, `outcome`, `timestamp`, `user_ref`);
 CREATE INDEX `submits_index_2` ON `Submits` (`problem_ref`, `submit_id`);
+CREATE INDEX `submits_index_3` ON Submits(`user_ref`, `outcome`);
 CREATE TABLE `Users` (
                     `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     `user_id`    TEXT,

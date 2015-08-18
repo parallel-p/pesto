@@ -6,9 +6,6 @@ class MorePopularNextProblemRecommender:
         self.our_db_cursor = our_db_cursor
         self.stats_db_cursor = stats_db_cursor
         self._problem_by_ref = dict()
-        logging.info('Indexes creating..')
-        self.our_db_cursor.execute('CREATE INDEX IdxUsersOutcome ON Submits(user_ref, outcome)')
-        logging.info('Indexes created')
 
 
     def fill_recommendations_table(self, limit=False):
@@ -68,8 +65,6 @@ class MorePopularNextProblemRecommender:
             for some in result[key][:min(len(result[key]), 10)]:
                 self._write_to_db(key, some[1])
 
-        self.our_db_cursor.execute('DROP INDEX IdxUsersOutcome')
-
     def _get_problem_id_by_problem_ref(self, problem_ref):
         if problem_ref in self._problem_by_ref:
             problem_id = self._problem_by_ref[problem_ref]
@@ -80,6 +75,15 @@ class MorePopularNextProblemRecommender:
             problem_id = tuple(self.our_db_cursor.fetchone())
             self._problem_by_ref[problem_ref] = problem_id
         return problem_id
+
+    def create_index(self):
+        try:
+            logging.info('Index creating..')
+            self.our_db_cursor.execute('CREATE INDEX submits_index_3 ON Submits(user_ref, outcome)')
+            logging.info('Index created')
+        except:
+            logging.error('Unable to create index. maybe the index already exists')
+
 
     def _clear_table(self):
         self.stats_db_cursor.execute('DELETE FROM sis_most_popular_next_problems_recommendations')

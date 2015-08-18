@@ -20,6 +20,7 @@ def parse_args():
                         default='')
     parser.add_argument('--end', help='Number of user to end recommendations generate',
                         default='')
+    parser.add_argument('-i', '--indexation', help='indexation of database for speed', action='store_true')
     return vars(parser.parse_args())
 
 
@@ -57,7 +58,8 @@ def get_arguments():
         print('Wrong config file:Output DB MySQL parameters are not specified')
         exit()
 
-    return args, input_sqlite_db_filename, output_mysql_db_config, log_filename
+    create_index = args['indexation'] if args['indexation'] else False
+    return args, input_sqlite_db_filename, output_mysql_db_config, log_filename, create_index
 
 def get_mysql_connector(mysql_config):
     if '' in mysql_config.values():
@@ -71,7 +73,7 @@ def get_mysql_connector(mysql_config):
 
 
 def main():
-    args, input_db_config, output_db_config, log_filename = get_arguments()
+    args, input_db_config, output_db_config, log_filename, create_index = get_arguments()
 
     if log_filename:
         logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
@@ -91,6 +93,8 @@ def main():
         pesto_cur = pesto_connector.get_cursor()
         informatics_cur = output_connector.get_cursor()
         recommender = MorePopularNextProblemRecommender(pesto_cur, informatics_cur)
+        if create_index:
+            recommender.create_index()
         if args['start_from']:
             between = (args['start_from'], args['end'])
             recommender.fill_recommendations_table(between)
