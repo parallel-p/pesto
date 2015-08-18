@@ -12,7 +12,6 @@ class ToollibTest(PestoTestCase):
         toollib.parse_args_filters(parser)
         good_parser = Mock()
         good_parser.add_argument('--filter-problem', help='process only submits for the problem selected')
-        good_parser.add_argument('--filter-user', help='process only submits by the selected user')
         good_parser.add_argument('--filter-contest', help='process only submits in the selected contest')
         self.assertEqual(parser.add_argument.call_args_list, good_parser.add_argument.call_args_list)
 
