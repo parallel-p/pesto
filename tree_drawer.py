@@ -2,17 +2,18 @@ import drawer
 import math
 import sys
 import random
+import json
 
 
-BACKGROUND_COLOR = '#353535'
+BACKGROUND_COLOR = "black"
 
 PROBLEM_RADIUS = 10
 PROBLEM_DIAMETER = PROBLEM_RADIUS * 2
 PROBLEM_FILL_COLOR = '#FF9347'
-PROBLEM_BORDER_COLOR = '#353535'
+PROBLEM_BORDER_COLOR = '#FF9347'
 PROBLEM_BORDER_THICKNESS = 2
 
-LINE_THICKNESS = 1
+LINE_THICKNESS = 2
 
 LOCATE_LINES_MAX_SPEED = 3.0
 LOCATE_LINES_MAX_SPEED_SQR = LOCATE_LINES_MAX_SPEED ** 2
@@ -24,13 +25,13 @@ CHUNK_SIZE = 200
 LOCATE_LINES_LINE_CONSTANT_FORCE = 0.25
 LOCATE_LINES_LINE_FORCE_DISTANCE = 10
 
-LINE_COLOR_SAME = (0, 150, 0)
-LINE_COLOR_MIN = (150, 0, 0)
-LINE_COLOR_MAX = (150, 150, 0)
+LINE_COLOR_SAME = (0, 255, 0)
+LINE_COLOR_MIN = (255, 0, 0)
+LINE_COLOR_MAX = (255, 255, 0)
 MIN_SIMILARITY = 0.5
 
-LINE_ARROW_ANGLE = math.pi / 30.0
-LINE_ARROW_LENGTH = 15.0
+LINE_ARROW_ANGLE = math.pi / 7.0
+LINE_ARROW_LENGTH = 10.0
 
 SEASON_NAME_WIDTH = 200
 GROUP_NAME_HEIGHT = 30
@@ -42,7 +43,7 @@ PROBLEM_HEIGHT = 30
 GROUPS_SPACING = 40
 END_SPACE = 50
 MAX_GROUP_COUNT = 15
-SEASON_SPACING = 20
+SEASON_SPACING = 150
 
 
 def _is_point_in_rectangle(point, rect_start, rect_size):
@@ -202,11 +203,7 @@ class TreeDrawer:
                 int(LINE_COLOR_MIN[2] + color_k * (LINE_COLOR_MAX[2] - LINE_COLOR_MIN[2])))
 
     def _locate_lines(self):
-        self.lines = []
-        self.arrows = []
-        self.lines_colors = []
-        # force_field = [[0.0, 0.0] for j in range(self.size_x * self.size_y)]
-        # force_field_last_added = [-1 for j in range(self.size_x * self.size_y)]
+        self.lines, self.arrows, self.lines_colors = [], [], []
 
         chunks_x, chunks_y = (self.size_x + CHUNK_SIZE - 1) // CHUNK_SIZE,\
                              (self.size_y + CHUNK_SIZE - 1) // CHUNK_SIZE
@@ -229,12 +226,12 @@ class TreeDrawer:
                     with open("my_data/log.txt", "a") as log:
                         print("wtf", problem_1.problem_id, problem_1.name, file=log)
                 continue
-            curr_x, curr_y = tuple(map(lambda x: float(x) + random.random() * PROBLEM_RADIUS -
-                                       PROBLEM_RADIUS / 2, self.problem_coords[problem_1]))
+            curr_x, curr_y = tuple(map(lambda x: float(x), self.problem_coords[problem_1]))
             destination = tuple(map(float, self.problem_coords[problem_2]))
             curr_vx, curr_vy = 0.0, 3.0
             self.lines.append([])
             self.lines_colors.append(self._get_line_color(problem_2))
+
             steps = 0
             while True:
                 steps += 1
@@ -273,43 +270,6 @@ class TreeDrawer:
                 destination_direction = _normalize((destination[0] - curr_x, destination[1] - curr_y))
                 curr_vx += LOCATE_LINES_DESTINATION_CONSTANT_FORCE * destination_direction[0]
                 curr_vy += LOCATE_LINES_DESTINATION_CONSTANT_FORCE * destination_direction[1]
-                # curr_x_int = int(curr_x)
-                # curr_y_int = int(curr_y)
-                # if 0 <= curr_x_int < self.size_x and 0 <= curr_y_int < self.size_y:
-                #     curr_vx += force_field[curr_x_int * self.size_y + curr_y_int][0]
-                #     curr_vy += force_field[curr_x_int * self.size_y + curr_y_int][1]
-
-            """point_1 = (None, None)
-            for point_2 in self.lines[-1]:
-                if point_1[0] is not None:
-                    line_a = point_2[1] - point_1[1]
-                    line_b = point_1[0] - point_2[0]
-                    try:
-                        line_a, line_b = _normalize((line_a, line_b))
-                    except ZeroDivisionError:
-                        continue
-                    line_c = (point_1[0] * line_a + point_1[1] * line_b) * -1
-                    for cx in range(min(point_1[0], point_2[0]) - LOCATE_LINES_LINE_FORCE_DISTANCE,
-                                    max(point_1[0], point_2[0]) + LOCATE_LINES_LINE_FORCE_DISTANCE):
-                        if cx < 0 or cx >= self.size_x:
-                            continue
-                        for cy in range(min(point_1[1], point_2[1]) - LOCATE_LINES_LINE_FORCE_DISTANCE,
-                                        max(point_1[1], point_2[1]) + LOCATE_LINES_LINE_FORCE_DISTANCE):
-                            if cy < 0 or cy >= self.size_y:
-                                continue
-                            cxcy = cx * self.size_y + cy
-                            if force_field_last_added[cxcy] == len(self.lines):
-                                continue
-                            distance = line_a * cx + line_b * cy + line_c
-                            if math.fabs(distance) <= LOCATE_LINES_LINE_FORCE_DISTANCE:
-                                force_field_last_added[cxcy] = len(self.lines)
-                                if distance >= 0.0:
-                                    force_field[cxcy][0] += line_a * LOCATE_LINES_LINE_CONSTANT_FORCE
-                                    force_field[cxcy][1] += line_b * LOCATE_LINES_LINE_CONSTANT_FORCE
-                                else:
-                                    force_field[cxcy][0] -= line_a * LOCATE_LINES_LINE_CONSTANT_FORCE
-                                    force_field[cxcy][1] -= line_b * LOCATE_LINES_LINE_CONSTANT_FORCE
-                point_1 = point_2"""
 
             self.arrows.append([])
             if len(self.lines[-1]) > 1:
