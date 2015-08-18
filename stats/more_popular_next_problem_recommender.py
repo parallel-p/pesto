@@ -6,6 +6,10 @@ class MorePopularNextProblemRecommender:
         self.our_db_cursor = our_db_cursor
         self.stats_db_cursor = stats_db_cursor
         self._problem_by_ref = dict()
+        logging.info('Indexes creating..')
+        self.our_db_cursor.execute('CREATE INDEX IdxUsersOutcome ON Submits(user_ref, outcome)')
+        logging.info('Indexes created')
+
 
     def fill_recommendations_table(self, limit=False):
         processing = 0
@@ -14,13 +18,13 @@ class MorePopularNextProblemRecommender:
             self.our_db_cursor.execute('SELECT id FROM users WHERE id > ? AND id < ?', (limit[0], limit[1]))
         else:
             self.our_db_cursor.execute('SELECT id FROM users')
-        logging.info('Loading users ids')
+        logging.info('Loading users ids..')
         database_users_ids = self.our_db_cursor.fetchall()
         users_num = len(database_users_ids)
         logging.info('Loaded {} users ids'.format(users_num))
         #the number of such sequences is the problem_ref-problem_ref
         number_of_sequences = dict()
-        logging.info('Users pocessing')
+        logging.info('Users pocessing..')
         for user_id_row in database_users_ids:
             processing += 1
             if processing >= 100:
@@ -62,8 +66,9 @@ class MorePopularNextProblemRecommender:
         for key in result:
             result[key].sort()
             for some in result[key][:min(len(result[key]), 10)]:
-                continue
                 self._write_to_db(key, some[1])
+
+        self.our_db_cursor.execute('DROP INDEX IdxUsersOutcome')
 
     def _get_problem_id_by_problem_ref(self, problem_ref):
         if problem_ref in self._problem_by_ref:
