@@ -31,7 +31,7 @@ class TestToolConfig(unittest.TestCase):
     def test_eq_matrix_factory(self, eq):
         factory = tool_config.EqMatrixShardingByProblem()
         self.assertIsInstance(factory.create(1), tool_config.ShardingByProblemVisitor)
-        eq.assert_any_call()
+
 
     def test_same_runs_acm(self):
         factory = tool_config.SameRunsACMFactory()

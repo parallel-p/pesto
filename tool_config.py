@@ -26,19 +26,22 @@ def get_presets_info():
     """
 
 
-def get_factory_by_preset(preset, output):
+def get_factory_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['1', 'count_submits']:
         return CustomShardingFactory(ShardingByContestVisitor, SubmitsCounterFactory)
     if preset in ['2', 'eq_matrix']:
-        return CustomShardingFactory(ShardingByScoringVisitor, EqMatrixShardingByProblem)
+        return CustomShardingFactory(ShardingByScoringVisitor, EqMatrixShardingByContest)
     if preset in ['3', 'same_runs']:
-        return CustomShardingFactory(ShardingByScoringVisitor, SameRunsFactory)
+        return CustomShardingFactory(ShardingByScoringVisitor, SameRunsContestFactory)
     if preset in ['4', 'submits_by_signature']:
-        return CustomShardingFactory(ShardingByProblemVisitor, SubmitsIdsBySignatureFactory)
+        if no_lang_sharding:  # such a dirty hack
+            global SubmitsIdsBySignatureFactory  # TODO do something with this
+            SubmitsIdsBySignatureFactory = SubmitsIdsBySignatureFactory2  # really sorry for that, hope no one will ever read it
+        return CustomShardingFactory(ShardingByContestVisitor, SubmitsIdsBySignatureContestFactory)
     if preset in ['5', 'submits_by_tests']:
         return CustomVisitorFactory(SubmitsOverTestCasesNumbers)
     if preset in ['6', 'same_runs_big_stat']:
-        return SameRunsBigStatFactory()
+        return SameRunsBigStatFactory()  # this does not work properly, however
     if preset in ['7', 'gen_pickles']:
         default_path = path.join('.', output)
         return PickleWriterFactory(default_path)
@@ -83,11 +86,18 @@ class SameRunsFactory(VisitorFactory):
         else:
             return ShardingByProblemVisitor(SameRunsKirovFactory())
 
+class SameRunsContestFactory(VisitorFactory):
+    def create(self, key):
+        return ShardingByContestVisitor(SameRunsFactory())
+
+
+class EqMatrixShardingByContest(VisitorFactory):
+    def create(self, key):
+        return ShardingByContestVisitor(EqMatrixShardingByProblem())
 
 class EqMatrixShardingByProblem(VisitorFactory):
     def create(self, key):
         return ShardingByProblemVisitor(EqMatrixFactory())
-
 
 class SameRunsACMFactory(VisitorFactory):
     def create(self, key):
@@ -118,6 +128,9 @@ class EqMatrixFactory(VisitorFactory):
     def create(self, key):
         return EqMatrix()
 
+class SubmitsIdsBySignatureContestFactory(VisitorFactory):
+    def create(self, key):
+        return ShardingByProblemVisitor(SubmitsIdsBySignatureFactory())
 
 class SubmitsIdsBySignatureFactory(VisitorFactory):
     def create(self, key):
