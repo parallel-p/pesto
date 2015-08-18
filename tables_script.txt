@@ -43,7 +43,7 @@ CREATE TABLE `Submits` (
                     `outcome`    TEXT
                 );
 CREATE INDEX `submits_index` ON `Submits` (`lang_id`, `outcome`, `timestamp`, `user_ref`);
-CREATE INDEX `submits_index_2` ON `Submits` (`submit_id`, `problem_ref`);
+CREATE INDEX `submits_index_2` ON `Submits` (`problem_ref`, `submit_id`);
 CREATE TABLE `Users` (
                     `id`    INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                     `user_id`    TEXT,

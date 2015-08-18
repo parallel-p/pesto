@@ -2,14 +2,20 @@ from stats.more_popular_next_problem_recommender import MorePopularNextProblemRe
 import argparse
 import toollib
 from mysql_connector import MySQLConnector
+from sqlite_connector import SQLiteConnector
 import sys
 from traceback import print_exception
+import logging
+import os.path
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="It fill`s recommendations table\n"
                                                  "You need to fill the config file first")
     parser.add_argument('--cfg', help="config file. By default config.ini is used",
                         default='config.ini')
+    parser.add_argument('--log', help="log filename. By default none file log is used",
+                        default=None)
     parser.add_argument('--start-from', help='Number of user to start recommendations generate from',
                         default='')
     parser.add_argument('--end', help='Number of user to end recommendations generate',
@@ -20,8 +26,10 @@ def parse_args():
 def get_arguments():
     args = parse_args()
     config = None
-
+    log_filename = args['log']
     config_name = args['cfg']
+    if not config_name:
+        config_name = 'config.ini'
     try:
         config = toollib.read_config(config_name, 'recommender_tool')
     except KeyError:
@@ -32,51 +40,57 @@ def get_arguments():
         exit()
 
     try:
-        pesto_mysql_config = {
-            'user': config['pesto_user'],
-            'password': config['pesto_password'],
-            'host': config['pesto_host'],
-            'port': config['pesto_port'],
-            'database': config['pesto_db_name']
-        }
+        input_sqlite_db_filename = config['input_db_filename']
     except KeyError:
-        print('Wrong config file:Pesto MySQL parameters are not specified')
+        print('Wrong config file:Pesto SQLite db parameters are not specified')
         exit()
 
     try:
-        informatics_mysql_config = {
-            'user': config['informatics_user'],
-            'password': config['informatics_password'],
-            'host': config['informatics_host'],
-            'port': config['informatics_port'],
-            'database': config['informatics_db_name']
+        output_mysql_db_config = {
+            'user': config['output_db_user'],
+            'password': config['output_db_password'],
+            'host': config['output_db_host'],
+            'port': config['output_db_port'],
+            'database': config['output_db_name']
         }
     except KeyError:
-        print('Wrong config file:Informatics MySQL parameters are not specified')
+        print('Wrong config file:Output DB MySQL parameters are not specified')
         exit()
 
-    return args, pesto_mysql_config, informatics_mysql_config
+    return args, input_sqlite_db_filename, output_mysql_db_config, log_filename
 
 def get_mysql_connector(mysql_config):
     if '' in mysql_config.values():
-        print('MySQL parameters are not specified')
+        logging.info('MySQL parameters are not specified')
         exit()
-    print('Now connecting to MySQL')
+    logging.info('Now connecting to MySQL')
     mysql_connector = MySQLConnector()
     mysql_connector.create_connection(mysql_config)
-    print('Connected to MySQL database')
+    logging.info('Connected to MySQL database')
     return mysql_connector
 
 
 def main():
-    args, pesto_config, infromatics_config = get_arguments()
-    pesto_connector = get_mysql_connector(pesto_config)
-    informatics_connector = get_mysql_connector(infromatics_config)
+    args, input_db_config, output_db_config, log_filename = get_arguments()
+
+    if log_filename:
+        logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
+    else:
+        logging.basicConfig(format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
+
+    if os.path.isfile(input_db_config):
+        pesto_connector = SQLiteConnector()
+        pesto_connector.create_connection(input_db_config)
+        logging.info('Connected to Pesto database')
+    else:
+        logging.error('Input database file not found')
+        exit()
+    output_connector = get_mysql_connector(output_db_config)
 
     try:
         pesto_cur = pesto_connector.get_cursor()
-        informatics_cur = informatics_connector.get_cursor()
-        recommender = MorePopularNextProblemRecommender(informatics_cur, pesto_cur)
+        informatics_cur = output_connector.get_cursor()
+        recommender = MorePopularNextProblemRecommender(pesto_cur, informatics_cur)
         if args['start_from']:
             between = (args['start_from'], args['end'])
             recommender.fill_recommendations_table(between)
@@ -86,18 +100,21 @@ def main():
     except SystemExit:
         raise
     except:
-        print('The following exception was caught:')
+        logging.critical('The following exception was caught:')
         print_exception(*sys.exc_info())
-        pesto_connector.connection.commit()
-        pesto_connector.connection.close()
-        print('Pesto connection closed')
-        informatics_connector.close()
+        pesto_connector.close_connection()
+        logging.info('Pesto connection closed')
+        output_connector.connection.commit()
+        output_connector.close()
+        logging.info('Output connection closed')
         exit()
 
-    pesto_connector.connection.commit()
-    pesto_connector.close()
-    informatics_connector.close()
-    print('Connection closed')
+    pesto_connector.close_connection
+    logging.info('Pesto connection closed')
+    output_connector.connection.commit()
+    output_connector.close()
+    logging.info('Output connection closed')
+    logging.info('Connection closed')
 
 
 if __name__ == "__main__":

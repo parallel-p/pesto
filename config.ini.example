@@ -16,17 +16,13 @@ pickle_dir = my_data/pickle
 base_dir = my_data/contests
 
 [recommender_tool]
-pesto_user = user
-pesto_password = password
-pesto_host = 127.0.0.1
-pesto_port = 8080
-pesto_db_name = Pesto
+input_db_filename = pesto.db
 
-informatic_user = user
-informatic_password = password
-informatics_host = 127.0.0.1
-informatics_port = 8080
-informatics_db_name = ejudge_sis
+output_db_user = user
+output_db_password = password
+output_db_host = 127.0.0.1
+output_db_port = 8080
+output_db_name = moodle
 
 
 # WARNING If you have any non-empty database there, it'll be overwritten

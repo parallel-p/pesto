@@ -203,19 +203,16 @@ class TreeDrawer:
                 int(LINE_COLOR_MIN[2] + color_k * (LINE_COLOR_MAX[2] - LINE_COLOR_MIN[2])))
 
     def _locate_lines(self):
-        self.lines, self.arrows, self.lines_colors = json.loads(open("my_data/kek.json", "r").read())
-        self.lines = [tuple(x) for x in self.lines]
-        self.arrows = [tuple(x) for x in self.arrows]
-        self.lines_colors = []
+        self.lines, self.arrows, self.lines_colors = [], [], []
 
-        """chunks_x, chunks_y = (self.size_x + CHUNK_SIZE - 1) // CHUNK_SIZE,\
+        chunks_x, chunks_y = (self.size_x + CHUNK_SIZE - 1) // CHUNK_SIZE,\
                              (self.size_y + CHUNK_SIZE - 1) // CHUNK_SIZE
         chunks = [[] for i in range(chunks_x * chunks_y)]
         for problem_and_coords in self.problems_and_coords:
             coords = problem_and_coords[1]
             chunk_x = int(coords[0]) // CHUNK_SIZE
             chunk_y = int(coords[1]) // CHUNK_SIZE
-            chunks[chunk_x * chunks_y + chunk_y].append(problem_and_coords)"""
+            chunks[chunk_x * chunks_y + chunk_y].append(problem_and_coords)
 
         fails = 0
         for problem_2 in self.problems:
@@ -229,12 +226,13 @@ class TreeDrawer:
                     with open("my_data/log.txt", "a") as log:
                         print("wtf", problem_1.problem_id, problem_1.name, file=log)
                 continue
-            """curr_x, curr_y = tuple(map(lambda x: float(x), self.problem_coords[problem_1]))
+            curr_x, curr_y = tuple(map(lambda x: float(x), self.problem_coords[problem_1]))
             destination = tuple(map(float, self.problem_coords[problem_2]))
             curr_vx, curr_vy = 0.0, 3.0
-            self.lines.append([])"""
+            self.lines.append([])
             self.lines_colors.append(self._get_line_color(problem_2))
-            """steps = 0
+
+            steps = 0
             while True:
                 steps += 1
                 if steps == LOCATE_LINES_MAX_ITERATIONS:
@@ -294,9 +292,8 @@ class TreeDrawer:
                 self.arrows[-1].append((point_3[0] + arrow_vector_1[0], point_3[1] + arrow_vector_1[1]))
                 self.arrows[-1].append(point_3)
                 arrow_vector_2 = _vector_rotate(arrow_vector, -LINE_ARROW_ANGLE)
-                self.arrows[-1].append((point_3[0] + arrow_vector_2[0], point_3[1] + arrow_vector_2[1]))"""
+                self.arrows[-1].append((point_3[0] + arrow_vector_2[0], point_3[1] + arrow_vector_2[1]))
         print("Lines located,", fails, "fails", file=sys.stderr)
-        # print(json.dumps((self.lines, self.arrows, self.lines_colors)), file=open("my_data/kek.json", "w"))
 
     def _draw_problem(self, problem, coords):
         self.image.draw_circle(coords, PROBLEM_RADIUS,  PROBLEM_BORDER_THICKNESS,

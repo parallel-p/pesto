@@ -241,7 +241,7 @@ class TestingSameRunsFinalStats(unittest.TestCase):
         submit1.runs = [run4, run5]
         self.srf.visit(submit1)
 
-        self.assertEqual(self.srf.pretty_print(), 'WE RECOMMEND REMOVING: 20/32 (62%)\nIT WILL SAVE: 130SEC/190SEC (68%)\n')
+        self.assertEqual(self.srf.pretty_print(), 'WE RECOMMEND REMOVING: 20/32 (62%)\nIT WILL SAVE: 0D 0H 2M 10S / 0D 0H 3M 10S (68%)\n')
 
 if __name__ == "__main__":
     unittest.main()

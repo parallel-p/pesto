@@ -52,8 +52,8 @@ class ContestsGrouper:
 
         year_regex = re.compile('20[0-9]{2}')
         parallel_regex = re.compile('(?:' + re.escape('.') + '|\\s)' +
-                                    '(?:[ABCDZСА]|AS|AA|AY)(?:py|python|prime|' +
-                                    re.escape('c++') + '|' + re.escape('++') + '|cpp|[0-9]+|' +
+                                    '(?:[ABCDZСА]|AS|AA|AY)(?:\.?py|\.?python|prime|' +
+                                    '\.?' + re.escape('c++') + '|' + re.escape('++') + '|\.?cpp|[0-9]+|' +
                                     re.escape('\'') + ')?' + re.escape('+') +
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)

@@ -1,4 +1,4 @@
-from pickle_walker import pickle_walker
+from walker import PickleWorker, SubmitWalker
 from ejudge_parse import ejudge_parse
 from pickle_submits import PickleWriter
 from visitor import FakeVisitor
@@ -34,8 +34,9 @@ class IntegrationTest(PestoTestCase):
             rmtree(self.pickler.default_path)
 
     def test_preprocessing(self):
-        self.tested_submits = [submit for submit in
-                                pickle_walker(self.pickler.default_path)]
+        walker = SubmitWalker(None)
+        self.tested_submits = [submit for filename in
+                                PickleWorker().walk(self.pickler.default_path) for submit in walker.walk(filename[1])]
 
         self.tested_submits = [''.join(map(str, submit.__dict__.values())) for submit in
                       self.tested_submits]

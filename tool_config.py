@@ -21,7 +21,7 @@ def get_presets_info():
         3.same_runs - Counts for each problem lists of runs that were launched together.
         4.submits_by_signature - Counts submits with each outcome for each problem for each language.
         5.submits_by_tests - Counts submits with each number of launched tests for each problem.
-        6.same_runs_big_stat - beta
+        6.same_runs_big_stat - Counts for all problem lists of runs that were launched together.
         7.gen_pickles - Generates fast access information for next use.
     """
 
