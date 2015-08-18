@@ -20,7 +20,7 @@ input_db_filename = pesto.db
 
 output_db_user = user
 output_db_password = password
-output_db__host = 127.0.0.1
+output_db_host = 127.0.0.1
 output_db_port = 8080
 output_db_name = moodle
 

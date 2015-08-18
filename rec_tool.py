@@ -5,12 +5,17 @@ from mysql_connector import MySQLConnector
 from sqlite_connector import SQLiteConnector
 import sys
 from traceback import print_exception
+import logging
+import os.path
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="It fill`s recommendations table\n"
                                                  "You need to fill the config file first")
     parser.add_argument('--cfg', help="config file. By default config.ini is used",
                         default='config.ini')
+    parser.add_argument('--log', help="log filename. By default none file log is used",
+                        default=None)
     parser.add_argument('--start-from', help='Number of user to start recommendations generate from',
                         default='')
     parser.add_argument('--end', help='Number of user to end recommendations generate',
@@ -21,7 +26,7 @@ def parse_args():
 def get_arguments():
     args = parse_args()
     config = None
-
+    log_filename = args['log']
     config_name = args['cfg']
     if not config_name:
         config_name = 'config.ini'
@@ -49,28 +54,37 @@ def get_arguments():
             'database': config['output_db_name']
         }
     except KeyError:
-        print('Wrong config file:Informatics MySQL parameters are not specified')
+        print('Wrong config file:Output DB MySQL parameters are not specified')
         exit()
 
-    return args, input_sqlite_db_filename, output_mysql_db_config
+    return args, input_sqlite_db_filename, output_mysql_db_config, log_filename
 
 def get_mysql_connector(mysql_config):
     if '' in mysql_config.values():
-        print('MySQL parameters are not specified')
+        logging.info('MySQL parameters are not specified')
         exit()
-    print('Now connecting to MySQL')
+    logging.info('Now connecting to MySQL')
     mysql_connector = MySQLConnector()
     mysql_connector.create_connection(mysql_config)
-    print('Connected to MySQL database')
+    logging.info('Connected to MySQL database')
     return mysql_connector
 
 
 def main():
-    args, input_db_config, output_db_config = get_arguments()
+    args, input_db_config, output_db_config, log_filename = get_arguments()
 
-    pesto_connector = SQLiteConnector()
-    pesto_connector.create_connection(input_db_config)
-    print('Connected to Pesto database')
+    if log_filename:
+        logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
+    else:
+        logging.basicConfig(format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
+
+    if os.path.isfile(input_db_config):
+        pesto_connector = SQLiteConnector()
+        pesto_connector.create_connection(input_db_config)
+        logging.info('Connected to Pesto database')
+    else:
+        logging.error('Input database file not found')
+        exit()
     output_connector = get_mysql_connector(output_db_config)
 
     try:
@@ -86,21 +100,21 @@ def main():
     except SystemExit:
         raise
     except:
-        print('The following exception was caught:')
+        logging.critical('The following exception was caught:')
         print_exception(*sys.exc_info())
         pesto_connector.close_connection()
-        print('Pesto connection closed')
+        logging.info('Pesto connection closed')
         output_connector.connection.commit()
         output_connector.close()
-        print('Ouput connection closed')
+        logging.info('Output connection closed')
         exit()
 
     pesto_connector.close_connection
-    print('Pesto connection closed')
+    logging.info('Pesto connection closed')
     output_connector.connection.commit()
     output_connector.close()
-    print('Ouput connection closed')
-    print('Connection closed')
+    logging.info('Output connection closed')
+    logging.info('Connection closed')
 
 
 if __name__ == "__main__":

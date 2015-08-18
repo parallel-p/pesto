@@ -1,3 +1,6 @@
+import logging
+
+
 class MorePopularNextProblemRecommender:
     def __init__(self, our_db_cursor, stats_db_cursor):
         self.our_db_cursor = our_db_cursor
@@ -11,19 +14,19 @@ class MorePopularNextProblemRecommender:
             self.our_db_cursor.execute('SELECT id FROM users WHERE id > ? AND id < ?', (limit[0], limit[1]))
         else:
             self.our_db_cursor.execute('SELECT id FROM users')
-        print('Loading users ids')
+        logging.info('Loading users ids')
         database_users_ids = self.our_db_cursor.fetchall()
         users_num = len(database_users_ids)
-        print('Loaded',users_num, 'users ids')
+        logging.info('Loaded {} users ids'.format(users_num))
         #the number of such sequences is the problem_ref-problem_ref
         number_of_sequences = dict()
-        print('Users pocessing')
+        logging.info('Users pocessing')
         for user_id_row in database_users_ids:
             processing += 1
             if processing >= 100:
                 log += 1
                 processing = 0
-                print(' Processed', log * 100, 'from', users_num)
+                logging.info(' Processed {} from {}'.format(log * 100, users_num))
             self.our_db_cursor.execute('SELECT problem_ref '
                                          'FROM submits '
                                          'WHERE user_ref=? AND outcome=? '
@@ -40,9 +43,9 @@ class MorePopularNextProblemRecommender:
                     number_of_sequences[problem_ref][next_ref] += 1
                 else:
                     number_of_sequences[problem_ref] = {next_ref:1}
-        print(' Processed', log * 100 + processing, 'from', users_num)
+        logging.info('Processed {} from {}'.format(log * 100 + processing, users_num))
         result = dict()
-        print('Data processing')
+        logging.info('Data processing')
         for problem_ref_start in number_of_sequences:
             for problem_ref_next in number_of_sequences[problem_ref_start]:
                 start_contest_problem = self._get_problem_id_by_problem_ref(problem_ref_start)
@@ -55,10 +58,11 @@ class MorePopularNextProblemRecommender:
                 else:
                     result[start_contest_problem] = [node]
 
-        print('Writing to database')
+        logging.info('Writing in database')
         for key in result:
             result[key].sort()
-            for some in result[key][:min(len(result[key]), 4)]:
+            for some in result[key][:min(len(result[key]), 10)]:
+                continue
                 self._write_to_db(key, some[1])
 
     def _get_problem_id_by_problem_ref(self, problem_ref):
