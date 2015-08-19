@@ -29,6 +29,16 @@ class RunsDaoTest(PestoTestCase):
         self.assertEqual(self.cursor.mock_calls,
                          [call.execute('SELECT case_id FROM Cases WHERE id = ?', ['case_ref']), call.fetchone()])
 
+    def test_load_all(self):
+        self.cursor.fetchall.return_value = [('10', '1'), ('20', '2'), ('30', '3')]
+        self.dao.load = Mock  # no brackets here!
+        runs = self.dao.load_all([{'case_ref': '20'}, {'case_ref': '10'}, {'case_ref': '30'}], 'ref')
+        self.cursor.execute.assert_called_once_with('SELECT id,case_id FROM Cases WHERE problem_ref=?', ('ref',))
+        self.assertEqual(runs[0].case_id, '2')
+        self.assertEqual(runs[1].case_id, '1')
+        self.assertEqual(runs[2].case_id, '3')
+
+
     def test_define(self):
         self.dao.lookup = Mock(side_effect=[None, 2])
         self.dao.create = Mock(return_value=1)

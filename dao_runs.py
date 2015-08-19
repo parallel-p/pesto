@@ -27,7 +27,8 @@ class DAORuns:
         if problem_ref in self.case_cache:
             cases = self.case_cache[problem_ref]
         else:
-            cases = dict(cursor.execute('SELECT id,case_id FROM Cases WHERE problem_ref=?', (problem_ref,)).fetchall())
+            cursor.execute('SELECT id,case_id FROM Cases WHERE problem_ref=?', (problem_ref,))
+            cases = dict(cursor.fetchall())
             self.case_cache[problem_ref] = cases
         for row in rows:
             run = self.load(row)
