@@ -1,10 +1,13 @@
 import logging
+from mysql_connector import MySQLConnector
 
 
 class MorePopularNextProblemRecommender:
-    def __init__(self, our_db_cursor, stats_db_cursor):
+    def __init__(self, our_db_cursor, output_db_config):
         self.our_db_cursor = our_db_cursor
-        self.stats_db_cursor = stats_db_cursor
+
+        self.output_db_config = output_db_config
+        self.stats_db_cursor = None
         self._problem_by_ref = dict()
 
 
@@ -27,7 +30,7 @@ class MorePopularNextProblemRecommender:
             if processing >= 100:
                 log += 1
                 processing = 0
-                logging.info(' Processed {} from {}'.format(log * 100, users_num))
+                logging.info('Processed {} from {}'.format(log * 100, users_num))
             self.our_db_cursor.execute('SELECT problem_ref '
                                          'FROM submits '
                                          'WHERE user_ref=? AND outcome=? '
@@ -45,6 +48,7 @@ class MorePopularNextProblemRecommender:
                 else:
                     number_of_sequences[problem_ref] = {next_ref:1}
         logging.info('Processed {} from {}'.format(log * 100 + processing, users_num))
+        
         result = dict()
         logging.info('Data processing')
         for problem_ref_start in number_of_sequences:
@@ -59,11 +63,23 @@ class MorePopularNextProblemRecommender:
                 else:
                     result[start_contest_problem] = [node]
 
+        logging.info('Output database connection to recording')
+        mysql_connector = MySQLConnector()
+        mysql_connector.create_connection(self.output_db_config)
+        logging.info('Connected to MySQL database')
+
+        self.stats_db_cursor = mysql_connector.get_cursor()
+
         logging.info('Writing in database')
         for key in result:
             result[key].sort()
             for some in result[key][:min(len(result[key]), 10)]:
                 self._write_to_db(key, some[1])
+
+        logging.info('Committing changes')
+        mysql_connector.connection.commit()
+        mysql_connector.close()
+        logging.info('Output mysql database closed')
 
     def _get_problem_id_by_problem_ref(self, problem_ref):
         if problem_ref in self._problem_by_ref:
@@ -83,7 +99,6 @@ class MorePopularNextProblemRecommender:
             logging.info('Index created')
         except:
             logging.error('Unable to create index. maybe the index already exists')
-
 
     def _clear_table(self):
         self.stats_db_cursor.execute('DELETE FROM sis_most_popular_next_problems_recommendations')
