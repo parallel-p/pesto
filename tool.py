@@ -15,6 +15,7 @@ def parse_args():
     toollib.parse_args_filters(parser)
 
     parser.add_argument('--scoring', help="contest scoring (acm, kirov)", nargs='?')
+    parser.add_argument('--no-lang-sharding', help="do not shard by language in submits_by_signature", action="store_true")
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
 
 
@@ -54,7 +55,7 @@ def get_arguments():
             print('Unknown scoring: ' + scoring)
             exit()
 
-    stats_counter = tool_config.get_factory_by_preset(args['preset_name'], output)
+    stats_counter = tool_config.get_visitor_by_preset(args['preset_name'], output, args['no_lang_sharding'])
     if stats_counter is None:
         print('Preset name "{}" is not defined or invalid.'.format(args['preset_name']))
         print('Presets available:', tool_config.get_presets_info())
@@ -76,13 +77,12 @@ def get_arguments():
 
     return database_filename, stats_counter, optional, scoring, is_pickle_writer
 
-def count_stat(connector, scoring, visitor_factory, optional):
+def count_stat(connector, scoring, visitor, optional):
     problem_cursor = connector.get_cursor()
     submit_cursor = connector.get_cursor()
     no_scoring = scoring is None
     if no_scoring:
         contest_cursor = connector.get_cursor()
-    visitor_by_problem = dict()
     dao_submits = DAOSubmits(connector)
     dao_problems = DAOProblems(connector)
     query = ('SELECT problems.id, contest_ref, problem_id, problems.name '
@@ -104,16 +104,15 @@ def count_stat(connector, scoring, visitor_factory, optional):
         if no_scoring:
             contest_row = contest_cursor.execute('SELECT {} FROM Contests WHERE Contests.id=?'.format(DAOContests.columns), (problem_row['contest_ref'],)).fetchone()
             scoring = DAOContests.load(contest_row).scoring
-        visitor_by_problem[problem] = visitor_factory.create(problem)
         for submit_row in submit_cursor.execute('SELECT * '
                                                 'FROM Submits '
                                                 'WHERE problem_ref=?', (problem_row['id'], )):
             submit = dao_submits.deep_load(submit_row)
             submit.problem_id = problem.problem_id
             submit.scoring = scoring.upper()
-            visitor_by_problem[problem].visit(submit)
-        visitor_by_problem[problem].close()
-    return visitor_by_problem
+            visitor.visit(submit)
+    visitor.close()
+    return visitor
 
 
 def pickles_mod(connector, visitor):
@@ -136,19 +135,15 @@ def pickles_mod(connector, visitor):
 
 
 def main():
-    database_filename, visitor_factory, optional, scoring, is_pickle = get_arguments()
+    database_filename, visitor, optional, scoring, is_pickle = get_arguments()
 
     connector = SQLiteConnector()
     connector.create_connection(database_filename)
     if is_pickle:
-        pickles_mod(connector, visitor_factory.create(None))
+        pickles_mod(connector, visitor)
     else:
-        stat = count_stat(connector, scoring, visitor_factory, optional)
-        result = []
-        for problem in stat:
-            result.append(stat[problem].pretty_print())
-            stat[problem].close()
-        result = '\n'.join(result)
+        stat = count_stat(connector, scoring, visitor, optional)
+        result = stat.pretty_print()
         if 'outfile' in optional:
             with open(optional['outfile'], 'w') as outfile:
                 outfile.write(result)

@@ -11,6 +11,7 @@ from sharding_visitor import ShardingByProblemVisitor
 from sharding_visitor import ShardingByLangVisitor
 from sharding_visitor import ShardingByScoringVisitor
 from elector_visitor import ElectorByMaxCasesVisitor
+from visitor import Visitor
 from os import path
 
 
@@ -25,105 +26,57 @@ def get_presets_info():
         7.gen_pickles - Generates fast access information for next use.
     """
 
+def sharder_wrap(visitor, sharders):
+    sharders = list(map(str.capitalize, sharders.split()))
+    visitor = ClassFactory(visitor)
+    for sharder in sharders[::-1]:
+        sharder_class = globals()['ShardingBy{}Visitor'.format(sharder)]
+        visitor = ClassFactory(sharder_class, visitor)
+    return visitor.create()
 
-def get_factory_by_preset(preset, output):
+
+def get_visitor_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['1', 'count_submits']:
-        return CustomShardingFactory(ShardingByContestVisitor, SubmitsCounterFactory)
+        return sharder_wrap(SubmitsCounter, 'contest problem')
     if preset in ['2', 'eq_matrix']:
-        return CustomShardingFactory(ShardingByScoringVisitor, EqMatrixShardingByProblem)
+        return sharder_wrap(EqMatrix, 'scoring contest problem')
     if preset in ['3', 'same_runs']:
-        return CustomShardingFactory(ShardingByScoringVisitor, SameRunsFactory)
+        return sharder_wrap(SameRuns, 'scoring contest problem')
     if preset in ['4', 'submits_by_signature']:
-        return CustomShardingFactory(ShardingByProblemVisitor, SubmitsIdsBySignatureFactory)
+        return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem' + ('' if no_lang_sharding else ' lang'))
     if preset in ['5', 'submits_by_tests']:
-        return CustomVisitorFactory(SubmitsOverTestCasesNumbers)
+        return SubmitsOverTestCasesNumbers()
     if preset in ['6', 'same_runs_big_stat']:
-        return SameRunsBigStatFactory()
+        return SameRunsBigStat()  # this does not work properly, however
     if preset in ['7', 'gen_pickles']:
-        default_path = path.join('.', output)
-        return PickleWriterFactory(default_path)
+        writer = PickleWriter()
+        writer.default_path = path.join('.', output)
+        return writer
     return None
 
+class SameRuns(Visitor):
 
-class SameRunsBigStatFactory(VisitorFactory):
     def __init__(self):
-        self.obj = SameRunsBigStat()
+        self.child = None
 
-    def create(self, key):
-        return self.obj
+    def visit(self, submit):
+        if not self.child:
+            if submit.scoring.upper() == 'ACM':
+                self.child = SameRunsACM()
+            else:
+                self.child = ElectorByMaxCasesVisitor(ClassFactory(SameRunsKirov))
+        self.child.visit(submit)
 
-class PickleWriterFactory(VisitorFactory):
-    def __init__(self, default_path):
-        self.default_path = default_path
+    def get_stat_data(self):
+        return self.child.get_stat_data()
 
-    def create(self, key):
-        result = PickleWriter()
-        result.default_path = self.default_path
-        return result
+    def pretty_print(self):
+        return self.child.pretty_print()
 
-class CustomShardingFactory(VisitorFactory):
-    def __init__(self, sharding_class, visitor_factory_class):
-        self.sharding_class = sharding_class
-        self.visitor_factory_class = visitor_factory_class
+class ClassFactory(VisitorFactory):
+    def __init__(self, klass, *params):
+        self.klass = klass
+        self.params = params
 
-    def create(self, key):
-        return self.sharding_class(self.visitor_factory_class())
-
-class CustomVisitorFactory(VisitorFactory):
-    def __init__(self, visitor_class):
-        self.visitor_class = visitor_class
-
-    def create(self, key):
-        return self.visitor_class()
-
-class SameRunsFactory(VisitorFactory):
-    def create(self, key):
-        if key == 'ACM':
-            return ShardingByProblemVisitor(SameRunsACMFactory())
-        else:
-            return ShardingByProblemVisitor(SameRunsKirovFactory())
-
-
-class EqMatrixShardingByProblem(VisitorFactory):
-    def create(self, key):
-        return ShardingByProblemVisitor(EqMatrixFactory())
-
-
-class SameRunsACMFactory(VisitorFactory):
-    def create(self, key):
-        return SameRunsACM()
-
-
-class SameRunsKirovFactory(VisitorFactory):
-    def create(self, key):
-        return ElectorByMaxCasesVisitor(SameRunsKirovFactory2())
-
-
-class SameRunsKirovFactory2(VisitorFactory):
-    def create(self, key):
-        return SameRunsKirov()
-
-
-class SubmitsCounterFactory(VisitorFactory):
-    def create(self, key):
-        return SubmitsCounter()
-
-
-class MaxTestCasesCountFactory(VisitorFactory):
-    def create(self, key):
-        return MaxTestCasesCount()
-
-
-class EqMatrixFactory(VisitorFactory):
-    def create(self, key):
-        return EqMatrix()
-
-
-class SubmitsIdsBySignatureFactory(VisitorFactory):
-    def create(self, key):
-        return ShardingByLangVisitor(SubmitsIdsBySignatureFactory2())
-
-
-class SubmitsIdsBySignatureFactory2(VisitorFactory):
-    def create(self, key):
-        return SubmitsIdsBySignatureVisitor()
+    def create(self, *args):
+        return self.klass(*self.params)

@@ -1,5 +1,6 @@
 import os
-
+import sys
+from traceback import print_exception
 
 class EjudgeContest:
     def __init__(self, dir_name):
@@ -90,13 +91,18 @@ class EjudgeContest:
         problems = {}
         paths = {}
         for root, dirs, files in os.walk(self.dir_name):
-            if self.test_pattern and (self.test_pattern % 1) in files:
-                if root.endswith('tests'):
-                    shortname = root.rstrip('tests').rstrip(os.path.sep).split(os.path.sep)[-1]
-                else:
-                    shortname = root.split(os.path.sep)[-1]
-                paths[shortname] = root
-
+            try:
+                if self.test_pattern and (self.test_pattern % 1) in files:
+                    if root.endswith('tests'):
+                        shortname = root.rstrip('tests').rstrip(os.path.sep).split(os.path.sep)[-1]
+                    else:
+                        shortname = root.split(os.path.sep)[-1]
+                    paths[shortname] = root
+            except:
+                print('The following exception was caught:')
+                print_exception(*sys.exc_info())
+                print('Continuing')
+                continue
         for problem in cfg[1:]:
             try:
                 if 'internal_name' in problem:

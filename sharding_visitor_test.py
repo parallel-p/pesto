@@ -76,7 +76,7 @@ class TestByProblem(unittest.TestCase):
 
     def test_pretty_key(self):
         visitor = ShardingByProblemVisitor(Mock())
-        self.assertEqual(visitor.pretty_key(('1', '2')), 'Contest #1, Problem #2')
+        self.assertEqual(visitor.pretty_key(('1', '2')), 'Problem #2')
 
 
 class TestByContest(unittest.TestCase):

@@ -40,7 +40,7 @@ class ShardingByProblemVisitor(ShardingVisitor):
         return submit.problem_id
 
     def pretty_key(self, key):
-        return 'Contest #{}, Problem #{}'.format(key[0], key[1])
+        return 'Problem #{}'.format(key[1])
 
 
 class ShardingByContestVisitor(ShardingVisitor):
