@@ -61,7 +61,9 @@ def get_arguments():
     create_index = args['indexation'] if args['indexation'] else False
     return args, input_sqlite_db_filename, output_mysql_db_config, log_filename, create_index
 
+
 def get_mysql_connector(mysql_config):
+    logging.info('Attempt to connect to mysql')
     if '' in mysql_config.values():
         logging.info('MySQL parameters are not specified')
         exit()
@@ -87,12 +89,14 @@ def main():
     else:
         logging.error('Input database file not found')
         exit()
+
     output_connector = get_mysql_connector(output_db_config)
+    output_connector.close()
+
 
     try:
         pesto_cur = pesto_connector.get_cursor()
-        informatics_cur = output_connector.get_cursor()
-        recommender = MorePopularNextProblemRecommender(pesto_cur, informatics_cur)
+        recommender = MorePopularNextProblemRecommender(pesto_cur, output_db_config)
         if create_index:
             recommender.create_index()
         if args['start_from']:
@@ -108,17 +112,10 @@ def main():
         print_exception(*sys.exc_info())
         pesto_connector.close_connection()
         logging.info('Pesto connection closed')
-        output_connector.connection.commit()
-        output_connector.close()
-        logging.info('Output connection closed')
         exit()
 
-    pesto_connector.close_connection
+    pesto_connector.close_connection()
     logging.info('Pesto connection closed')
-    output_connector.connection.commit()
-    output_connector.close()
-    logging.info('Output connection closed')
-    logging.info('Connection closed')
 
 
 if __name__ == "__main__":
