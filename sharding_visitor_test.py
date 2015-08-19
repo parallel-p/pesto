@@ -26,6 +26,11 @@ class FunctionTesting(unittest.TestCase):
     def test_empty_data(self):
         self.assertEqual(self.shard_visitor.get_stat_data(), [])
 
+    def test_comparable_key(self):
+        self.assertEqual(self.shard_visitor.comparable_key('042'), 42)
+        self.assertEqual(self.shard_visitor.comparable_key('abc'), 'abc')
+        self.assertEqual(self.shard_visitor.comparable_key((1, 2)), (1, 2))
+
     def test_one_visitors(self):
         self.shard_visitor.visit(10)
         self.assertEqual(self.shard_visitor.visitors.keys(), {'10'})
@@ -73,6 +78,10 @@ class TestByProblem(unittest.TestCase):
         self.assertEqual(len(visitor.visitors[("1", "2")].submits), 3)
         self.assertEqual(len(visitor.visitors[("1", "5")].submits), 1)
         self.assertEqual(len(visitor.visitors[("5", "2")].submits), 1)
+
+    def test_comparable_key(self):
+        visitor = ShardingByProblemVisitor(Mock())
+        self.assertEqual(visitor.comparable_key(('1', '02')), 2)
 
     def test_pretty_key(self):
         visitor = ShardingByProblemVisitor(Mock())

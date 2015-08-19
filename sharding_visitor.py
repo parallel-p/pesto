@@ -13,9 +13,15 @@ class ShardingVisitor(Visitor):
             self.visitors[key] = self.factory.create(key)
         self.visitors[key].visit(submit)
 
+    def comparable_key(self, key):
+        try:
+            return int(key)
+        except Exception:
+            return key
+
     def get_stat_data(self):
         result = []
-        for key_visitor in sorted(self.visitors.items()):
+        for key_visitor in sorted(self.visitors.items(), key=lambda key:self.comparable_key(key[0])):
             result.append((key_visitor[0], key_visitor[1].get_stat_data()))
         return result
 
@@ -24,7 +30,7 @@ class ShardingVisitor(Visitor):
 
     def pretty_print(self):
         result = ''
-        for key in sorted(self.visitors.keys()):
+        for key in sorted(self.visitors.keys(), key=self.comparable_key):
             child_result = self.visitors[key].pretty_print()
             if child_result in ['', None]:
                 continue
@@ -38,6 +44,9 @@ class ShardingVisitor(Visitor):
 class ShardingByProblemVisitor(ShardingVisitor):
     def build_key(self, submit):
         return submit.problem_id
+
+    def comparable_key(self, key):
+        return int(key[1])
 
     def pretty_key(self, key):
         return 'Problem #{}'.format(key[1])
