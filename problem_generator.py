@@ -9,7 +9,6 @@ from dao_contests import DAOContests
 def problem_generator(contest_dirs):
     for contest_dir in contest_dirs:
         contest = ejudge_contest.EjudgeContest(contest_dir)
-        contest_id = contest.get_contest_id()
         problems_ids = contest.get_problem_ids()
         for problem_id in problems_ids:
             problem_name = contest.get_short_name_by_problem_id(problem_id)

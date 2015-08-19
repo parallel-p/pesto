@@ -7,10 +7,14 @@ class EjudgeContest:
         self.problems = []
         self.dir_name = dir_name.rstrip('\\').rstrip('/')
 
-        file = open(os.path.join(self.dir_name, 'conf', 'serve.cfg'), encoding='utf-8')
-        cfg_string = file.read().strip()
-        file.close()
-        self.parse_config(cfg_string)
+        try:
+            file = open(os.path.join(self.dir_name, 'conf', 'serve.cfg'), encoding='utf-8')
+            cfg_string = file.read().strip()
+            file.close()
+        except FileNotFoundError:
+            pass
+        else:
+            self.parse_config(cfg_string)
 
     def get_contest_id(self):
         return self.contest_id
