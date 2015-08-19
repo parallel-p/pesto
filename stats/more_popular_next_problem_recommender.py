@@ -2,6 +2,9 @@ import logging
 from mysql_connector import MySQLConnector
 
 
+NUMBER_OF_RECOMMENDATIONS_TO_THE_PROBLEM = 10
+
+
 class MorePopularNextProblemRecommender:
     def __init__(self, our_db_cursor, output_db_config):
         self.our_db_cursor = our_db_cursor
@@ -41,27 +44,29 @@ class MorePopularNextProblemRecommender:
             for list_id, problem_ref_row in enumerate(sorted_problems_refs[:-1]):
                 problem_ref = problem_ref_row['problem_ref']
                 next_ref = sorted_problems_refs[list_id + 1]['problem_ref']
-                if problem_ref in number_of_sequences:
-                    if next_ref not in number_of_sequences[problem_ref]:
-                        number_of_sequences[problem_ref][next_ref] = 0
-                    number_of_sequences[problem_ref][next_ref] += 1
+
+                start_problem_id = self._get_problem_id_by_problem_ref(problem_ref)
+                next_problem_id = self._get_problem_id_by_problem_ref(next_ref)
+
+                if start_problem_id in number_of_sequences:
+                    if next_problem_id not in number_of_sequences[start_problem_id]:
+                        number_of_sequences[start_problem_id][next_problem_id] = 0
+                    number_of_sequences[start_problem_id][next_problem_id] += 1
                 else:
-                    number_of_sequences[problem_ref] = {next_ref:1}
+                    number_of_sequences[start_problem_id] = {next_problem_id: 1}
+
         logging.info('Processed {} from {}'.format(log * 100 + processing, users_num))
-        
+
         result = dict()
         logging.info('Data processing')
-        for problem_ref_start in number_of_sequences:
-            for problem_ref_next in number_of_sequences[problem_ref_start]:
-                start_contest_problem = self._get_problem_id_by_problem_ref(problem_ref_start)
-                next_contest_problem = self._get_problem_id_by_problem_ref(problem_ref_next)
+        for problem_id_start in number_of_sequences:
+            for problem_id_next in number_of_sequences[problem_id_start]:
+                node = (number_of_sequences[problem_id_start][problem_id_next], problem_id_next)
 
-                node = (number_of_sequences[problem_ref_start][problem_ref_next], next_contest_problem)
-
-                if start_contest_problem in result:
-                    result[start_contest_problem].append(node)
+                if problem_id_start in result:
+                    result[problem_id_start].append(node)
                 else:
-                    result[start_contest_problem] = [node]
+                    result[problem_id_start] = [node]
 
         logging.info('Output database connection to recording')
         mysql_connector = MySQLConnector()
@@ -73,7 +78,7 @@ class MorePopularNextProblemRecommender:
         logging.info('Writing in database')
         for key in result:
             result[key].sort()
-            for some in result[key][:min(len(result[key]), 10)]:
+            for some in result[key][:min(len(result[key]), NUMBER_OF_RECOMMENDATIONS_TO_THE_PROBLEM)]:
                 self._write_to_db(key, some[1])
 
         logging.info('Committing changes')
