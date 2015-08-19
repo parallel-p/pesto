@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, patch
 from pesto_testcase import PestoTestCase
 from dao_submits import DAOSubmits
 import dao_submits
@@ -12,9 +12,9 @@ class DAOSubmitsTest(unittest.TestCase):
         self.cursor = Mock()
         connection = Mock()
         connection.get_cursor.return_value = self.cursor
-        dao_submits.Submit = Mock(return_value=Mock())
         self.dao = DAOSubmits(connection)
 
+    @patch('dao_submits.Submit', Mock())
     def test_load(self):
         res = self.dao.load(self.row)
         self.assertEqual(dao_submits.Submit.mock_calls,
@@ -22,14 +22,14 @@ class DAOSubmitsTest(unittest.TestCase):
         self.assertEqual(res.problem_ref, 'problem_ref')
         self.assertEqual(res.user_ref, 'user_ref')
 
-    def test_deep_load(self):
+    @patch('dao_submits.DAORuns', columns='kek')
+    def test_deep_load(self, dr):
         res = Mock()
         res.runs = list()
         self.dao.load = Mock(return_value=res)
         dao_runs = Mock()
         dao_runs.load_all.return_value = [1, 2]
-        dao_submits.DAORuns = Mock(return_value=dao_runs)
-        dao_submits.DAORuns.columns = 'kek'
+        dao_submits.DAORuns.return_value = dao_runs
         self.cursor.fetchall.return_value = ['row1', 'row2']
         res = self.dao.deep_load(self.row)
         self.assertEqual(self.cursor.mock_calls,

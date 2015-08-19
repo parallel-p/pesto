@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, patch
 from dao_users import DAOUsers
 import dao_users
 
@@ -11,8 +11,8 @@ class DAOUsersTest(unittest.TestCase):
         connection = Mock()
         connection.get_cursor.return_value = self.cursor
         self.dao = DAOUsers(connection)
-        dao_users.User = Mock(return_value='User_object')
 
+    @patch('dao_users.User', Mock(return_value='User_object'))
     def test_load(self):
         self.assertEqual(self.dao.load(self.row), 'User_object')
         self.assertEqual(dao_users.User.mock_calls, [call('user_id', 'origin')])

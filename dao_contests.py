@@ -13,7 +13,7 @@ class DAOContests:
         return result
 
     def deep_load(self, row):
-        return DAOContests.load(row)
+        return self.load(row)
 
     def define(self, origin, scoring, contest_id):
         ref = self.lookup(origin, scoring, contest_id)
@@ -37,7 +37,7 @@ class DAOContests:
     def update(self, ref, update_def):
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT {} FROM Contests WHERE id = ?'.format(DAOContests.columns), [ref])
-        old = DAOContests.load(cursor.fetchone())
+        old = self.load(cursor.fetchone())
         new_def = {'origin': old.origin, 'name': old.name, 'scoring': old.scoring, 'contest_id': old.contest_id}
         for key, value in update_def.items():
             new_def[key] = value

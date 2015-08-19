@@ -6,16 +6,16 @@ import md5_hasher
 
 
 class TestProblemGenerator(unittest.TestCase):
-    def setUp(self):
+
+    @patch('md5_hasher.get_hash', Mock(return_value='hash'))
+    @patch('ejudge_contest.EjudgeContest')
+    def test_common(self, ec):
         ejudge_contest_object = Mock()
         ejudge_contest_object.get_contest_id = Mock(return_value='42')
         ejudge_contest_object.get_problem_ids = Mock(return_value=[('42', '1'), ('42', '2')])
         ejudge_contest_object.get_short_name_by_problem_id = Mock(return_value='a-plus-b')
         ejudge_contest_object.get_test_paths_by_problem_id = Mock(return_value=[('a', 'b'), ('c', 'd')])
-        ejudge_contest.EjudgeContest = Mock(return_value=ejudge_contest_object)
-        md5_hasher.get_hash = Mock(return_value='hash')
-
-    def test_common(self):
+        ec.return_value = ejudge_contest_object
         contest_dirs = [('000001', '000001'), ('000179', '000179')]
         result = [x for x in problem_generator(contest_dirs)]
         self.assertEqual(len(result), 4)

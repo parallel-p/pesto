@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, patch
 from dao_problems import DAOProblems
 from dao_cases import DAOCases
 import dao_problems
@@ -12,20 +12,20 @@ class DAOProblemsTest(unittest.TestCase):
         connection = Mock()
         connection.get_cursor.return_value = self.cursor
         self.dao = DAOProblems(connection)
-        dao_problems.Problem = Mock(return_value=Mock())
 
+    @patch('dao_problems.Problem', Mock())
     def test_load(self):
         res = self.dao.load(self.row)
         self.assertEqual(dao_problems.Problem.mock_calls, [call(('', 'problem_id'), 'name', [])])
         self.assertEqual(res.contest_ref, 1)
 
-    def test_deep_load(self):
+    @patch('dao_problems.DAOCases', columns='kek')
+    def test_deep_load(self, dc):
         res = Mock()
         res.cases = []
         self.dao.load = Mock(return_value=res)
         self.cursor.fetchone.side_effect = [{'contest_id': '1'}, 1, 2, None]
-        DAOCases.columns = 'kek'
-        DAOCases.load = Mock(side_effect=['hash1', 'hash2'])
+        dc.load = Mock(side_effect=['hash1', 'hash2'])
         self.assertEqual(self.dao.deep_load(self.row), res)
         self.assertEqual(res.problem_id, ('1', 'problem_id'))
         self.assertEqual(res.cases, ['hash1', 'hash2'])
@@ -34,7 +34,7 @@ class DAOProblemsTest(unittest.TestCase):
                  call.execute('SELECT kek FROM Cases WHERE problem_ref = ?', [2]),
                  call.fetchone(), call.fetchone(), call.fetchone()]
         self.assertEqual(self.cursor.mock_calls, calls)
-        self.assertEqual(DAOCases.load.mock_calls, [call(1), call(2)])
+        self.assertEqual(dao_problems.DAOCases.load.mock_calls, [call(1), call(2)])
 
     def test_define(self):
         self.dao.lookup = Mock(side_effect=[None, 2])

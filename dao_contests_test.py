@@ -1,23 +1,25 @@
 import unittest
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, patch
 from dao_contests import DAOContests
 import model
 
 
 class DAOContestsTest(unittest.TestCase):
+
     def setUp(self):
         self.row = {'contest_id': '42', 'origin': 'orig', 'name': 'Untitled', 'scoring': 'ACM'}
         self.cursor = Mock()
         connection = Mock()
         connection.get_cursor.return_value = self.cursor
         self.dao = DAOContests(connection)
-        model.Contest = Mock(return_value='Contest_object')
 
+    @patch('model.Contest', Mock(return_value='Contest_object'))
     def test_load(self):
         return_value = self.dao.load(self.row)
         self.assertEqual(return_value, 'Contest_object')
         model.Contest.assert_called_once_with('42', 'orig', 'Untitled', 'ACM')
 
+    @patch('model.Contest', Mock(return_value='Contest_object'))
     def test_deep_load(self):
         return_value = self.dao.deep_load(self.row)
         self.assertEqual(return_value, 'Contest_object')
@@ -59,7 +61,7 @@ class DAOContestsTest(unittest.TestCase):
         contest1.scoring, contest1.contest_id = 'scoring1', 'contest_id1'
         contest2.origin, contest2.name = 'origin2', 'name2'
         contest2.scoring, contest2.contest_id = 'scoring2', 'contest_id2'
-        DAOContests.load = Mock(side_effect=[contest1, contest2])
+        self.dao.load = Mock(side_effect=[contest1, contest2])
         self.dao.update(1, {'name': 'name3'})
         self.dao.update(2, {'scoring': 'scoring3', 'contest_id': 'contest_id3'})
         calls = [call.execute('SELECT contest_id, origin, name, scoring FROM Contests WHERE id = ?', [1]),

@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, patch
 from pesto_testcase import PestoTestCase
 from dao_runs import DAORuns
 import dao_runs
@@ -13,8 +13,8 @@ class RunsDaoTest(PestoTestCase):
         connection = Mock()
         connection.get_cursor.return_value = self.cursor
         self.dao = DAORuns(connection)
-        dao_runs.Run = Mock(return_value=Mock())
 
+    @patch('dao_runs.Run', Mock())
     def test_load(self):
         res = self.dao.load(self.row)
         self.assertEqual(dao_runs.Run.mock_calls, [call('', '', '', 'realtime', 'time', 'outcome')])
