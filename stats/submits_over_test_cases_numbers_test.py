@@ -1,27 +1,41 @@
+from unittest.mock import Mock
 import unittest
 import os.path
 from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
-from ejudge_parse import ejudge_parse
 
 
 class SubmitsOverCasesTest(unittest.TestCase):
     def setUp(self):
         self.visitor = SubmitsOverTestCasesNumbers()
-        self.base_path = os.path.join('testdata', 'submits_over_test_cases_numbers')
-    
-    def test_good(self):
-        correct = {('1', '1'): {2: 1, 3: 2}, ('1', '2'): {3: 2}}
-        ejudge_parse([os.path.join(self.base_path, '001')], os.path.join(self.base_path, 'db.csv'), self.visitor)
-        self.assertEqual(self.visitor.get_stat_data(), correct)
 
-    def test_bad_submit(self):
-        with self.assertRaises(Exception):
-            self.visitor.visit(None)
+    def test_init(self):
+        self.assertFalse(self.visitor.get_stat_data())
+        self.assertFalse(self.visitor.pretty_print())
 
-    def test_pretty(self):
-        correct = "-------------\nProblem #('1', '1')\n-------------\n    2 ################################################## 1\n    3 #################################################################################################### 2\n-------------\nProblem #('1', '2')\n-------------\n    3 #################################################################################################### 2\n"
-        ejudge_parse([os.path.join(self.base_path, '001')], os.path.join(self.base_path, 'db.csv'), self.visitor)
-        self.assertEqual(self.visitor.pretty_print(), correct)
+    def test_visit(self):
+        self.visitor.visit(Mock(problem_id=('1', '2'), runs = [0] * 5))
+        self.visitor.visit(Mock(problem_id=('2', '1'), runs = [0] * 15))
+        self.visitor.visit(Mock(problem_id=('1', '1'), runs = [0] * 5))
+        self.visitor.visit(Mock(problem_id=('1', '1'), runs = [0] * 5))
+        self.visitor.visit(Mock(problem_id=('1', '1'), runs = [0] * 10))
+        self.assertEqual(self.visitor.get_stat_data(), {('2','1'): {15:1}, ('1','1'): {10:1, 5:2}, ('1','2'): {5:1}})
+        res = self.visitor.pretty_print().strip().splitlines()
+        good = ["-------------",
+                "Problem #('1', '1')",
+                "-------------",
+                "   10 ################################################## 1",
+                "    5 #################################################################################################### 2",
+                "-------------",
+                "Problem #('1', '2')",
+                "-------------",
+                "    5 #################################################################################################### 1",
+                "-------------",
+                "Problem #('2', '1')",
+                "-------------",
+                "   15 #################################################################################################### 1"]
+        self.assertEqual(res, good)
+
+
 
 if __name__ == "__main__":
     unittest.main()

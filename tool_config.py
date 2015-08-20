@@ -37,7 +37,7 @@ def sharder_wrap(visitor, sharders):
 
 def get_visitor_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['1', 'count_submits']:
-        return sharder_wrap(SubmitsCounter, 'contest problem')
+        return sharder_wrap(SubmitsCounter, 'contest')
     if preset in ['2', 'eq_matrix']:
         return sharder_wrap(EqMatrix, 'scoring contest problem')
     if preset in ['3', 'same_runs']:

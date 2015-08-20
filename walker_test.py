@@ -102,9 +102,8 @@ class TestSubmitWalker(PestoTestCase):
         pk.asssert_called_once_with(42)
         self.assertEqual(res, [])
 
-    @patch('walker.EjudgeDB', return_value=5)
     @patch('walker.ejudge_xml_parse', return_value=Mock(submit_id='5', submit_outcome='OK', scoring='ACM', run_outcomes=[('2', '3', 'OK'), ('4', '5', 'WA')]))
-    def test_get_submit_from_xml(self, par, db):
+    def test_get_submit_from_xml(self, par):
         w = SubmitWalker('a')
         w.contest_id = '7'
         w.database = Mock()
@@ -125,16 +124,14 @@ class TestSubmitWalker(PestoTestCase):
                          (('7', '1'), '5', 2, '4', '5', 'WA'))
         par.assert_called_once_with('filename')
 
-    @patch('walker.EjudgeDB', return_value=5)
     @patch('walker.ejudge_xml_parse', return_value=None)
-    def test_get_submit_from_xml_none(self, par, db):
+    def test_get_submit_from_xml_none(self, par):
         w = SubmitWalker('a')
         res = w._get_submit_from_xml('filename')
         self.assertIsNone(res)
 
-    @patch('walker.EjudgeDB', return_value=5)
-    @patch('walker.ejudge_xml_parse', return_value=None, side_effect=OSError())
-    def test_get_submit_from_xml_error(self, par, db):
+    @patch('walker.ejudge_xml_parse', side_effect=OSError())
+    def test_get_submit_from_xml_error(self, par):
         w = SubmitWalker('a')
         res = w._get_submit_from_xml('filename')
         self.assertIsNone(res)

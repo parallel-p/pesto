@@ -10,14 +10,9 @@ class SubmitsOverTestCasesNumbers(Visitor):
     def visit(self, submit):
         runs_number = len(submit.runs)
         if submit.problem_id in self.result:
-            if runs_number in self.result[submit.problem_id]:
-                self.result[submit.problem_id][runs_number] += 1
-            else:
-                self.result[submit.problem_id][runs_number] = 1
-
+            self.result[submit.problem_id][runs_number] = self.result[submit.problem_id].get(runs_number, 0) + 1
         else:
-            self.result[submit.problem_id] = {}
-            self.result[submit.problem_id][runs_number] = 1
+            self.result[submit.problem_id] = {runs_number: 1}
 
     def get_stat_data(self):
         return self.result

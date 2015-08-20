@@ -1,7 +1,6 @@
 import os
 from gzip import open as gzip_open
 from ejudge_xml_parse import ejudge_xml_parse
-from ejudgedb import EjudgeDB
 from model import Run
 from model import Submit
 import pickle
@@ -69,7 +68,6 @@ class PickleWorker(Walker):
 class ProblemWalker(Walker):
     def walk(self, contest_dir):
         contest = ejudge_contest.EjudgeContest(contest_dir)
-        contest_id = contest.get_contest_id()
         problems_ids = contest.get_problem_ids()
         for problem_id in problems_ids:
             problem_name = contest.get_short_name_by_problem_id(problem_id)

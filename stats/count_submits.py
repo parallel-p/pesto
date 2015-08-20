@@ -7,14 +7,16 @@ class SubmitsCounter(Visitor):
         self.result = dict()
 
     def visit(self, submit):
-        if str(submit.problem_id[1]) not in self.result:
-            self.result[submit.problem_id[1]] = 1
-        else:
-            self.result[submit.problem_id[1]] += 1
+        self.result[submit.problem_id[1]] = self.result.get(submit.problem_id[1], 0) + 1
 
     def pretty_print(self):
         result = ''
-        for k, v in sorted(self.result.items()):
-            result += 'Problem #{}: {} submits.\n'.format(k, v)
+        items = self.result.items()
+        try:
+            items = [(int(i[0]), i[1]) for i in items]
+        except Exception:
+            pass
+        for k, v in sorted(items):
+            result += 'Problem #{}: {} submit{}.\n'.format(k, v, '' if v == 1 else 's')
         return result
 
