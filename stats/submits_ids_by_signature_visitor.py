@@ -5,27 +5,27 @@ from visitor import Visitor
 class SubmitsIdsBySignatureVisitor(Visitor):
     def __init__(self):
         self.result = dict()
-        self.submits_number = 0
-        self.sample_submits_ids = []
+        self.sample_count = 10
 
     def visit(self, submit):
-        self.submits_number += 1
         if submit.runs_results not in self.result:
             self.result[submit.runs_results] = [1, [submit.submit_id]]
         else:
             self.result[submit.runs_results][0] += 1
-            if len(self.result[submit.runs_results][1]) > 10:
-                if random.randint(0, self.submits_number) == 5:
-                    self.result[submit.runs_results][1][random.randint(0, 9)] = submit.submit_id
+            if len(self.result[submit.runs_results][1]) > self.sample_count:
+                if random.randint(0, self.result[submit.runs_results][0]) < self.sample_count:
+                    self.result[submit.runs_results][1][random.randint(0, self.sample_count - 1)] = submit.submit_id
             else:
                 self.result[submit.runs_results][1].append(submit.submit_id)
 
 
     def get_stat_data(self):
+        for arr in self.result.values():
+            arr[1].sort(key=int)
         return self.result
 
     def pretty_print(self):
-        temp_data = list(self.result.items())
+        temp_data = list(self.get_stat_data().items())
         temp_data.sort(key=lambda x:(-len(x[0]), -x[1][0], x[1][1]))
 
         answer = []
