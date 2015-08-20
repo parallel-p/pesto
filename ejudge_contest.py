@@ -11,7 +11,7 @@ class EjudgeContest:
             file = open(os.path.join(self.dir_name, 'conf', 'serve.cfg'), encoding='utf-8')
             cfg_string = file.read().strip()
             file.close()
-        except FileNotFoundError:
+        except:
             pass
         else:
             self.parse_config(cfg_string)
