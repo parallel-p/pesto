@@ -45,7 +45,7 @@ def get_visitor_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['4', 'submits_by_signature']:
         return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem' + ('' if no_lang_sharding else ' lang'))
     if preset in ['5', 'submits_by_tests']:
-        return SubmitsOverTestCasesNumbers()
+        return sharder_wrap(SubmitsOverTestCasesNumbers, 'contest')
     if preset in ['6', 'same_runs_big_stat']:
         return SameRunsBigStat()  # this does not work properly, however
     if preset in ['7', 'gen_pickles']:

@@ -19,7 +19,12 @@ class SubmitsOverTestCasesNumbers(Visitor):
 
     def pretty_print(self):
         data_dict = self.result
-        data_list = sorted(data_dict.items())
+        data_list = data_dict.items()
+        try:
+            data_list = [(int(i[0][1]), i[1]) for i in data_list]
+        except Exception:
+            data_list = [(i[0][1], i[1]) for i in data_list]
+        data_list.sort()
         result = ''
         for problem in data_list:
             problem_id, data = problem
