@@ -13,16 +13,27 @@ class ShardingVisitor(Visitor):
             self.visitors[key] = self.factory.create(key)
         self.visitors[key].visit(submit)
 
-    def comparable_key(self, key):
+    def _enum_visitors(self):
+        result = list(self.visitors.items())
         try:
-            return int(key)
+            result.sort(key=lambda p:self._comparable_key(p[0]))
+        except Exception:
+            result.sort()
+        return result
+
+    def comparable_key(self, key):
+        return int(key)
+
+    def _comparable_key(self, key):
+        try:
+            return self.comparable_key(key)
         except Exception:
             return key
 
     def get_stat_data(self):
         result = []
-        for key_visitor in sorted(self.visitors.items(), key=lambda key:self.comparable_key(key[0])):
-            result.append((key_visitor[0], key_visitor[1].get_stat_data()))
+        for key, visitor in self._enum_visitors():
+            result.append((key, visitor.get_stat_data()))
         return result
 
     def pretty_key(self, key):
@@ -30,8 +41,8 @@ class ShardingVisitor(Visitor):
 
     def pretty_print(self):
         result = ''
-        for key in sorted(self.visitors.keys(), key=self.comparable_key):
-            child_result = self.visitors[key].pretty_print()
+        for key, visitor in self._enum_visitors():
+            child_result = visitor.pretty_print()
             if child_result in ['', None]:
                 continue
             result += '\n' + self.pretty_key(key) + ':\n\t' + child_result.replace('\n', '\n\t')

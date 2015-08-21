@@ -27,9 +27,20 @@ class FunctionTesting(unittest.TestCase):
         self.assertEqual(self.shard_visitor.get_stat_data(), [])
 
     def test_comparable_key(self):
-        self.assertEqual(self.shard_visitor.comparable_key('042'), 42)
-        self.assertEqual(self.shard_visitor.comparable_key('abc'), 'abc')
-        self.assertEqual(self.shard_visitor.comparable_key((1, 2)), (1, 2))
+        self.assertEqual(self.shard_visitor._comparable_key('042'), 42)
+        self.assertEqual(self.shard_visitor._comparable_key('abc'), 'abc')
+        self.assertEqual(self.shard_visitor._comparable_key((1, 2)), (1, 2))
+        self.shard_visitor.comparable_key = Mock(return_value=42)
+        self.assertEqual(self.shard_visitor._comparable_key('anything'), 42)
+        self.shard_visitor.comparable_key = Mock(side_effect=Exception)
+        self.assertEqual(self.shard_visitor._comparable_key('42'), '42')
+
+    def test_enum_visitors(self):
+        self.shard_visitor.visitors['10'] = 1
+        self.shard_visitor.visitors['2'] = 2
+        self.assertEqual(list(self.shard_visitor._enum_visitors()), [('2', 2), ('10', 1)])
+        self.shard_visitor.visitors['a'] = 3
+        self.assertEqual(list(self.shard_visitor._enum_visitors()), [('10', 1), ('2', 2), ('a', 3)])
 
     def test_one_visitors(self):
         self.shard_visitor.visit(10)
@@ -46,20 +57,20 @@ class FunctionTesting(unittest.TestCase):
 
     def test_raw_stats(self):
         for i in range(2):
-            self.shard_visitor.visit(20)
+            self.shard_visitor.visit(2)
         self.shard_visitor.visit(10)
-        self.assertEqual(self.shard_visitor.get_stat_data(), [('10', 1), ('20', 2)])
+        self.assertEqual(self.shard_visitor.get_stat_data(), [('2', 2), ('10', 1)])
 
     def test_pretty_key(self):
         self.assertEqual(self.shard_visitor.pretty_key(5), '5')
         self.shard_visitor.visit(10)
 
     def test_pretty_print(self):
-        self.shard_visitor.visitors['a'] = Mock(pretty_print=Mock(return_value='A'))
+        self.shard_visitor.visitors['10'] = Mock(pretty_print=Mock(return_value='A'))
         self.shard_visitor.visitors['b'] = Mock(pretty_print=Mock(return_value=''))
         self.shard_visitor.visitors['c'] = Mock(pretty_print=Mock(return_value=None))
-        self.shard_visitor.visitors['d'] = Mock(pretty_print=Mock(return_value='D'))
-        self.assertEqual(self.shard_visitor.pretty_print(), '\na:\n\tA\nd:\n\tD')
+        self.shard_visitor.visitors['2'] = Mock(pretty_print=Mock(return_value='D'))
+        self.assertEqual(self.shard_visitor.pretty_print(), '\n10:\n\tA\n2:\n\tD')
 
 
 def do_visits(visitor):
