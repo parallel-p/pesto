@@ -142,6 +142,7 @@ def main():
             fill_cases_hashes(sqlite_cursor, base_dir, origin, args['start_from'])
             connection.commit()
             connection.close()
+            print('Case hashes were filled successfully')
             print('Connection closed')
             exit()
 
