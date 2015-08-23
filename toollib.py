@@ -1,5 +1,6 @@
 import configparser
 import os
+import logging
 
 
 def parse_args_filters(parser):
@@ -15,6 +16,9 @@ def parse_args_output(parser):
 
 def parse_args_config(parser):
     parser.add_argument('--cfg', help="config file")
+
+def init_logging(loglevel):
+    logging.basicConfig(level=getattr(logging, loglevel), format='[%(levelname)s] %(message)s')
 
 def read_config(filename, section=None):
     config = configparser.ConfigParser()

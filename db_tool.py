@@ -71,7 +71,7 @@ def get_arguments():
         exit()
     try:
         loglevel = toollib.read_config(config_name, 'logging')['level'].upper()
-        logging.basicConfig(level=getattr(logging, loglevel))
+        toollib.init_logging(loglevel)
     except Exception:
         pass
     return base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir
