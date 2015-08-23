@@ -105,7 +105,7 @@ class EjudgeContest:
                     else:
                         shortname = root.split(os.path.sep)[-1]
                     paths[shortname] = root
-                    logging.info('Cases for problem {} from contest {} found in {}'.format(shortname, self.contest_id, root))
+                    logging.debug('Cases for problem {} from contest {} found in {}'.format(shortname, self.contest_id, root))
             except Exception:
                 logging.exception('Exception caught')
         for problem in cfg:
