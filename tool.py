@@ -59,7 +59,8 @@ def get_arguments():
 
     stats_counter = tool_config.get_visitor_by_preset(args['preset_name'], output, args['no_lang_sharding'])
     if stats_counter is None:
-        print('Preset name "{}" is not defined or invalid.'.format(args['preset_name']))
+        if args['preset_name']:
+            print('Preset name "{}" is not defined or invalid.'.format(args['preset_name']))
         print('Presets available:', tool_config.get_presets_info())
         exit()
 
