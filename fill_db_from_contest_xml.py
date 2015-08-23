@@ -15,3 +15,5 @@ def fill_db_from_contest_xml(contest_xmls_dir, cursor, origin):
         logging.info('Filling contest name for contest #{}'.format(contest_id))
         cursor.execute('UPDATE Contests SET name = ? WHERE origin = ? AND contest_id = ?',
                        (contest_name, origin, contest_id.rjust(6, '0')))
+        if cursor.rowcount != 1:
+            logging.warning('Contest #{} not found'.format(contest_id))

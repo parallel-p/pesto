@@ -13,12 +13,12 @@ def extract_cases_to_db(contest_dirs, cursor, origin, start_from='1'):
         if problem.problem_id[0].rjust(6, '0') < start_from.rjust(6, '0'):
             continue
 
-        logging.debug('Filling in cases for problem #{0} from contest #{1}'.format(problem.problem_id[1],
+        logging.info('Filling in cases for problem #{0} from contest #{1}'.format(problem.problem_id[1],
                                                                            problem.problem_id[0]))
         contest_response = cursor.execute('SELECT id FROM Contests WHERE origin = ? AND contest_id = ?',
                                          (origin, problem.problem_id[0].rjust(6, '0'))).fetchone()
         if contest_response is None:
-            logging.warning('Contest {} not found'.format(problem.problem_id[0]))
+            logging.warning('Contest #{} not found'.format(problem.problem_id[0]))
             continue
 
         for contest_ref in contest_response:
