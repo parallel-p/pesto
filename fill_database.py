@@ -38,6 +38,6 @@ def fill_from_xml(sqlite_cursor, ejudge_cursor, start_dir, origin):
                         logging.info('Filled in {0} submits from contest #{1}'.format(processed_submits,
                                                                                contest_id))
                 else:
-                    logging.warning('{} is broken'.format(filename[1]))
+                    logging.debug('{} is broken, skipping'.format(filename[1]))
         logging.info('Contest #{0} was finished, filled in {1} submits'.format(contest_id,
                                                                      processed_submits))

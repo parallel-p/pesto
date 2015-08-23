@@ -16,7 +16,7 @@ class EjudgeDatabase:
     def get_submit_info(self, contest_id, submit_id):
 
         query = ('SELECT prob_id,user_id,lang_id,create_time '
-                               'FROM runs '
+                               'FROM ejudge.runs '
                                'WHERE contest_id=%(contest)s AND run_id=%(submit)s')
         self.db_cursor.execute(query, {'contest': contest_id, 'submit': submit_id})
         response = self.db_cursor.fetchone()
