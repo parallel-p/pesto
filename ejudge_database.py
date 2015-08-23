@@ -1,3 +1,5 @@
+import logging
+
 class EjudgeSubmitInfo:
     def __init__(self, problem_id, user_id, lang_id, timestamp):
         self.problem_id = problem_id
@@ -19,6 +21,7 @@ class EjudgeDatabase:
         self.db_cursor.execute(query, {'contest': contest_id, 'submit': submit_id})
         response = self.db_cursor.fetchone()
         if response is None:
+            logging.warning('Submit {} from contest {} not found in database'.format(submit_id, contest_id))
             return None
         problem_id, user_id, lang_id, timestamp = list(response)
         return EjudgeSubmitInfo(problem_id, user_id, lang_id, timestamp)

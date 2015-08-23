@@ -1,18 +1,19 @@
 import os
 import sys
+import logging
 from traceback import print_exception
 
 class EjudgeContest:
     def __init__(self, dir_name):
         self.problems = []
         self.dir_name = dir_name.rstrip('\\').rstrip('/')
-
+        serve_filename = os.path.join(self.dir_name, 'conf', 'serve.cfg')
         try:
-            file = open(os.path.join(self.dir_name, 'conf', 'serve.cfg'), encoding='utf-8')
+            file = open(serve_filename, encoding='utf-8')
             cfg_string = file.read().strip()
             file.close()
-        except:
-            pass
+        except Exception:
+            logging.error('Unable to read {}'.format(serve_filename))
         else:
             self.parse_config(cfg_string)
 
@@ -77,12 +78,14 @@ class EjudgeContest:
         elif 'test_sfx' in sect:
             self.test_pattern = '%03d' + sect['test_sfx'].strip('"')
         else:
+            logging.warning('test_pat not found in contest {}'.format(self.contest_id))
             self.test_pattern = None
         if 'corr_pat' in sect:
             self.corr_pattern = sect['corr_pat'].strip('"')
         elif 'corr_sfx' in sect:
             self.corr_pattern = '%03d' + sect['corr_sfx'].strip('"')
         else:
+            logging.warning('corr_pat not found in contest {}'.format(self.contest_id))
             self.corr_pattern = None
 
     def get_problems(self, cfg):
@@ -102,23 +105,23 @@ class EjudgeContest:
                     else:
                         shortname = root.split(os.path.sep)[-1]
                     paths[shortname] = root
-            except:
-                print('The following exception was caught:')
-                print_exception(*sys.exc_info())
-                print('Continuing')
-                continue
-        for problem in cfg[1:]:
+                    logging.info('Cases for problem {} from contest {} found in {}'.format(shortname, self.contest_id, root))
+            except Exception:
+                logging.exception('Exception caught')
+        for problem in cfg:
             try:
+                if 'abstract' in problem:
+                    continue
                 if 'internal_name' in problem:
                     problem['short_name'] = problem['internal_name']
                 problem['short_name'] = problem['short_name'].strip('"')
                 problems[problem['id']] = (problem['short_name'], paths.get(problem['short_name']))
-            except KeyError:
-                continue
+            except KeyError as e:
+                logging.warning('Invalid problem in contest {}, "{}" missing'.format(self.contest_id, str(e)))
         return problems
 
 
     def parse_section(self, sect):
         sect = sect.strip().splitlines()
-        sect = [line.split(' = ', maxsplit=1) for line in sect if ' = ' in line]
+        sect = [line.split(' = ', maxsplit=1) if ' = ' in line else (line, None) for line in sect]
         return dict(sect)

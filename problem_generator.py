@@ -4,13 +4,16 @@ import md5_hasher
 import sqlite_connector
 from dao_problems import DAOProblems
 from dao_contests import DAOContests
+import logging
 
 
 def problem_generator(contest_dirs):
     for contest_dir in contest_dirs:
+        logging.info('Entering {}'.format(contest_dir))
         contest = ejudge_contest.EjudgeContest(contest_dir)
         problems_ids = contest.get_problem_ids()
         for problem_id in problems_ids:
+            logging.info('Processing problem {} from contest {}'.format(problem_id, contest.contest_id))
             problem_name = contest.get_short_name_by_problem_id(problem_id)
             tests_paths = contest.get_test_paths_by_problem_id(problem_id)
             tests_hashes = []
