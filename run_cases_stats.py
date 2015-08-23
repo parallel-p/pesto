@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from argparse import ArgumentParser
 from case_counter import CasesCounter
 from find_same_problems import SameProblemsFinder

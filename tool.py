@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import tool_config
 import argparse
 from dao_problems import DAOProblems
