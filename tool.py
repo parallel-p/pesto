@@ -7,6 +7,7 @@ from dao_submits import DAOSubmits
 from dao_contests import DAOContests
 import toollib
 from sqlite_connector import SQLiteConnector
+import logging
 
 
 def parse_args():
@@ -26,18 +27,13 @@ def parse_args():
 
 def get_arguments():
     args, config = parse_args(), None
-    if args['cfg']:
-        try:
-            config = toollib.read_config(args['cfg'], 'tool')
-        except KeyError:
-            print('Incorrect config filename.')
-            exit()
-    else:
-        try:
-            config = toollib.read_config('config.ini', 'tool')
-        except KeyError:
-            print('Incorrect config.ini')
-            exit()
+    cfg_name = args['cfg'] or 'config.ini'
+    try:
+        config = toollib.read_config(cfg_name, 'tool')
+    except KeyError:
+        print('Incorrect config')
+        exit()
+    toollib.init_logging(cfg_name)
 
     output, database_filename, scoring = None, None, None
     try:
@@ -53,7 +49,9 @@ def get_arguments():
         exit()
     if scoring:
         scoring = scoring.upper()
-        if scoring not in ('KIROV', 'ACM'):
+        if scoring == 'ALL':
+            scoring = None
+        elif scoring not in ('KIROV', 'ACM'):
             print('Unknown scoring: ' + scoring)
             exit()
 
@@ -104,9 +102,11 @@ def count_stat(connector, scoring, visitor, optional):
     query = query.format('')
     for problem_row in problem_cursor.execute(query, args):
         problem = dao_problems.deep_load(problem_row)
+        logging.info('Processing problem {} from contest {}'.format(problem.problem_id[1], problem.problem_id[0]))
         if no_scoring:
             contest_row = contest_cursor.execute('SELECT {} FROM Contests WHERE Contests.id=?'.format(DAOContests.columns), (problem_row['contest_ref'],)).fetchone()
             scoring = DAOContests.load(contest_row).scoring
+            logging.debug('Scoring is {}'.format(scoring))
         for submit_row in submit_cursor.execute('SELECT * '
                                                 'FROM Submits '
                                                 'WHERE problem_ref=?', (problem_row['id'], )):

@@ -4,7 +4,7 @@ database = my_data/database_file.db
 pickle_dir = pickle
 trash_dir = trash
 output = trash/output.txt
-scoring = ACM
+scoring = ALL
 
 [cases_stats]
 database = database.db
