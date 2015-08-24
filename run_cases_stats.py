@@ -52,6 +52,8 @@ def main():
         print('Incorrect config specified.')
         exit()
 
+    toollib.init_logging(config_name)
+
     if args['statistic'] is None:
         display_stats_list()
         exit()

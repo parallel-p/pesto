@@ -9,7 +9,7 @@ import logging
 
 def problem_generator(contest_dirs):
     for contest_dir in contest_dirs:
-        logging.info('Entering {}'.format(contest_dir))
+        logging.debug('Entering {}'.format(contest_dir))
         contest = ejudge_contest.EjudgeContest(contest_dir)
         problems_ids = contest.get_problem_ids()
         for problem_id in problems_ids:
@@ -29,7 +29,9 @@ def sqlite_problem_generator(conn):
 
     dao = DAOProblems(conn)
     for row in result:
-        yield dao.deep_load(row)
+        prob = dao.deep_load(row)
+        logging.debug('Processing problem {} from contest {}'.format(prob.problem_id[1], prob.problem_id[0]))
+        yield prob
 
 
 def sqlite_contest_generator(conn):
@@ -39,4 +41,6 @@ def sqlite_contest_generator(conn):
 
     dao = DAOContests(conn)
     for row in result:
-        yield dao.deep_load(row)
+        cont =  dao.deep_load(row)
+        logging.debug('Processing contest {}'.format(cont.contest_id))
+        yield cont

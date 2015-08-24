@@ -1,5 +1,5 @@
 import sys
-
+import logging
 
 SIMILAR_PROBLEMS_MIN_RATIO = 0.5
 EPS = 1e-9
@@ -10,8 +10,8 @@ class ProblemsTree:
         self.problems = list(problems)
         self.problem_previous = dict()  # problem -> (previous, similarity, same, added, removed)
         for index, problem_1 in enumerate(self.problems):
-            if index % 100 == 99:
-                print("Build tree: ", index, "/", len(problems), file=sys.stderr, sep="")
+            if index % 100 == 0 and index > 0:
+                logging.info("Build tree: {}/{}".format(index, len(problems)))
             problem_1_tests = set(problem_1.cases)
             for problem_2 in self.problems[index + 1:]:
                 problem_2_tests = set(problem_2.cases)

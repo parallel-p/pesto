@@ -69,11 +69,7 @@ def get_arguments():
     except KeyError:
         print('Wrong config file: MySQL parameters are not specified')
         exit()
-    try:
-        loglevel = toollib.read_config(config_name, 'logging')['level'].upper()
-        toollib.init_logging(loglevel)
-    except Exception:
-        pass
+    toollib.init_logging(config_name)
     return base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir
 
 

@@ -17,7 +17,11 @@ def parse_args_output(parser):
 def parse_args_config(parser):
     parser.add_argument('--cfg', help="config file")
 
-def init_logging(loglevel):
+def init_logging(config_name):
+    try:
+        loglevel = read_config(config_name, 'logging')['level'].upper()
+    except Exception:
+        loglevel = 'INFO'
     logging.basicConfig(level=getattr(logging, loglevel), format='[%(levelname)s] %(message)s')
 
 def read_config(filename, section=None):

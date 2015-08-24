@@ -3,6 +3,7 @@ import math
 import sys
 import random
 import json
+import logging
 
 
 BACKGROUND_COLOR = "black"
@@ -217,14 +218,12 @@ class TreeDrawer:
         fails = 0
         for problem_2 in self.problems:
             if problem_2 not in self.problem_coords:
-                with open("my_data/log.txt", "a") as log:
-                    print("wtf", problem_2.problem_id, problem_2.name, file=log)
+                logging.warning('wtf {} {}'.format(problem_2.problem_id, problem_2.name))  # idk what it means
                 continue
             problem_1 = self.tree.get_previous_problem(problem_2)
             if problem_1 is None or problem_1 not in self.problem_coords:
                 if problem_1 is not None:
-                    with open("my_data/log.txt", "a") as log:
-                        print("wtf", problem_1.problem_id, problem_1.name, file=log)
+                    logging.warning('wtf {} {}'.format(problem_1.problem_id, problem_1.name))  # same here
                 continue
             curr_x, curr_y = tuple(map(lambda x: float(x), self.problem_coords[problem_1]))
             destination = tuple(map(float, self.problem_coords[problem_2]))
@@ -236,7 +235,7 @@ class TreeDrawer:
             while True:
                 steps += 1
                 if steps == LOCATE_LINES_MAX_ITERATIONS:
-                    print("Failed to locate line", len(self.lines) - 1, file=sys.stderr)
+                    logging.warning("Failed to locate line {}".format(len(self.lines) - 1))
                     fails += 1
                     self.lines[-1] = []
                     break
@@ -251,7 +250,7 @@ class TreeDrawer:
                 curr_x += curr_vx
                 curr_y += curr_vy
                 if _distance_sqr((curr_x, curr_y), destination) <= PROBLEM_RADIUS ** 2:
-                    print("Line", len(self.lines) - 1, "located", file=sys.stderr)
+                    logging.info("Line {} located".format(len(self.lines) - 1))
                     break
                 chunk_x = int(curr_x) // CHUNK_SIZE
                 chunk_y = int(curr_y) // CHUNK_SIZE
@@ -293,7 +292,7 @@ class TreeDrawer:
                 self.arrows[-1].append(point_3)
                 arrow_vector_2 = _vector_rotate(arrow_vector, -LINE_ARROW_ANGLE)
                 self.arrows[-1].append((point_3[0] + arrow_vector_2[0], point_3[1] + arrow_vector_2[1]))
-        print("Lines located,", fails, "fails", file=sys.stderr)
+        logging.info("Lines located, {} fails".format(fails))
 
     def _draw_problem(self, problem, coords):
         self.image.draw_circle(coords, PROBLEM_RADIUS,  PROBLEM_BORDER_THICKNESS,
