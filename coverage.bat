@@ -1,5 +1,5 @@
 @echo off
-coverage.exe run testing_global.py
+coverage.exe run --rcfile=.coveragerc testing_global.py
 coverage.exe html -d coverage/
 
 py.exe test_coverage.py
