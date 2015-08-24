@@ -13,7 +13,7 @@ def problem_generator(contest_dirs):
         contest = ejudge_contest.EjudgeContest(contest_dir)
         problems_ids = contest.get_problem_ids()
         for problem_id in problems_ids:
-            logging.debug('Processing problem {} from contest {}'.format(problem_id, contest.contest_id))
+            logging.debug('Processing problem {} from contest {}'.format(problem_id[1], contest.contest_id))
             problem_name = contest.get_short_name_by_problem_id(problem_id)
             tests_paths = contest.get_test_paths_by_problem_id(problem_id)
             tests_hashes = []
