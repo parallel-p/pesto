@@ -60,10 +60,11 @@ class TestSubmit(unittest.TestCase):
 class TestProblem(unittest.TestCase):
 
     def setUp(self):
-        self.prob = Problem(("1", "17"), "Testname", ["1", "2", "3"])
+        self.prob = Problem(("1", "17"), '42', "Testname", ["1", "2", "3"])
 
     def test_init(self):
         self.assertEqual(self.prob.problem_id, ("1", "17"))
+        self.assertEqual(self.prob.polygon_id, '42')
         self.assertEqual(self.prob.name, "Testname")
         self.assertEqual(self.prob.cases, ["1", "2", "3"])
 

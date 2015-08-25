@@ -6,6 +6,7 @@ from traceback import print_exception
 class EjudgeContest:
     def __init__(self, dir_name):
         self.problems = []
+        self.polygon = {}
         self.dir_name = dir_name.rstrip('\\').rstrip('/')
         serve_filename = os.path.join(self.dir_name, 'conf', 'serve.cfg')
         try:
@@ -25,6 +26,9 @@ class EjudgeContest:
 
     def get_short_name_by_problem_id(self, problem_id):
         return self.problems[problem_id[1]][0]
+
+    def get_polygon_id_by_problem_id(self, problem_id):
+        return self.polygon.get(problem_id[1], '')
 
     def get_test_paths_by_problem_id(self, problem_id):
         res = []
@@ -119,6 +123,10 @@ class EjudgeContest:
                     problem['short_name'] = problem['internal_name']
                 problem['short_name'] = problem['short_name'].strip('"')
                 problems[problem['id']] = (problem['short_name'], paths.get(problem['short_name']))
+                if 'extid' in problem:
+                    problem['extid'] = problem['extid'].strip('"')
+                    if problem['extid'].startswith('polygon:'):
+                        self.polygon[problem['id']] = problem['extid'].lstrip('polygon:')
             except KeyError as e:
                 logging.error('Invalid problem in contest {}, {} missing'.format(self.contest_id, str(e)))
         return problems

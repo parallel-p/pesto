@@ -11,7 +11,7 @@ class DAOProblems:
 
     @staticmethod
     def load(row):
-        result = Problem(('', row['problem_id']), row['name'], [])
+        result = Problem(('', row['problem_id']), '', row['name'], [])
         result.contest_ref = row['contest_ref']
         return result
 

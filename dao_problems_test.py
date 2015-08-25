@@ -16,7 +16,7 @@ class DAOProblemsTest(unittest.TestCase):
     @patch('dao_problems.Problem', Mock())
     def test_load(self):
         res = self.dao.load(self.row)
-        self.assertEqual(dao_problems.Problem.mock_calls, [call(('', 'problem_id'), 'name', [])])
+        self.assertEqual(dao_problems.Problem.mock_calls, [call(('', 'problem_id'), '', 'name', [])])
         self.assertEqual(res.contest_ref, 1)
 
     @patch('dao_problems.DAOCases', columns='kek')
