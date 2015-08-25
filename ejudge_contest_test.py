@@ -36,5 +36,19 @@ class TestEjudgeContest(unittest.TestCase):
         tests = contest.get_test_paths_by_problem_id(('1', '1'))
         self.assertFalse(tests)
 
+    def test_non_unicode(self):
+        contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000003'))
+
+    def test_invalid_pattern(self):
+        contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000004'))
+        self.assertEqual(len(contest.get_problem_ids()), 1)
+        self.assertEqual(contest.get_short_name_by_problem_id(('25950', '1')), 'intA')
+        tests = contest.get_test_paths_by_problem_id(('1', '1'))
+        self.assertFalse(tests)
+
+    def test_missing_fields(self):
+        contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000005'))
+        self.assertFalse(contest.get_problem_ids())
+
 if __name__ == "__main__":
     unittest.main()

@@ -28,6 +28,7 @@ class TestMultiContestWalker(PestoTestCase):
         contests = list(self.walker.walk(contests_dir))
         true_contests = [('1', os.path.join('testdata', 'ejudge_contest', '000001')),
                          ('2', os.path.join('testdata', 'ejudge_contest', '000002')),
+                         ('5', os.path.join('testdata', 'ejudge_contest', '000005')),
                          ('3', os.path.join('testdata', 'ejudge_contest',
                                             'there_is_a_contest_inside', '000003'))]
         self.assertEqual(sorted(contests), sorted(true_contests))

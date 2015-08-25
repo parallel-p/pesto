@@ -13,6 +13,8 @@ class SQLiteConnectorTest(pesto_testcase.PestoTestCase):
     def test_connection(self):
         self.connector.create_connection('test_database')
         sqlite3.connect.assert_called_with('test_database')
+        sqlite3.connect.return_value.cursor.return_value = 69
+        self.assertEqual(self.connector.get_cursor(), 69)
 
     @patch('sqlite3.connect', MagicMock())
     def test_get_cursor(self):

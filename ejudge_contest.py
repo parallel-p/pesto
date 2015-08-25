@@ -97,17 +97,20 @@ class EjudgeContest:
 
         problems = {}
         paths = {}
-        for root, dirs, files in os.walk(self.dir_name):
+        if self.test_pattern:
             try:
-                if self.test_pattern and (self.test_pattern % 1) in files:
-                    if root.endswith('tests'):
-                        shortname = root.rstrip('tests').rstrip(os.path.sep).split(os.path.sep)[-1]
-                    else:
-                        shortname = root.split(os.path.sep)[-1]
-                    paths[shortname] = root
-                    logging.debug('Cases for problem {} from contest {} found in {}'.format(shortname, self.contest_id, root))
-            except Exception:
-                logging.exception('Exception caught')
+                self.test_pattern % 1
+            except ValueError:
+                logging.error('Invalid test pattern "{}" in {}'.format(self.test_pattern, os.path.join(self.dir_name, 'conf', 'serve.cfg')))
+            else:
+                for root, dirs, files in os.walk(self.dir_name):
+                    try:
+                        if (self.test_pattern % 1) in files:
+                            shortname = root.rstrip('tests').rstrip(os.path.sep).split(os.path.sep)[-1]
+                            paths[shortname] = root
+                            logging.debug('Cases for problem {} from contest {} found in {}'.format(shortname, self.contest_id, root))
+                    except Exception:
+                        logging.exception('Exception caught')  # is it possible to get an exception here?
         for problem in cfg:
             try:
                 if 'abstract' in problem:
@@ -117,7 +120,7 @@ class EjudgeContest:
                 problem['short_name'] = problem['short_name'].strip('"')
                 problems[problem['id']] = (problem['short_name'], paths.get(problem['short_name']))
             except KeyError as e:
-                logging.warning('Invalid problem in contest {}, "{}" missing'.format(self.contest_id, str(e)))
+                logging.error('Invalid problem in contest {}, {} missing'.format(self.contest_id, str(e)))
         return problems
 
 

@@ -7,15 +7,15 @@ def ejudge_get_contest_name(xml_filename):
         with open(xml_filename, encoding='utf-8') as f:
             data = f.read()
     except UnicodeError:
-        logging.warning('Unable to parse {}'.format(xml_filename))
+        logging.error('Unable to parse {}'.format(xml_filename))
         return None
     try:
         xml_root = ETree.fromstring(data)
     except ETree.ParseError:
-        logging.warning('Unable to parse {}'.format(xml_filename))
+        logging.error('Unable to parse {}'.format(xml_filename))
         return None
     try:
         return xml_root.find("name").text
     except AttributeError:
-        logging.warning('Unable to parse {}'.format(xml_filename))
+        logging.error('Unable to parse {}'.format(xml_filename))
         return None
