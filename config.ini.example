@@ -35,7 +35,7 @@ output_db_port = 8080
 output_db_name = moodle
 
 [update_db]
-db_filename = pesto.db
+database = database.db
 
 [logging]
 level = info

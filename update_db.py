@@ -7,7 +7,7 @@ import os
 from scheme_update_funcs import *
 
 
-#version in code
+#Version in code.
 ACTUAL_SCHEMA_VERSION = 1
 
 
@@ -47,7 +47,7 @@ def get_arguments():
         exit()
 
     try:
-        db_filename = config['db_filename']
+        db_filename = config['database']
     except KeyError:
         print('Wrong config file:Pesto db parameters are not specified')
         exit()
@@ -101,6 +101,7 @@ def start_update(connector, target_schema_version):
 
     logging.info('Update successful')
 
+
 def main():
     args, db_filename, log_filename, target_schema_version = get_arguments()
 
@@ -114,7 +115,7 @@ def main():
         pesto_connector.create_connection(db_filename)
         logging.info('Connected to Pesto database')
     else:
-        logging.error('Input database file not found')
+        logging.error('Database file not found')
         exit()
 
     start_update(pesto_connector, target_schema_version)
