@@ -34,6 +34,9 @@ output_db_host = 127.0.0.1
 output_db_port = 8080
 output_db_name = moodle
 
+[update_db]
+db_filename = pesto.db
+
 [logging]
 level = info
 
