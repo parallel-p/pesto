@@ -1,7 +1,7 @@
 from model import User
 
 
-class DAOUsers:
+class UsersDAO:
     columns = 'origin, user_id'
 
     def __init__(self, connector):
