@@ -1,4 +1,3 @@
-from dao_cases import DAOCases
 from dao_runs import DAORuns
 from model import User, Problem, Submit
 import model
@@ -91,6 +90,48 @@ class ContestsDAO:
                        'contest_id = :contest_id WHERE id = :id', new_def)
 
 
+class CasesDAO:
+    columns = "io_hash"
+
+    def __init__(self, connector):
+        self.connector = connector
+
+    @staticmethod
+    def load(row):
+        result_hash = row['io_hash']
+        return result_hash
+
+    def deep_load(self, row):
+        return self.load(row)
+
+    def define(self, problem_ref, case_id):
+        ref = self.lookup(problem_ref, case_id)
+        if ref is None:
+            ref = self.create(problem_ref, case_id)
+        return ref
+
+    def lookup(self, problem_ref, case_id):
+        cursor = self.connector.get_cursor()
+        cursor.execute('SELECT id FROM Cases WHERE problem_ref = ? AND case_id = ?', [problem_ref, case_id])
+        response = cursor.fetchone()
+        return response['id'] if response else None
+
+    def create(self, problem_ref, case_id):
+        cursor = self.connector.get_cursor()
+        cursor.execute('INSERT INTO Cases (id, problem_ref, case_id) VALUES (NULL, ?, ?)', [problem_ref, case_id])
+        return cursor.lastrowid
+
+    def update(self, ref, update_def):
+        cursor = self.connector.get_cursor()
+        cursor.execute('SELECT {} FROM Cases WHERE id = ?'.format(self.columns), ref)
+        old = self.load(cursor.fetchone())
+        new_def = {'io_hash': old}
+        for key, value in update_def.items():
+            new_def[key] = value
+        new_def['id'] = ref
+        cursor.execute('UPDATE Cases SET io_hash = :io_hash WHERE id = :id', new_def)
+
+
 class ProblemsDAO:
     columns = 'id, contest_ref, problem_id, name'
 
@@ -108,10 +149,10 @@ class ProblemsDAO:
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT contest_id FROM Contests WHERE id = ?', [row['contest_ref']])
         result.problem_id = (cursor.fetchone()['contest_id'], row['problem_id'])
-        cursor.execute('SELECT {} FROM Cases WHERE problem_ref = ?'.format(DAOCases.columns), [row['id']])
+        cursor.execute('SELECT {} FROM Cases WHERE problem_ref = ?'.format(CasesDAO.columns), [row['id']])
         cases_row = cursor.fetchone()
         while cases_row:
-            hash = DAOCases.load(cases_row)
+            hash = CasesDAO.load(cases_row)
             result.cases.append(hash)
             cases_row = cursor.fetchone()
         return result
@@ -198,3 +239,4 @@ class SubmitsDAO:
         new_def['id'] = ref
         cursor.execute('UPDATE Submits SET submit_id = :submit_id, lang_id = :lang_id, problem_ref = :problem_ref, '
                        'user_ref = :user_ref, outcome = :outcome, timestamp = :timestamp WHERE id = :id', new_def)
+
