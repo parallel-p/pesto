@@ -1,4 +1,3 @@
-from dao_contests import DAOContests
 import re
 
 

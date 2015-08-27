@@ -1,13 +1,13 @@
 #!/usr/bin/python3
-
-import tool_config
 import argparse
+import logging
+
+from dao import ContestsDAO
+import tool_config
 from dao_problems import DAOProblems
 from dao_submits import DAOSubmits
-from dao_contests import DAOContests
 import toollib
 from sqlite_connector import SQLiteConnector
-import logging
 
 
 def parse_args():
@@ -104,8 +104,8 @@ def count_stat(connector, scoring, visitor, optional):
         problem = dao_problems.deep_load(problem_row)
         logging.info('Processing problem {} from contest {}'.format(problem.problem_id[1], problem.problem_id[0]))
         if no_scoring:
-            contest_row = contest_cursor.execute('SELECT {} FROM Contests WHERE Contests.id=?'.format(DAOContests.columns), (problem_row['contest_ref'],)).fetchone()
-            scoring = DAOContests.load(contest_row).scoring
+            contest_row = contest_cursor.execute('SELECT {} FROM Contests WHERE Contests.id=?'.format(ContestsDAO.columns), (problem_row['contest_ref'],)).fetchone()
+            scoring = ContestsDAO.load(contest_row).scoring
             logging.debug('Scoring is {}'.format(scoring))
         for submit_row in submit_cursor.execute('SELECT * '
                                                 'FROM Submits '
