@@ -1,4 +1,5 @@
 import random
+
 from visitor import Visitor
 
 
@@ -26,10 +27,11 @@ class SubmitsIdsBySignatureVisitor(Visitor):
 
     def pretty_print(self):
         temp_data = list(self.get_stat_data().items())
-        temp_data.sort(key=lambda x:(-len(x[0]), -x[1][0], x[1][1]))
+        temp_data.sort(key=lambda x: (-len(x[0]), -x[1][0], x[1][1]))
 
         answer = []
         for signature, sabmits_num_and_samp in temp_data:
-            answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0], sabmits_num_and_samp[1]))
+            answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0],
+                                                                                 sabmits_num_and_samp[1]))
 
         return '\n'.join(answer)

@@ -1,8 +1,9 @@
 import unittest
+
 from stats.max_test_cases_count import MaxTestCasesCount
+
 from model import Submit
 from model import Run
-from os.path import join
 
 
 class MaxTestCountTest(unittest.TestCase):

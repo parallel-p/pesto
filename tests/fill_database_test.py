@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock, Mock, call
+
 from fill_database import create_submit_walker, fill_from_pickles, fill_from_xml
 import fill_database as fill_database
 

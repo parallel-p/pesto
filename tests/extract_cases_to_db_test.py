@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock, patch
+
 from pesto_testcase import PestoTestCase
 from extract_cases_to_db import extract_cases_to_db
 
@@ -23,12 +24,12 @@ class ExtractCasesToDBTest(PestoTestCase):
             format_string, data_tuple = tuple(one_call)[0]
             resulting_requests.append(self.prepare_request(format_string, data_tuple))
         good_requests = ['SELECT id FROM Contests WHERE origin = abacaba AND contest_id = 000003',
-                        'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
-                        'UPDATE Problems SET name = A WHERE contest_ref = 1 AND problem_id = 4',
-                        'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
-                        'UPDATE Cases SET io_hash = qwer WHERE problem_ref = 2 AND case_id = 1',
-                        'UPDATE Cases SET io_hash = asdf WHERE problem_ref = 2 AND case_id = 2',
-                        'UPDATE Cases SET io_hash = zxcv WHERE problem_ref = 2 AND case_id = 3']
+                         'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
+                         'UPDATE Problems SET name = A WHERE contest_ref = 1 AND problem_id = 4',
+                         'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
+                         'UPDATE Cases SET io_hash = qwer WHERE problem_ref = 2 AND case_id = 1',
+                         'UPDATE Cases SET io_hash = asdf WHERE problem_ref = 2 AND case_id = 2',
+                         'UPDATE Cases SET io_hash = zxcv WHERE problem_ref = 2 AND case_id = 3']
         self.maxDiff = None
         self.assertEqual(resulting_requests, good_requests)
 
@@ -54,14 +55,15 @@ class ExtractCasesToDBTest(PestoTestCase):
             format_string, data_tuple = tuple(one_call)[0]
             resulting_requests.append(self.prepare_request(format_string, data_tuple))
         good_requests = ['SELECT id FROM Contests WHERE origin = abacaba AND contest_id = 000003',
-                        'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
-                        'INSERT INTO Problems (id, contest_ref, problem_id, name) VALUES (NULL, 1, 4, A)',
-                        'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
-                        'UPDATE Cases SET io_hash = qwer WHERE problem_ref = 2 AND case_id = 1',
-                        'UPDATE Cases SET io_hash = asdf WHERE problem_ref = 2 AND case_id = 2',
-                        'UPDATE Cases SET io_hash = zxcv WHERE problem_ref = 2 AND case_id = 3']
+                         'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
+                         'INSERT INTO Problems (id, contest_ref, problem_id, name) VALUES (NULL, 1, 4, A)',
+                         'SELECT id FROM Problems WHERE contest_ref = 1 AND problem_id = 4',
+                         'UPDATE Cases SET io_hash = qwer WHERE problem_ref = 2 AND case_id = 1',
+                         'UPDATE Cases SET io_hash = asdf WHERE problem_ref = 2 AND case_id = 2',
+                         'UPDATE Cases SET io_hash = zxcv WHERE problem_ref = 2 AND case_id = 3']
         self.maxDiff = None
         self.assertEqual(resulting_requests, good_requests)
+
 
 if __name__ == "__main__":
     unittest.main()

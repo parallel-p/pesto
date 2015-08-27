@@ -1,6 +1,8 @@
-from db_submits_filler import DBSubmitsFiller
 import unittest
+
 from unittest.mock import Mock, call
+
+from db_submits_filler import DBSubmitsFiller
 
 
 class TestDBSubmitsFiller(unittest.TestCase):
@@ -84,6 +86,7 @@ class TestDBSubmitsFiller(unittest.TestCase):
         self.filler.db_update('table', 1, ['one', 'two'], ['one_val', 'two_val'])
         params = ['UPDATE table SET one = ?, two = ? WHERE id = 1', ['one_val', 'two_val']]
         self.assertEqual(self.filler.db_cur.mock_calls, [call.execute(*params)])
+
 
 if __name__ == "__main__":
     unittest.main()

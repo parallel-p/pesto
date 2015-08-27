@@ -1,5 +1,6 @@
 import logging
 
+
 class EjudgeSubmitInfo:
     def __init__(self, problem_id, user_id, lang_id, timestamp):
         self.problem_id = problem_id
@@ -14,10 +15,9 @@ class EjudgeDatabase:
         self.db_cursor = ejudge_cursor
 
     def get_submit_info(self, contest_id, submit_id):
-
         query = ('SELECT prob_id,user_id,lang_id,create_time '
-                               'FROM ejudge.runs '
-                               'WHERE contest_id=%(contest)s AND run_id=%(submit)s')
+                 'FROM ejudge.runs '
+                 'WHERE contest_id=%(contest)s AND run_id=%(submit)s')
         self.db_cursor.execute(query, {'contest': contest_id, 'submit': submit_id})
         response = self.db_cursor.fetchone()
         if response is None:

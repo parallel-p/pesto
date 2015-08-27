@@ -1,4 +1,3 @@
-import sys
 import logging
 
 SIMILAR_PROBLEMS_MIN_RATIO = 0.5
@@ -21,8 +20,8 @@ class ProblemsTree:
                 except ZeroDivisionError:
                     similarity = 0.0
                 if similarity > SIMILAR_PROBLEMS_MIN_RATIO:
-                    if problem_2 not in self.problem_previous or\
-                       similarity > self.problem_previous[problem_2][1] - EPS:
+                    if problem_2 not in self.problem_previous or \
+                                    similarity > self.problem_previous[problem_2][1] - EPS:
                         self.problem_previous[problem_2] = (problem_1, similarity, same_tests_count,
                                                             len(problem_2_tests) - same_tests_count,
                                                             len(problem_1_tests) - same_tests_count)
@@ -49,13 +48,14 @@ class ProblemsTree:
             if problem not in self.problem_previous:
                 resulting_string += 'it is a new problem. Tests: {tests}.\n'.format(tests=len(set(problem.cases)))
             else:
-                previous, similarity, same_tests_count, added_tests_count, removed_tests_count = self.problem_previous[problem]
+                previous, similarity, same_tests_count, added_tests_count, removed_tests_count = self.problem_previous[
+                    problem]
                 if added_tests_count == 0 and removed_tests_count == 0:
-                    resulting_string += 'it is {previous}. Tests: {tests}.\n'.\
+                    resulting_string += 'it is {previous}. Tests: {tests}.\n'. \
                         format(previous=str(previous), tests=same_tests_count)
                 else:
                     resulting_string += 'is based on {previous}. '.format(previous=str(previous))
-                    resulting_string += 'Tests: +{added}, -{removed}, {same} not changed.\n'.\
+                    resulting_string += 'Tests: +{added}, -{removed}, {same} not changed.\n'. \
                         format(added=added_tests_count, removed=removed_tests_count, same=same_tests_count)
         return resulting_string
 

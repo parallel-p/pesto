@@ -16,9 +16,9 @@ def parse_args():
     toollib.parse_args_filters(parser)
 
     parser.add_argument('--scoring', help="contest scoring (acm, kirov)", nargs='?')
-    parser.add_argument('--no-lang-sharding', help="do not shard by language in submits_by_signature", action="store_true")
+    parser.add_argument('--no-lang-sharding', help="do not shard by language in submits_by_signature",
+                        action="store_true")
     parser.add_argument('preset_name', help="name or number of statistics preset", nargs='?')
-
 
     return vars(parser.parse_args())
 
@@ -76,6 +76,7 @@ def get_arguments():
 
     return database_filename, stats_counter, optional, scoring, is_pickle_writer
 
+
 def count_stat(connector, scoring, visitor, optional):
     problem_cursor = connector.get_cursor()
     submit_cursor = connector.get_cursor()
@@ -85,8 +86,8 @@ def count_stat(connector, scoring, visitor, optional):
     dao_submits = SubmitsDAO(connector)
     dao_problems = ProblemsDAO(connector)
     query = ('SELECT problems.id, contest_ref, problem_id, problems.name '
-                                              'FROM Problems, Contests '
-                                              'WHERE Contests.id=Problems.contest_ref {} ORDER BY contest_id')
+             'FROM Problems, Contests '
+             'WHERE Contests.id=Problems.contest_ref {} ORDER BY contest_id')
     args = []
     if scoring:
         query = query.format('AND scoring=? {}')
@@ -102,7 +103,9 @@ def count_stat(connector, scoring, visitor, optional):
         problem = dao_problems.deep_load(problem_row)
         logging.info('Processing problem {} from contest {}'.format(problem.problem_id[1], problem.problem_id[0]))
         if no_scoring:
-            contest_row = contest_cursor.execute('SELECT {} FROM Contests WHERE Contests.id=?'.format(ContestsDAO.columns), (problem_row['contest_ref'],)).fetchone()
+            contest_row = contest_cursor.execute(
+                'SELECT {} FROM Contests WHERE Contests.id=?'.format(ContestsDAO.columns),
+                (problem_row['contest_ref'],)).fetchone()
             scoring = ContestsDAO.load(contest_row).scoring
             logging.debug('Scoring is {}'.format(scoring))
         for submit_row in submit_cursor.execute('SELECT * '
@@ -152,6 +155,7 @@ def main():
             print(result)
 
     connector.close_connection()
+
 
 if __name__ == "__main__":
     main()

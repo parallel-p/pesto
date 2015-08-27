@@ -1,5 +1,6 @@
 import mysql.connector
 
+
 class MySQLConnector():
     """Class that creates connection to MySQL DB.
     Input variable "config" should be a dict, and contain following
@@ -16,6 +17,7 @@ class MySQLConnector():
     Important notice - this class doesn't handle any errors of connection etc.
     You'll have to watch them by yourself, when you're using this class.
     """
+
     def __init__(self):
         self.connector = mysql.connector
         self.connection = self.connector.connect()

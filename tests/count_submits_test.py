@@ -1,10 +1,10 @@
-from stats.count_submits import SubmitsCounter
 from unittest.mock import Mock
 import unittest
 
+from stats.count_submits import SubmitsCounter
+
 
 class CountMethodTest(unittest.TestCase):
-
     def setUp(self):
         self.submits_counter = SubmitsCounter()
 
@@ -33,6 +33,7 @@ class CountMethodTest(unittest.TestCase):
         res = self.submits_counter.pretty_print().strip()
         good = 'Problem #10: 1 submit.\nProblem #2: 1 submit.\nProblem #a: 1 submit.'
         self.assertEqual(res, good)
+
 
 if __name__ == 'main':
     unittest.main()

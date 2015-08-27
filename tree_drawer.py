@@ -1,9 +1,8 @@
-import drawer
 import math
-import sys
-import random
-import json
+
 import logging
+
+import drawer
 
 
 BACKGROUND_COLOR = "black"
@@ -49,7 +48,7 @@ SEASON_SPACING = 150
 
 def _is_point_in_rectangle(point, rect_start, rect_size):
     return rect_start[0] <= point[0] <= rect_start[0] + rect_size[0] and \
-        rect_start[1] <= point[1] <= rect_start[1] + rect_size[1]
+           rect_start[1] <= point[1] <= rect_start[1] + rect_size[1]
 
 
 def _distance_sqr(a, b):
@@ -206,7 +205,7 @@ class TreeDrawer:
     def _locate_lines(self):
         self.lines, self.arrows, self.lines_colors = [], [], []
 
-        chunks_x, chunks_y = (self.size_x + CHUNK_SIZE - 1) // CHUNK_SIZE,\
+        chunks_x, chunks_y = (self.size_x + CHUNK_SIZE - 1) // CHUNK_SIZE, \
                              (self.size_y + CHUNK_SIZE - 1) // CHUNK_SIZE
         chunks = [[] for i in range(chunks_x * chunks_y)]
         for problem_and_coords in self.problems_and_coords:
@@ -261,7 +260,8 @@ class TreeDrawer:
                         for problem, problem_coords in chunks[curr_chunk_x * chunks_y + curr_chunk_y]:
                             if problem in (problem_1, problem_2):
                                 continue
-                            distance_sqr = (_distance_sqr((curr_x, curr_y), problem_coords) ** 0.5 - PROBLEM_RADIUS) ** 2
+                            distance_sqr = (
+                                           _distance_sqr((curr_x, curr_y), problem_coords) ** 0.5 - PROBLEM_RADIUS) ** 2
                             inverse_distance_sqr = 1.0 / distance_sqr
                             direction = _normalize((problem_coords[0] - curr_x, problem_coords[1] - curr_y))
                             curr_vx += LOCATE_LINES_PROBLEMS_FORCE * inverse_distance_sqr * direction[0]
@@ -295,7 +295,7 @@ class TreeDrawer:
         logging.info("Lines located, {} fails".format(fails))
 
     def _draw_problem(self, problem, coords):
-        self.image.draw_circle(coords, PROBLEM_RADIUS,  PROBLEM_BORDER_THICKNESS,
+        self.image.draw_circle(coords, PROBLEM_RADIUS, PROBLEM_BORDER_THICKNESS,
                                PROBLEM_BORDER_COLOR, PROBLEM_FILL_COLOR)
 
     def _draw_tree(self):
@@ -320,7 +320,7 @@ class Season:
         self.groups = []
 
     def get_order(self):
-        pos = {'июль' : 0, 'август' : 1, 'зима' : 2}
+        pos = {'июль': 0, 'август': 1, 'зима': 2}
         year = int(self.name[0])
         name = self.name[1].lower()
         order = pos[name] if name in pos else 3
@@ -335,18 +335,18 @@ class Group:
 
     def _get_order(self):
         order_dict = {'A': 0, 'A+': 0,
-                'A\'': 1, 'A\'+': 1,
-                'A0': 2,
-                'AA': 3,
-                'AS': 4,
-                'AY': 5,
-                'B': 6, 'B+': 6,
-                'B\'': 7, 'B\'+': 7,
-                'C': 8, 'Ccpp': 8, 'C+': 8, 'Ccpp+': 8,
-                'Cpy': 9, 'Cpy+': 9,
-                'C\'': 10, 'C\'+': 10,
-                'D': 11,
-                'olymp': 12}
+                      'A\'': 1, 'A\'+': 1,
+                      'A0': 2,
+                      'AA': 3,
+                      'AS': 4,
+                      'AY': 5,
+                      'B': 6, 'B+': 6,
+                      'B\'': 7, 'B\'+': 7,
+                      'C': 8, 'Ccpp': 8, 'C+': 8, 'Ccpp+': 8,
+                      'Cpy': 9, 'Cpy+': 9,
+                      'C\'': 10, 'C\'+': 10,
+                      'D': 11,
+                      'olymp': 12}
         if self.name in order_dict:
             return order_dict[self.name]
         else:

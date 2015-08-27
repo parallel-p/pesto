@@ -41,6 +41,6 @@ def sqlite_contest_generator(conn):
 
     dao = ContestsDAO(conn)
     for row in result:
-        cont =  dao.deep_load(row)
+        cont = dao.deep_load(row)
         logging.debug('Processing contest {}'.format(cont.contest_id))
         yield cont

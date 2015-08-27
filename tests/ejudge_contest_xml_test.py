@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open
+
 from ejudge_contest_xml import ejudge_get_contest_name
 
 
@@ -19,6 +20,7 @@ class TextGetName(unittest.TestCase):
     @patch('builtins.open', side_effect=UnicodeError)
     def test_not_utf8(self, op):
         self.assertIsNone(ejudge_get_contest_name('nope'))
+
 
 if __name__ == "__main__":
     unittest.main()

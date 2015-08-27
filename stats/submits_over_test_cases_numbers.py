@@ -1,5 +1,4 @@
 from visitor import Visitor
-import operator
 
 
 class SubmitsOverTestCasesNumbers(Visitor):

@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import Mock, MagicMock
-from pesto_testcase import PestoTestCase
 import configparser
 import os
+
+from pesto_testcase import PestoTestCase
 import toollib
 
 
@@ -55,7 +56,7 @@ class ToollibTest(PestoTestCase):
         config_parser_object.read.assert_called_once_with('filename')
         self.assertEqual(result, config_parser_object.__getitem__.return_value)
         configparser.ConfigParser = config_parser_backup
-    
+
     def test_read_config_section_bad(self):
         config_parser_backup = configparser.ConfigParser
         config_parser_object = MagicMock()
@@ -70,5 +71,7 @@ class ToollibTest(PestoTestCase):
     def test_get_contests_from_dir(self, d):
         result = toollib.get_contests_from_dir('d')
         self.assertEqual(result, [os.path.join('d', 'a'), os.path.join('d', 'b')])
+
+
 if __name__ == "__main__":
     unittest.main()

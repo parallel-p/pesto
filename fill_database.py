@@ -1,8 +1,8 @@
-from db_submits_filler import DBSubmitsFiller
-from ejudge_database import EjudgeDatabase
 import logging
 
+from db_submits_filler import DBSubmitsFiller
 
+from ejudge_database import EjudgeDatabase
 from walker import PickleWorker, SubmitWalker, MultipleContestWalker, EjudgeRunsFilesWorker
 
 
@@ -36,8 +36,8 @@ def fill_from_xml(sqlite_cursor, ejudge_cursor, start_dir, origin):
                     processed_submits += 1
                     if processed_submits % 100 == 0:
                         logging.info('Filled in {0} submits from contest #{1}'.format(processed_submits,
-                                                                               contest_id))
+                                                                                      contest_id))
                 else:
                     logging.debug('{} is broken, skipping'.format(filename[1]))
         logging.info('Contest #{0} was finished, filled in {1} submits'.format(contest_id,
-                                                                     processed_submits))
+                                                                               processed_submits))

@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock
+
 from find_similar_problems import SimilarProblemsFinder
 
 

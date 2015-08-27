@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ETree
-import  logging
+import logging
 
 
 def ejudge_get_contest_name(xml_filename):

@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock, call, patch
+
 from pesto_testcase import PestoTestCase
 from dao_runs import DAORuns
 import dao_runs
@@ -93,6 +94,7 @@ class RunsDaoTest(PestoTestCase):
                               {'realtime': 'realtime2', 'time': 'time2', 'outcome': 'outcome2',
                                'submit_ref': 'submit_ref3', 'case_ref': 'case_ref3', 'id': 2})]
         self.assertEqual(self.cursor.mock_calls, calls)
+
 
 if __name__ == "__main__":
     unittest.main()

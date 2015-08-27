@@ -2,15 +2,16 @@
 
 import sqlite3
 import argparse
-import toollib
+
 import logging
+
+import toollib
 from extract_cases_to_db import extract_cases_to_db
 from walker import MultipleContestWalker
 from fill_db_from_contest_xml import fill_db_from_contest_xml
 from mysql_connector import MySQLConnector
 from fill_database import fill_from_xml, fill_from_pickles
-import sys
-from traceback import print_exception
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Dump all the data to the database\n"
@@ -116,11 +117,13 @@ def fill_submits(sqlite_cursor, base_dir, origin, mysql_config):
     fill_from_xml(sqlite_cursor, ej_cursor, base_dir, origin)
     mysql_connector.close()
 
+
 def fill_contests_names(sqlite_cursor, contests_info_dir, origin):
     if contests_info_dir:
         logging.info('Filling contests names')
         fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
         logging.info('Contests names were filled')
+
 
 def main():
     base_dir, args, pickle_dir, output_database, origin, mysql_config, contests_info_dir = get_arguments()

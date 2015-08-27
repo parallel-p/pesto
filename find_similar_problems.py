@@ -10,7 +10,7 @@ class SimilarProblemsFinder:
         for i in range(len(problem_list)):
             problem_1 = problem_list[i]
             problem_1_tests = set(problem_1.cases)
-            for problem_2 in problem_list[i+1:]:
+            for problem_2 in problem_list[i + 1:]:
                 same_tests_count = 0
                 for problem_2_test in problem_2.cases:
                     if problem_2_test in problem_1_tests:
@@ -51,7 +51,7 @@ class SimilarProblemsFinder:
             same_tests_count = self.get_same_tests_count(pair[0], pair[1])
             resulting_string += template.format(p1=pair[0].name, c1=pair[0].problem_id[0],
                                                 p2=pair[1].name, c2=pair[1].problem_id[0],
-                                                similarity=int(self.get_similarity(pair[0], pair[1])*100),
-                                                added = added_tests_count, removed=removed_tests_count,
+                                                similarity=int(self.get_similarity(pair[0], pair[1]) * 100),
+                                                added=added_tests_count, removed=removed_tests_count,
                                                 same=same_tests_count)
         return resulting_string

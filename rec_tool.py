@@ -1,12 +1,13 @@
-from stats.more_popular_next_problem_recommender import MorePopularNextProblemRecommender
 import argparse
-import toollib
-from mysql_connector import MySQLConnector
-from sqlite_connector import SQLiteConnector
 import sys
 from traceback import print_exception
 import logging
 import os.path
+
+from stats.more_popular_next_problem_recommender import MorePopularNextProblemRecommender
+import toollib
+from mysql_connector import MySQLConnector
+from sqlite_connector import SQLiteConnector
 
 
 def parse_args():
@@ -78,7 +79,8 @@ def main():
     args, input_db_config, output_db_config, log_filename, create_index = get_arguments()
 
     if log_filename:
-        logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
+        logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s',
+                            level=logging.INFO)
     else:
         logging.basicConfig(format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
 
@@ -92,7 +94,6 @@ def main():
 
     output_connector = get_mysql_connector(output_db_config)
     output_connector.close()
-
 
     try:
         pesto_cur = pesto_connector.get_cursor()

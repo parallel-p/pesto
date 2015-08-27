@@ -33,6 +33,7 @@ PARALLEL_TO_INT = {
     'D+': 11,
 }
 
+
 class _Contest:
     def __init__(self, year, season, day, parallel):
         self.year = year
@@ -56,7 +57,9 @@ class ContestsGrouper:
                                     re.escape('\'') + ')?' + re.escape('+') +
                                     '?(?:' + re.escape('.') + '|\\s|$)')
         season_regex = re.compile('(?:Июль|Август|Зима|Николаев|Подмосковье)', re.I)
-        day_regex = re.compile('(?:(?:день|day)(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.|D)[0-9]{1,2}(?:\\s|\\.|[^0-9]|$))(?!(?:день|day)))', re.I)
+        day_regex = re.compile(
+            '(?:(?:день|day)(?:\\s|\\.)*[0-9]{1,2}|(?:(?:\\s|\\.|D)[0-9]{1,2}(?:\\s|\\.|[^0-9]|$))(?!(?:день|day)))',
+            re.I)
 
         parallels = set()
 
@@ -89,7 +92,7 @@ class ContestsGrouper:
             else:
                 season = season_regex.findall(contest.name)[0]
             if 'зачет' in contest.name.lower() or 'зачёт' in contest.name.lower() or 'зачот' in contest.name.lower() or 'exam' in contest.name.lower():
-                    day = 'exam'
+                day = 'exam'
             elif not day_regex.findall(contest.name):
                 day = ''
             else:  # This replaces is also dangerous.

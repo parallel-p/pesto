@@ -1,5 +1,8 @@
 import unittest
+from unittest.mock import Mock
+
 from sharding_visitor import ShardingVisitor
+
 from sharding_visitor import ShardingByProblemVisitor
 from sharding_visitor import ShardingByContestVisitor
 from sharding_visitor import ShardingByUserVisitor
@@ -8,7 +11,6 @@ from sharding_visitor import ShardingByScoringVisitor
 from visitor import FakeVisitor
 from model import Submit
 from visitor_factory import VisitorFactory
-from unittest.mock import Mock
 
 
 class FakeFactory(VisitorFactory):
@@ -151,6 +153,7 @@ class TestByScoring(unittest.TestCase):
     def test_pretty_key(self):
         visitor = ShardingByScoringVisitor(Mock())
         self.assertEqual(visitor.pretty_key('blah'), 'Scoring type - #blah')
+
 
 if __name__ == "__main__":
     unittest.main()

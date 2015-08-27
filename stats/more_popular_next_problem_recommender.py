@@ -1,4 +1,5 @@
 import logging
+
 from mysql_connector import MySQLConnector
 
 
@@ -25,7 +26,7 @@ class MorePopularNextProblemRecommender:
         database_users_ids = self.our_db_cursor.fetchall()
         users_num = len(database_users_ids)
         logging.info('Loaded {} users ids'.format(users_num))
-        #the number of such sequences is the problem_ref-problem_ref
+        # the number of such sequences is the problem_ref-problem_ref
         number_of_sequences = dict()
         logging.info('Users pocessing..')
         for user_id_row in database_users_ids:
@@ -35,9 +36,9 @@ class MorePopularNextProblemRecommender:
                 processing = 0
                 logging.info('Processed {} from {}'.format(log * 100, users_num))
             self.our_db_cursor.execute('SELECT problem_ref '
-                                         'FROM submits '
-                                         'WHERE user_ref=? AND outcome=? '
-                                         'ORDER BY timestamp', (user_id_row['id'], 'OK'))
+                                       'FROM submits '
+                                       'WHERE user_ref=? AND outcome=? '
+                                       'ORDER BY timestamp', (user_id_row['id'], 'OK'))
 
             sorted_problems_refs = self.our_db_cursor.fetchall()
 
@@ -91,8 +92,8 @@ class MorePopularNextProblemRecommender:
             problem_id = self._problem_by_ref[problem_ref]
         else:
             self.our_db_cursor.execute('SELECT Contests.contest_id, Problems.problem_id '
-                                         'FROM problems, contests '
-                                         'WHERE contest_ref=Contests.id AND Problems.id=?', (problem_ref, ))
+                                       'FROM problems, contests '
+                                       'WHERE contest_ref=Contests.id AND Problems.id=?', (problem_ref, ))
             problem_id = tuple(self.our_db_cursor.fetchone())
             self._problem_by_ref[problem_ref] = problem_id
         return problem_id
@@ -112,4 +113,5 @@ class MorePopularNextProblemRecommender:
         self.stats_db_cursor.execute('INSERT INTO sis_most_popular_next_problems_recommendations '
                                      '(id,contest_id,problem_id,recommended_contest_id,recommended_problem_id) '
                                      'VALUES (null,%s,%s,%s,%s)',
-                                     (contest_problem[0], contest_problem[1], recommended_cont_prob[0], recommended_cont_prob[1]))
+                                     (contest_problem[0], contest_problem[1], recommended_cont_prob[0],
+                                      recommended_cont_prob[1]))

@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock
+
 from find_same_problems import SameProblemsFinder
 
 
@@ -27,10 +28,12 @@ class TestFindSameProblems(unittest.TestCase):
         self.assertEqual(problems, [('17', '1'), ('17', '3'), ('18', '1')])
         problems = [p.problem_id for p in result[1]]
         self.assertEqual(problems, [('17', '2'), ('18', '2')])
-    
+
     def test_str(self):
         result = str(self.finder)
-        self.assertEqual(result, 'Problems "A" from contest 17, "C" from contest 17, "D" from contest 18 are same.\nProblems "B" from contest 17, "E" from contest 18 are same.\n')
+        self.assertEqual(result,
+                         'Problems "A" from contest 17, "C" from contest 17, "D" from contest 18 are same.\nProblems "B" from contest 17, "E" from contest 18 are same.\n')
+
 
 if __name__ == "__main__":
     unittest.main()

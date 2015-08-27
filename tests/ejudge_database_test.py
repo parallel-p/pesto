@@ -1,10 +1,10 @@
 import unittest
 from unittest.mock import Mock
+
 from ejudge_database import EjudgeDatabase, EjudgeSubmitInfo
 
 
 class TestEjudgeDatabase(unittest.TestCase):
-
     def test_submit_info(self):
         info = EjudgeSubmitInfo('1', '2', '3', 4)
         self.assertEqual(info.problem_id, '1')

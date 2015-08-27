@@ -1,12 +1,11 @@
 import os
 from gzip import open as gzip_open
+import pickle
+
 from ejudge_xml_parse import ejudge_xml_parse
+
 from model import Run
 from model import Submit
-import pickle
-import ejudge_contest
-import md5_hasher
-import model
 
 
 class Walker:
@@ -21,19 +20,18 @@ class SingleContestWalker(Walker):
 
 
 class MultipleContestWalker(Walker):
-    def walk(self, start_dir = os.path.dirname(__file__), path_only=False):
+    def walk(self, start_dir=os.path.dirname(__file__), path_only=False):
         for root, dirs, files in os.walk(start_dir, followlinks=True):
             contest_id = os.path.split(root)[1]
             is_contest = ('conf' in dirs and ('problems' in dirs or 'tests' in dirs)
-                                         and contest_id.isdigit()
-                                         and len(contest_id) == 6)
+                          and contest_id.isdigit()
+                          and len(contest_id) == 6)
             dirs[:] = [sub_dir for sub_dir in dirs if not is_contest]
             if is_contest:
                 if path_only:
                     yield root
                 else:
                     yield (contest_id.lstrip('0'), root)
-
 
 
 class EjudgeRunsFilesWorker(Walker):
@@ -73,7 +71,7 @@ class SubmitWalker(Walker):
     def walk(self, file_name):
         if file_name.endswith('.gz'):
             with gzip_open(file_name) as current_file:
-             yield self._get_submit_from_xml(current_file)
+                yield self._get_submit_from_xml(current_file)
         elif file_name.endswith('.pickle'):
             for submit in self._get_submit_from_pickle(file_name):
                 yield submit
@@ -119,7 +117,9 @@ class SubmitWalker(Walker):
         if None in (problem_id, user_id):
             return None
 
-        runs = [Run((self.contest_id, problem_id), submit_id, i + 1, run_outcomes[i][0], run_outcomes[i][1], run_outcomes[i][2]) for i in range(len(run_outcomes))]
-        submit = Submit(submit_id, (self.contest_id, problem_id), user_id, lang_id, runs, submit_outcome, scoring, time_stamp)
+        runs = [Run((self.contest_id, problem_id), submit_id, i + 1, run_outcomes[i][0], run_outcomes[i][1],
+                    run_outcomes[i][2]) for i in range(len(run_outcomes))]
+        submit = Submit(submit_id, (self.contest_id, problem_id), user_id, lang_id, runs, submit_outcome, scoring,
+                        time_stamp)
         return submit
 

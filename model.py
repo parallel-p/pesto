@@ -1,6 +1,5 @@
 class Submit:
     def __init__(self, submit_id, problem_id, user_id, lang_id, runs, outcome, scoring, timestamp):
-
         self.problem_id = problem_id
         self.submit_id = submit_id
         self.runs = runs
@@ -51,7 +50,7 @@ class Problem:
 
 
 class User:
-    def __init__(self, user_id, origin):    
+    def __init__(self, user_id, origin):
         self.user_id = user_id
         self.origin = origin
 

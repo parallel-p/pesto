@@ -1,14 +1,16 @@
-from pesto_testcase import PestoTestCase
-from walker import MultipleContestWalker
-from walker import SingleContestWalker
-from walker import EjudgeRunsFilesWorker
-from walker import AllFilesWalker
-from walker import PickleWorker
-from walker import SubmitWalker
 from unittest.mock import Mock, patch, MagicMock
 import unittest
 import os.path
 import pickle
+
+from pesto_testcase import PestoTestCase
+from walker import MultipleContestWalker
+from walker import SingleContestWalker
+from walker import EjudgeRunsFilesWorker
+
+from walker import AllFilesWalker
+from walker import PickleWorker
+from walker import SubmitWalker
 
 
 class TestSingleContestWalker(PestoTestCase):
@@ -62,7 +64,7 @@ class TestAllFilesWalker(PestoTestCase):
         files = list(self.walker.walk(dir))
         good_files = [('xml', os.path.join('testdata', 'count_submit_test', '000017', '000077')),
                       ('xml', os.path.join('testdata', 'count_submit_test', '000017', '0', '000066')),
-                      ('gzip',os.path.join('testdata', 'count_submit_test', '000017', 'A', '000068.gz'))]
+                      ('gzip', os.path.join('testdata', 'count_submit_test', '000017', 'A', '000068.gz'))]
         self.assertEqual(sorted(files), sorted(good_files))
 
 
@@ -81,7 +83,6 @@ class TestPickleWalker(PestoTestCase):
 
 
 class TestSubmitWalker(PestoTestCase):
-
     def test_init(self):
         w = SubmitWalker('7')
         self.assertEqual(w.database, '7')
@@ -103,7 +104,8 @@ class TestSubmitWalker(PestoTestCase):
         pk.asssert_called_once_with(42)
         self.assertEqual(res, [])
 
-    @patch('walker.ejudge_xml_parse', return_value=Mock(submit_id='5', submit_outcome='OK', scoring='ACM', run_outcomes=[('2', '3', 'OK'), ('4', '5', 'WA')]))
+    @patch('walker.ejudge_xml_parse', return_value=Mock(submit_id='5', submit_outcome='OK', scoring='ACM',
+                                                        run_outcomes=[('2', '3', 'OK'), ('4', '5', 'WA')]))
     def test_get_submit_from_xml(self, par):
         w = SubmitWalker('a')
         w.contest_id = '7'

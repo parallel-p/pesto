@@ -1,10 +1,10 @@
 import unittest
-
 import os.path
+
 from ejudge_contest import EjudgeContest
 
-class TestEjudgeContest(unittest.TestCase):
 
+class TestEjudgeContest(unittest.TestCase):
     def test_contest1(self):
         contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000001'))
         self.assertEqual(contest.dir_name, os.path.join('testdata', 'ejudge_contest', '000001'))
@@ -51,6 +51,7 @@ class TestEjudgeContest(unittest.TestCase):
     def test_missing_fields(self):
         contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000005'))
         self.assertFalse(contest.get_problem_ids())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,10 +1,10 @@
 import unittest
 from unittest.mock import Mock, patch
+
 from md5_hasher import _md5_update, get_hash
 
 
 class TestMD5Hasher(unittest.TestCase):
-
     @patch('builtins.open', return_value=Mock(read=Mock(return_value='contents'), __exit__=Mock(),
                                               __enter__=Mock(return_value=Mock(read=Mock(return_value='contents'),
                                                                                close=Mock()))))

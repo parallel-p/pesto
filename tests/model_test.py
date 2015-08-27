@@ -1,9 +1,9 @@
 import unittest
+
 from model import Submit, Run, Problem, User, Contest
 
 
 class TestRun(unittest.TestCase):
-
     def setUp(self):
         self.run = Run(None, '1', '2', '1', '100', 'OK')
 
@@ -24,7 +24,6 @@ class TestRun(unittest.TestCase):
 
 
 class TestSubmit(unittest.TestCase):
-
     def setUp(self):
         self.runs = []
         self.runs_results = []
@@ -58,7 +57,6 @@ class TestSubmit(unittest.TestCase):
 
 
 class TestProblem(unittest.TestCase):
-
     def setUp(self):
         self.prob = Problem(("1", "17"), '42', "Testname", ["1", "2", "3"])
 
@@ -73,7 +71,6 @@ class TestProblem(unittest.TestCase):
 
 
 class TestUser(unittest.TestCase):
-
     def setUp(self):
         self.user = User(1, 'lksh')
 
@@ -86,7 +83,6 @@ class TestUser(unittest.TestCase):
 
 
 class TestContest(unittest.TestCase):
-
     def setUp(self):
         self.contest = Contest('42', 'orig', 'Untitled', 'ACM')
 

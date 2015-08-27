@@ -2,6 +2,7 @@ import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
 
+
 def RGB(r, g, b):
     return 2 ** 16 * b + 2 ** 8 * g + r
 

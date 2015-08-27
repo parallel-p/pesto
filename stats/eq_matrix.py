@@ -1,5 +1,7 @@
-from visitor import Visitor
 from copy import deepcopy
+
+from visitor import Visitor
+
 
 class EqMatrix(Visitor):
     def __init__(self):
@@ -40,7 +42,8 @@ class EqMatrix(Visitor):
                 printing_result[i][j] *= 100
                 printing_result[i][j] = round(100 - printing_result[i][j], 1)
 
-        results = "\t" + "".join("{:>9}".format(elem) for elem in [self.result[i][i] for i in range(len(self.result))]) + "\n"
+        results = "\t" + "".join(
+            "{:>9}".format(elem) for elem in [self.result[i][i] for i in range(len(self.result))]) + "\n"
         print_data += results
         results = "0\t" + "".join("{:>9}".format(str(case_num + 1)) for case_num in range(len(self.result))) + "\n"
         print_data += results

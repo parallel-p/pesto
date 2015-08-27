@@ -1,10 +1,10 @@
 import unittest
+from unittest.mock import Mock, patch
+
 from visitor import Visitor
+
 from tool_config import get_presets_info
 from tool_config import get_visitor_by_preset, SameRuns
-from tool_config import VisitorFactory
-import tool_config
-from unittest.mock import Mock, patch
 
 
 class TestToolConfig(unittest.TestCase):
@@ -20,7 +20,6 @@ class TestToolConfig(unittest.TestCase):
 
 
 class TestSameRuns(unittest.TestCase):
-
     @patch('tool_config.SameRunsACM')
     def test_visit_acm(self, cl):
         vis = SameRuns()

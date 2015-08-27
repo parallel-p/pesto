@@ -1,9 +1,8 @@
 import unittest
-from unittest.mock import Mock
+
 from pesto_testcase import PestoTestCase
 from model import Contest
 from stats.contests_grouper import ContestsGrouper
-import os
 
 
 class ProblemsGrouperTest(PestoTestCase):
@@ -67,6 +66,7 @@ class ProblemsGrouperTest(PestoTestCase):
         self.assertEqual(grouped_by_parallel['olymp'], ['789012'])
         self.assertTrue('' in grouped_by_parallel)
         self.assertEqual(grouped_by_parallel[''], ['345678'])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock
+
 from elector_visitor import ElectorVisitor
 from elector_visitor import ElectorByMaxCasesVisitor
 
@@ -66,6 +67,7 @@ class TestElectorByMaxCases(unittest.TestCase):
         submit = Mock()
         submit.runs = [1, 2, 3]
         self.assertEqual(elector.build_key(submit), 3)
+
 
 if __name__ == "__main__":
     unittest.main()

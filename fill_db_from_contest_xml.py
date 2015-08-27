@@ -1,7 +1,8 @@
-from ejudge_contest_xml import ejudge_get_contest_name
-from walker import AllFilesWalker
 import os
 import logging
+
+from ejudge_contest_xml import ejudge_get_contest_name
+from walker import AllFilesWalker
 
 
 def fill_db_from_contest_xml(contest_xmls_dir, cursor, origin):

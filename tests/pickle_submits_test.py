@@ -1,9 +1,10 @@
 import unittest
-from unittest.mock import Mock
-from pickle_submits import PickleWriter
 from shutil import rmtree
-from os import mkdir, listdir
+from os import listdir
+
 from os.path import exists, join
+
+from pickle_submits import PickleWriter
 from model import Submit
 from pesto_testcase import PestoTestCase
 

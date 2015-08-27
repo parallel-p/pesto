@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from argparse import ArgumentParser
+
 from case_counter import CasesCounter
 from find_same_problems import SameProblemsFinder
 from find_similar_problems import SimilarProblemsFinder
@@ -43,7 +44,7 @@ def print_result(result, filename):
 
 def main():
     args = parse_args()
-    
+
     config_name = args['cfg'] if args['cfg'] else 'config.ini'
     output_file = args['output'] if args['output'] else None
 

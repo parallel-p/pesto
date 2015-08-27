@@ -1,6 +1,7 @@
 import unittest
 import sqlite3
 from unittest.mock import MagicMock, patch
+
 from sqlite_connector import SQLiteConnector
 import pesto_testcase
 
@@ -27,6 +28,7 @@ class SQLiteConnectorTest(pesto_testcase.PestoTestCase):
         self.connector.close_connection()
         sqlite3.connect.commit.assert_called_once()
         sqlite3.connect.close.assert_called_once()
+
 
 if __name__ == '__main__':
     unittest.main()

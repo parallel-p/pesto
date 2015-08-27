@@ -1,10 +1,9 @@
 import unittest
 import configparser
-import os.path
 import os
 
-class PestoTestCase(unittest.TestCase):
 
+class PestoTestCase(unittest.TestCase):
     def __init__(self, *p, **d):
         super().__init__(*p, **d)
         parser = configparser.ConfigParser()

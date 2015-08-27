@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import Mock
+
 from problems_tree import ProblemsTree
 
 
@@ -21,7 +22,7 @@ class TestProblemsTree(unittest.TestCase):
         self.problems.append(Mock(cases=['c1', 'c2', 'c3', 'c4'], problem_id=('46', '1')))
         self.problems[-1].name = '46a'
         for problem in self.problems:
-            string = 'Problem #{0} ("{1}") from contest #{2}'.\
+            string = 'Problem #{0} ("{1}") from contest #{2}'. \
                 format(problem.problem_id[1], problem.name, problem.problem_id[0])
             problem.__str__ = Mock(return_value=string)
 
@@ -58,6 +59,7 @@ Problem #1 ("46a") from contest #46: it is Problem #1 ("44a") from contest #44. 
         tree.problem_previous[problem] = (1, 2, 3, 4, 5)
 
         self.assertEqual(tree.get_relation_to_parent(problem), (1, 2, 3, 4, 5))
+
 
 if __name__ == "__main__":
     unittest.main()

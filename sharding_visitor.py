@@ -16,7 +16,7 @@ class ShardingVisitor(Visitor):
     def _enum_visitors(self):
         result = list(self.visitors.items())
         try:
-            result.sort(key=lambda p:self._comparable_key(p[0]))
+            result.sort(key=lambda p: self._comparable_key(p[0]))
         except Exception:
             result.sort()
         return result

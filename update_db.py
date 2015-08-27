@@ -1,13 +1,14 @@
-from sqlite_connector import SQLiteConnector
 import sqlite3
 import argparse
-import toollib
 import logging
 import os
-from scheme_update_funcs import *
+
+from sqlite_connector import SQLiteConnector
+import toollib
 
 
-#Version in code.
+
+# Version in code.
 ACTUAL_SCHEMA_VERSION = 1
 
 
@@ -19,7 +20,8 @@ def parse_args():
     parser.add_argument('--log', help="Log filename. By default none file log is used",
                         default=None)
 
-    parser.add_argument('--update_to', help='Version to which you want to update the database. Actual(code) version by default',
+    parser.add_argument('--update_to',
+                        help='Version to which you want to update the database. Actual(code) version by default',
                         default=ACTUAL_SCHEMA_VERSION)
 
     return vars(parser.parse_args())
@@ -51,8 +53,6 @@ def get_arguments():
     except KeyError:
         print('Wrong config file:Pesto db parameters are not specified')
         exit()
-
-
 
     return args, db_filename, log_filename, target_schema_version
 
@@ -94,7 +94,8 @@ def start_update(connector, target_schema_version):
             logging.error('transition faild: ' + str(e))
             return
         else:
-            logging.info('transition from {} to {} successful. Commiting changes.'.format(schema_version, schema_version + 1))
+            logging.info(
+                'transition from {} to {} successful. Commiting changes.'.format(schema_version, schema_version + 1))
             connector.sqlite_connection.commit()
             logging.info('Changes commited')
             schema_version += 1
@@ -106,7 +107,8 @@ def main():
     args, db_filename, log_filename, target_schema_version = get_arguments()
 
     if log_filename:
-        logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
+        logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s',
+                            level=logging.INFO)
     else:
         logging.basicConfig(format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
 
@@ -123,6 +125,7 @@ def main():
     logging.info('Closing connection..')
     pesto_connector.close_connection()
     logging.info('Connection closed')
+
 
 if __name__ == "__main__":
     main()

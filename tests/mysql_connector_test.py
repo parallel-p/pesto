@@ -1,10 +1,10 @@
 import unittest
 from unittest.mock import Mock, patch
-from pesto_testcase import PestoTestCase
+
 from mysql_connector import MySQLConnector
 
-class MySQLConnTest(unittest.TestCase):
 
+class MySQLConnTest(unittest.TestCase):
     @patch('mysql.connector')
     def test_init(self, mc):
         conn = MySQLConnector()
@@ -22,7 +22,7 @@ class MySQLConnTest(unittest.TestCase):
     def test_get_cursor(self, mc):
         conn = MySQLConnector()
         conn.connection.is_connected = Mock(return_value=True)
-        conn.connection.cursor.return_value=42
+        conn.connection.cursor.return_value = 42
         self.assertEqual(conn.get_cursor(), 42)
         conn.connection.is_connected.return_value = False
         self.assertIsNone(conn.get_cursor())

@@ -1,7 +1,9 @@
 import unittest
+
 from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from model import Submit
 from model import Run
+
 
 class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
     def setUp(self):

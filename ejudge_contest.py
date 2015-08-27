@@ -1,7 +1,6 @@
 import os
-import sys
 import logging
-from traceback import print_exception
+
 
 class EjudgeContest:
     def __init__(self, dir_name):
@@ -105,14 +104,18 @@ class EjudgeContest:
             try:
                 self.test_pattern % 1
             except ValueError:
-                logging.error('Invalid test pattern "{}" in {}'.format(self.test_pattern, os.path.join(self.dir_name, 'conf', 'serve.cfg')))
+                logging.error('Invalid test pattern "{}" in {}'.format(self.test_pattern,
+                                                                       os.path.join(self.dir_name, 'conf',
+                                                                                    'serve.cfg')))
             else:
                 for root, dirs, files in os.walk(self.dir_name):
                     try:
                         if (self.test_pattern % 1) in files:
                             shortname = root.rstrip('tests').rstrip(os.path.sep).split(os.path.sep)[-1]
                             paths[shortname] = root
-                            logging.debug('Cases for problem {} from contest {} found in {}'.format(shortname, self.contest_id, root))
+                            logging.debug(
+                                'Cases for problem {} from contest {} found in {}'.format(shortname, self.contest_id,
+                                                                                          root))
                     except Exception:
                         logging.exception('Exception caught')  # is it possible to get an exception here?
         for problem in cfg:

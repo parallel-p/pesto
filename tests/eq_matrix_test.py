@@ -1,4 +1,5 @@
 import unittest
+
 from stats.eq_matrix import EqMatrix
 from model import Submit
 from model import Run
@@ -101,9 +102,9 @@ class PositiveTests(unittest.TestCase):
                   "2\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 100.0, 0.0]) + "\n" +
                   "3\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [0.0, 100.0, 0.0, 100.0]) + "\n" +
                   "4\t" + "".join("{:>9}".format(str(elem) + "%") for elem in [100.0, 0.0, 100.0, 0.0]) + "\n")
-        
+
         # sample = ("10 0 4 0\n" +
-        #           "0 8 0 4\n"  +
+        # "0 8 0 4\n"  +
         #           "4 0 4 0\n"  +
         #           "0 4 0 4\n")
 
@@ -127,12 +128,11 @@ class PositiveTests(unittest.TestCase):
             self.matrix.visit(submit)
 
         sample = [[10, 0, 4, 0],
-                  [0, 8, 0, 4],  
-                  [4, 0, 4, 0], 
+                  [0, 8, 0, 4],
+                  [4, 0, 4, 0],
                   [0, 4, 0, 4]]
 
         self.assertEqual(self.matrix.get_stat_data(), sample)
-
 
 
 if __name__ == "__main__":

@@ -1,7 +1,9 @@
 import unittest
-from model import Submit, Run
-from stats.same_runs import SameRunsKirov, SameRunsACM, SameRunsBigStat
 from unittest.mock import Mock
+
+from model import Submit, Run
+
+from stats.same_runs import SameRunsKirov, SameRunsACM, SameRunsBigStat
 
 
 class PositiveTestsKirov(unittest.TestCase):
@@ -21,7 +23,7 @@ class PositiveTestsKirov(unittest.TestCase):
             self.same.visit(submit)
 
         # sample = ("10 10 10 10\n" +
-        #           "10 10 10 10\n" +
+        # "10 10 10 10\n" +
         #           "10 10 10 10\n" +
         #           "10 10 10 10\n")
 
@@ -40,7 +42,7 @@ class PositiveTestsKirov(unittest.TestCase):
             submits.append(Submit(i, (0, 0), 0, 0, runs, 0, 'ACM', 37))
 
         # sample = ("10 0 0 0\n"   +
-        #           "0 10 10 10\n" +
+        # "0 10 10 10\n" +
         #           "0 10 10 10\n" +
         #           "0 10 10 10\n")
 
@@ -65,7 +67,7 @@ class PositiveTestsKirov(unittest.TestCase):
             self.same.visit(submit)
 
         # sample = ("10 0 10 0\n" +
-        #           "0 10 0 10\n" +
+        # "0 10 0 10\n" +
         #           "10 0 10 0\n" +
         #           "0 10 0 10\n")
 
@@ -90,7 +92,7 @@ class PositiveTestsKirov(unittest.TestCase):
             self.same.visit(submit)
 
         # sample = ("10 0 4 0\n" +
-        #           "0 8 0 4\n"  +
+        # "0 8 0 4\n"  +
         #           "4 0 4 0\n"  +
         #           "0 4 0 4\n")
 
@@ -241,7 +243,9 @@ class TestingSameRunsFinalStats(unittest.TestCase):
         submit1.runs = [run4, run5]
         self.srf.visit(submit1)
 
-        self.assertEqual(self.srf.pretty_print(), 'WE RECOMMEND REMOVING: 20/32 (62%)\nIT WILL SAVE: 0D 0H 2M 10S / 0D 0H 3M 10S (68%)\n')
+        self.assertEqual(self.srf.pretty_print(),
+                         'WE RECOMMEND REMOVING: 20/32 (62%)\nIT WILL SAVE: 0D 0H 2M 10S / 0D 0H 3M 10S (68%)\n')
+
 
 if __name__ == "__main__":
     unittest.main()

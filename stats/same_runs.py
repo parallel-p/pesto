@@ -45,11 +45,14 @@ class SameRunsBigStat(Visitor):
 
         result = ''
         if self.cases != 0:
-            result += 'WE RECOMMEND REMOVING: {0}/{1} ({2}%)'.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '\n'
+            result += 'WE RECOMMEND REMOVING: {0}/{1} ({2}%)'.format(self.cases_to_del, self.cases,
+                                                                     int(100 * self.cases_to_del / self.cases)) + '\n'
         else:
             result += 'DEV BY ZERO\n'
         if self.time != 0:
-            result += 'IT WILL SAVE: {0} / {1} ({2}%)'.format(sec_to_time(int(self.time_to_del / 1000)), sec_to_time(int(self.time / 1000)), int(100 * self.time_to_del / self.time)) + '\n'
+            result += 'IT WILL SAVE: {0} / {1} ({2}%)'.format(sec_to_time(int(self.time_to_del / 1000)),
+                                                              sec_to_time(int(self.time / 1000)),
+                                                              int(100 * self.time_to_del / self.time)) + '\n'
         else:
             result += 'DEV BY ZERO\n'
         return result
@@ -129,11 +132,15 @@ class SameRuns(Visitor):
 
         if self.bad_cases:
             if self.cases != 0:
-                result += 'we recommend removing: {0}/{1} ({2}%) '.format(self.cases_to_del, self.cases, int(100 * self.cases_to_del / self.cases)) + '{' + ' '.join(map(str, sorted(self.bad_cases, key=int))) + '}\n'
+                result += 'we recommend removing: {0}/{1} ({2}%) '.format(self.cases_to_del, self.cases, int(
+                    100 * self.cases_to_del / self.cases)) + '{' + ' '.join(
+                    map(str, sorted(self.bad_cases, key=int))) + '}\n'
             else:
                 result += 'DEV BY ZERO\n'
             if self.time != 0:
-                result += 'it will save: {0}sec/{1}sec ({2}%)'.format(int(self.time_to_del / 1000), int(self.time / 1000), int(100 * self.time_to_del / self.time)) + '\n'
+                result += 'it will save: {0}sec/{1}sec ({2}%)'.format(int(self.time_to_del / 1000),
+                                                                      int(self.time / 1000),
+                                                                      int(100 * self.time_to_del / self.time)) + '\n'
             else:
                 result += 'DEV BY ZERO\n'
         return result
@@ -213,6 +220,7 @@ class SameRunsACM(SameRuns):
             return self.pretty()
         except:
             pass
+
 
 """
    _        _

@@ -6,7 +6,6 @@ import md5_hasher
 
 
 class TestProblemGenerator(unittest.TestCase):
-
     @patch('md5_hasher.get_hash', Mock(return_value='hash'))
     @patch('ejudge_contest.EjudgeContest')
     def test_common(self, ec):
@@ -54,7 +53,6 @@ class TestProblemGenerator(unittest.TestCase):
         conn.get_cursor.return_value = 42
         self.assertEqual(connect(conn, '123'), 42)
         conn.create_connection.assert_called_once_with('123')"""
-
 
 if __name__ == "__main__":
     unittest.main()
