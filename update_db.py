@@ -4,12 +4,13 @@ import logging
 import os
 
 from sqlite_connector import SQLiteConnector
+import scheme_update_funcs
 import toollib
 
 
 
 # Version in code.
-ACTUAL_SCHEMA_VERSION = 1
+ACTUAL_SCHEMA_VERSION = 2
 
 
 def parse_args():
@@ -82,9 +83,10 @@ def start_update(connector, target_schema_version):
     logging.info('Starting update from {} to {}'.format(schema_version, target_schema_version))
 
     while schema_version != target_schema_version:
+        update_func_name = 'update_from_v{}_to_v{}'.format(schema_version, schema_version + 1)
         try:
-            update_func = globals()['update_from_v{}_to_v{}'.format(schema_version, schema_version + 1)]
-        except KeyError:
+            update_func = getattr(scheme_update_funcs, update_func_name)
+        except AttributeError:
             logging.error('Undefined transition from version {} to {}'.format(schema_version, schema_version + 1))
             return
         logging.info('transition from version {} to {} ..'.format(schema_version, schema_version + 1))
