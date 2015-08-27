@@ -2,9 +2,8 @@
 import argparse
 import logging
 
-from dao import ContestsDAO
+from dao import ContestsDAO, ProblemsDAO
 import tool_config
-from dao_problems import DAOProblems
 from dao_submits import DAOSubmits
 import toollib
 from sqlite_connector import SQLiteConnector
@@ -85,7 +84,7 @@ def count_stat(connector, scoring, visitor, optional):
     if no_scoring:
         contest_cursor = connector.get_cursor()
     dao_submits = DAOSubmits(connector)
-    dao_problems = DAOProblems(connector)
+    dao_problems = ProblemsDAO(connector)
     query = ('SELECT problems.id, contest_ref, problem_id, problems.name '
                                               'FROM Problems, Contests '
                                               'WHERE Contests.id=Problems.contest_ref {} ORDER BY contest_id')
@@ -123,7 +122,7 @@ def pickles_mod(connector, visitor):
     submit_cursor = connector.get_cursor()
 
     dao_submits = DAOSubmits(connector)
-    dao_problems = DAOProblems(connector)
+    dao_problems = ProblemsDAO(connector)
 
     for problem_row in problem_cursor.execute('SELECT id, contest_ref, problem_id, name '
                                               'FROM Problems '):

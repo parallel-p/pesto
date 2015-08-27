@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
-from problem_generator import problem_generator, sqlite_problem_generator
-import ejudge_contest
+
+from problem_generator import problem_generator
 import md5_hasher
 
 
@@ -41,7 +41,7 @@ class TestProblemGenerator(unittest.TestCase):
 
     @patch('problem_generator.connect')
     @patch('sqlite_connector.SQLiteConnector')
-    @patch('problem_generator.DAOProblems')
+    @patch('problem_generator.ProblemsDAO')
     def test_common(self, dao, connector, conn):
         conn.return_value.fetchall.return_value = [{'id': 1, 'problem_id': '42', 'name': 'a_plus_b'}]
         dao.columns = '123'

@@ -1,10 +1,9 @@
 import logging
 
-from dao import ContestsDAO
+from dao import ContestsDAO, ProblemsDAO
 import ejudge_contest
 import model
 import md5_hasher
-from dao_problems import DAOProblems
 
 
 def problem_generator(contest_dirs):
@@ -25,10 +24,10 @@ def problem_generator(contest_dirs):
 
 def sqlite_problem_generator(conn):
     cursor = conn.get_cursor()
-    cursor.execute('SELECT {} FROM Problems'.format(DAOProblems.columns))
+    cursor.execute('SELECT {} FROM Problems'.format(ProblemsDAO.columns))
     result = cursor.fetchall()
 
-    dao = DAOProblems(conn)
+    dao = ProblemsDAO(conn)
     for row in result:
         prob = dao.deep_load(row)
         logging.debug('Processing problem {} from contest {}'.format(prob.problem_id[1], prob.problem_id[0]))
