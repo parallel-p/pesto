@@ -74,3 +74,6 @@ fonts/
 
 # Data
 data/
+
+# Mac
+.DS_Store
