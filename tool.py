@@ -85,8 +85,8 @@ def count_stat(connector, scoring, visitor, optional):
         contest_cursor = connector.get_cursor()
     dao_submits = SubmitsDAO(connector)
     dao_problems = ProblemsDAO(connector)
-    query = ('SELECT problems.id, contest_ref, problem_id, problems.name '
-             'FROM Problems, Contests '
+    query = ('SELECT ' + ProblemsDAO.columns +
+             ' FROM Problems, Contests '
              'WHERE Contests.id=Problems.contest_ref {} ORDER BY contest_id')
     args = []
     if scoring:

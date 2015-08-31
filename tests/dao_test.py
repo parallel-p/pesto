@@ -203,7 +203,7 @@ class CasesDAOTest(unittest.TestCase):
 
 class ProblemsDAOTest(unittest.TestCase):
     def setUp(self):
-        self.row = {'id': 2, 'contest_ref': 1, 'problem_id': 'problem_id', 'name': 'name'}
+        self.row = {'id': 2, 'contest_ref': 1, 'problem_id': 'problem_id', 'name': 'name', 'polygon_id': '42'}
         self.cursor = Mock()
         connection = Mock()
         connection.get_cursor.return_value = self.cursor
@@ -212,7 +212,7 @@ class ProblemsDAOTest(unittest.TestCase):
     @patch('dao.Problem', Mock())
     def test_load(self):
         res = self.dao.load(self.row)
-        self.assertEqual(dao.Problem.mock_calls, [call(('', 'problem_id'), '', 'name', [])])
+        self.assertEqual(dao.Problem.mock_calls, [call(('', 'problem_id'), '42', 'name', [])])
         self.assertEqual(res.contest_ref, 1)
 
     @patch('dao.CasesDAO', columns='kek')
@@ -264,21 +264,17 @@ class ProblemsDAOTest(unittest.TestCase):
     def test_update(self):
         self.cursor.fetchone.return_value = None
         problem1, problem2 = Mock(), Mock()
-        problem1.contest_ref, problem1.name, problem1.problem_id = 'contest_ref1', 'name1', ('', 'problem_id1')
-        problem2.contest_ref, problem2.name, problem2.problem_id = 'contest_ref2', 'name2', ('', 'problem_id2')
+        problem1.contest_ref, problem1.name, problem1.problem_id, problem1.polygon_id = 'contest_ref1', 'name1', ('', 'problem_id1'), '42'
+        problem2.contest_ref, problem2.name, problem2.problem_id, problem2.polygon_id = 'contest_ref2', 'name2', ('', 'problem_id2'), '42'
         self.dao.load = Mock(side_effect=[problem1, problem2])
         self.dao.update(1, {'contest_ref': 'contest_ref3'})
         self.dao.update(2, {'name': 'name3', 'problem_id': 'problem_id3'})
-        calls = [call.execute('SELECT id, contest_ref, problem_id, name FROM Problems WHERE id = ?', [1]),
-                 call.fetchone(),
-                 call.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id '
-                              'WHERE id = :id', {'contest_ref': 'contest_ref3',
-                                                 'name': 'name1', 'problem_id': 'problem_id1', 'id': 1}),
-                 call.execute('SELECT id, contest_ref, problem_id, name FROM Problems WHERE id = ?', [2]),
-                 call.fetchone(),
-                 call.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id '
-                              'WHERE id = :id', {'contest_ref': 'contest_ref2',
-                                                 'name': 'name3', 'problem_id': 'problem_id3', 'id': 2})]
+        calls = [call.execute('SELECT id, contest_ref, problem_id, name, polygon_id FROM Problems WHERE id = ?', [1]),
+        call.fetchone(),
+        call.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id, polygon_id = :polygon_id, WHERE id = :id', {'name': 'name1', 'problem_id': 'problem_id1', 'polygon_id': '42', 'contest_ref': 'contest_ref3', 'id': 1}),
+        call.execute('SELECT id, contest_ref, problem_id, name, polygon_id FROM Problems WHERE id = ?', [2]),
+        call.fetchone(),
+        call.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id, polygon_id = :polygon_id, WHERE id = :id', {'name': 'name3', 'problem_id': 'problem_id3', 'polygon_id': '42', 'contest_ref': 'contest_ref2', 'id': 2})]
         self.assertEqual(self.cursor.mock_calls, calls)
 
 

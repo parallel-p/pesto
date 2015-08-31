@@ -133,14 +133,14 @@ class CasesDAO:
 
 
 class ProblemsDAO:
-    columns = 'id, contest_ref, problem_id, name'
+    columns = 'Problems.id, contest_ref, problem_id, Problems.name, polygon_id'
 
     def __init__(self, connector):
         self.connector = connector
 
     @staticmethod
     def load(row):
-        result = Problem(('', row['problem_id']), '', row['name'], [])
+        result = Problem(('', row['problem_id']), row['polygon_id'], row['name'], [])
         result.contest_ref = row['contest_ref']
         return result
 
@@ -180,11 +180,11 @@ class ProblemsDAO:
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT {} FROM Problems WHERE id = ?'.format(self.columns), [ref])
         old = self.load(cursor.fetchone())
-        new_def = {'contest_ref': old.contest_ref, 'problem_id': old.problem_id[1], 'name': old.name}
+        new_def = {'contest_ref': old.contest_ref, 'problem_id': old.problem_id[1], 'name': old.name, 'polygon_id': old.polygon_id}
         for key, value in update_def.items():
             new_def[key] = value
         new_def['id'] = ref
-        cursor.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id '
+        cursor.execute('UPDATE Problems SET contest_ref = :contest_ref, name = :name, problem_id = :problem_id, polygon_id = :polygon_id, '
                        'WHERE id = :id', new_def)
 
 

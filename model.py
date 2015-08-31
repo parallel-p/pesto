@@ -41,7 +41,7 @@ class Run:
 class Problem:
     def __init__(self, problem_id, polygon_id, name, cases):
         self.problem_id = problem_id
-        self.polygon_id = polygon_id
+        self.polygon_id = polygon_id or ''
         self.name = name
         self.cases = cases
 
