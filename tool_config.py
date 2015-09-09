@@ -13,18 +13,42 @@ from sharding_visitor import ShardingByScoringVisitor
 from elector_visitor import ElectorByMaxCasesVisitor
 from visitor import Visitor
 from os import path
+from statistics import Statistics, SubmitStatistics, ProblemStatistics
+from shard import shard
 
 
 def get_presets_info():
     return """
-        1.count_submits - Counts number of submits for each problem.
-        2.eq_matrix - Creates matrix for each problem which contains how many times cases were launched together.
-        3.same_runs - Counts for each problem lists of runs that were launched together.
-        4.submits_by_signature - Counts submits with each outcome for each problem for each language.
-        5.submits_by_tests - Counts submits with each number of launched tests for each problem.
-        6.same_runs_big_stat - Counts for all problem lists of runs that were launched together.
-        7.gen_pickles - Generates fast access information for next use.
+        1. count_submits - Counts number of submits for each problem.
+        2. eq_matrix - Creates matrix for each problem which contains how many times cases were launched together.
+        3. same_runs - Counts for each problem lists of runs that were launched together.
+        4. submits_by_signature - Counts submits with each outcome for each problem for each language.
+        5. submits_by_tests - Counts submits with each number of launched tests for each problem.
+        6. same_runs_big_stat - Counts for all problem lists of runs that were launched together.
+        7. cases_count - Count cases for each problem.
+        8. same_problems - Find same problems.
+        9. similar_problems - Find similar problems (problems with many same tests).
+        10. draw_tree - Build tree of similar problems and draw it to file.
+        11. build_problems_tree - Build tree of similar problems and write it to json file.
+        12. draw_saved_tree - load tree from json and draw it to file.
     """
+
+class StatCountSubmits(ProblemStatistics):
+
+    def get_input_data(self, connection):
+        cursor = connection.get_cursor()
+        for problem in super().get_input_data(connection):
+            yield (problem.problem_id, next(cursor.execute('SELECT COUNT(*) FROM Submits WHERE problem_ref=?', (problem.db_id,)))[0])
+
+    def calc(self, data):
+        data = list(data)
+        self.result = {}
+        for i in data:
+            self.result[i[0]] = self.result.get(i[0], 0) + i[1]
+
+    def as_string(self):
+        data = {i:'Problem #{}: {} submits'.format(i[1], self.result[i]) for i in self.result}
+        return shard(data, [(lambda x:x[0], lambda x:'Contest #{}'.format(x))], key=lambda x:int(x[1]))
 
 def sharder_wrap(visitor, sharders):
     sharders = list(map(str.capitalize, sharders.split()))
@@ -33,6 +57,10 @@ def sharder_wrap(visitor, sharders):
         sharder_class = globals()['ShardingBy{}Visitor'.format(sharder)]
         visitor = ClassFactory(sharder_class, visitor)
     return visitor.create()
+
+def get_stat_by_preset(preset):
+    if preset in ['1', 'count_submits']:
+        return StatCountSubmits
 
 
 def get_visitor_by_preset(preset, output, no_lang_sharding=False):

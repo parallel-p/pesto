@@ -142,13 +142,17 @@ class ProblemsDAO:
     def load(row):
         result = Problem(('', row['problem_id']), row['polygon_id'], row['name'], [])
         result.contest_ref = row['contest_ref']
+        result.db_id = row['id']  # kostil
         return result
 
-    def deep_load(self, row):
+    def deep_load(self, row, contest_id=None):
         result = self.load(row)
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT contest_id FROM Contests WHERE id = ?', [row['contest_ref']])
-        result.problem_id = (cursor.fetchone()['contest_id'], row['problem_id'])
+        if contest_id is not None:
+            result.problem_id = (contest_id, row['problem_id'])
+        else:
+            cursor.execute('SELECT contest_id FROM Contests WHERE id = ?', [row['contest_ref']])
+            result.problem_id = (cursor.fetchone()['contest_id'], row['problem_id'])
         cursor.execute('SELECT {} FROM Cases WHERE problem_ref = ?'.format(CasesDAO.columns), [row['id']])
         cases_row = cursor.fetchone()
         while cases_row:
@@ -189,7 +193,7 @@ class ProblemsDAO:
 
 
 class SubmitsDAO:
-    columns = 'id, submit_id, lang_id, problem_ref, user_ref, outcome, timestamp'
+    columns = 'Submits.id, submit_id, lang_id, problem_ref, user_ref, outcome, timestamp'
 
     def __init__(self, connector):
         self.connector = connector
@@ -200,13 +204,17 @@ class SubmitsDAO:
         submit.problem_ref, submit.user_ref = row['problem_ref'], row['user_ref']
         return submit
 
-    def deep_load(self, row):
+    def deep_load(self, row, problem_id=None):
         submit = self.load(row)
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), [row['id']])
         runs_dao = DAORuns(self.connector)
         submit.runs = runs_dao.load_all(cursor.fetchall(), row['problem_ref'])
         submit.count_results()
+        if problem_id is not None:
+            submit.problem_id = problem_id
+        else:
+            print('problem_id is not filled, so bad')
         return submit
 
     def define(self, submit_id, problem_ref):
