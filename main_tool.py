@@ -137,7 +137,7 @@ def main():
     elif args[0] == 'stat':
         connector = SQLiteConnector()
         connector.create_connection(args[2])
-        StatClass = tool_config.get_stat_by_preset(args[1])
+        StatClass = tool_config.get_stat_by_preset(args[1], args[5])
         if StatClass is None:
             die(tool_config.get_presets_info())
         stat = StatClass(connector, args[4], args[5])

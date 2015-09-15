@@ -204,7 +204,7 @@ class SubmitsDAO:
         submit.problem_ref, submit.user_ref = row['problem_ref'], row['user_ref']
         return submit
 
-    def deep_load(self, row, problem_id=None):
+    def deep_load(self, row, problem_id=None, scoring=None):
         submit = self.load(row)
         cursor = self.connector.get_cursor()
         cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), [row['id']])
@@ -215,6 +215,10 @@ class SubmitsDAO:
             submit.problem_id = problem_id
         else:
             print('problem_id is not filled, so bad')
+        if scoring is not None:
+            submit.scoring = scoring
+        else:
+            print('scoring is not filled, it makes me cry')
         return submit
 
     def define(self, submit_id, problem_ref):

@@ -50,6 +50,31 @@ class StatCountSubmits(ProblemStatistics):
         data = {i:'Problem #{}: {} submits'.format(i[1], self.result[i]) for i in self.result}
         return shard(data, [(lambda x:x[0], lambda x:'Contest #{}'.format(x))], key=lambda x:int(x[1]))
 
+class StatEqMatrix(SubmitStatistics):
+
+    def _create_visitor(self):
+        return sharder_wrap(EqMatrix, 'scoring contest problem')
+
+class StatSameRuns(SubmitStatistics):
+
+    def _create_visitor(self):
+        return sharder_wrap(SameRuns, 'scoring contest problem')
+
+class StatSubmitsBySignature(SubmitStatistics):
+
+    def _create_visitor(self):
+        return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem')
+
+class StatSubmitsBySignatureLang(SubmitStatistics):  # kostil
+
+    def _create_visitor(self):
+        return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem lang')
+
+class StatSubmitsByTests(SubmitStatistics):
+
+    def _create_visitor(self):
+         return sharder_wrap(SubmitsOverTestCasesNumbers, 'contest')
+
 def sharder_wrap(visitor, sharders):
     sharders = list(map(str.capitalize, sharders.split()))
     visitor = ClassFactory(visitor)
@@ -58,10 +83,20 @@ def sharder_wrap(visitor, sharders):
         visitor = ClassFactory(sharder_class, visitor)
     return visitor.create()
 
-def get_stat_by_preset(preset):
+def get_stat_by_preset(preset, extra):
     if preset in ['1', 'count_submits']:
         return StatCountSubmits
-
+    if preset in ['2', 'eq_matrix']:
+        return StatEqMatrix
+    if preset in ['3', 'same_runs']:
+        return StatSameRuns
+    if preset in ['4', 'submits_by_signature']:
+        return StatSubmitsBySignatureLang if 'lang_sharding' in extra else StatSubmitsBySignature
+    if preset in ['5', 'submits_by_tests']:
+        return StatSubmitsByTests
+    if preset in ['6', 'same_runs_big_stat']:  # TODO something here
+        print('gg')
+        exit()
 
 def get_visitor_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['1', 'count_submits']:

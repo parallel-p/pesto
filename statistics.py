@@ -28,7 +28,7 @@ class Statistics:
 class SubmitStatistics(Statistics):
 
     def _create_query(self):
-        query = 'SELECT {}, Contests.contest_id, Problems.problem_id FROM Submits JOIN Problems ON Submits.problem_ref=Prolems.id JOIN Contests ON Prolems.contest_ref = CONTESTS.id'.format(dao.SubmitsDAO.columns)
+        query = 'SELECT {}, Contests.scoring, Contests.contest_id, Problems.problem_id FROM Submits JOIN Problems ON Submits.problem_ref=Problems.id JOIN Contests ON Problems.contest_ref = CONTESTS.id'.format(dao.SubmitsDAO.columns)
         cond = []
         if 'scoring' in self.filters:
             cond.append(('Contests.scoring = ?', self.filters['scoring']))
@@ -40,12 +40,24 @@ class SubmitStatistics(Statistics):
             query += ' WHERE ' + ' AND '.join(i[0] for i in cond)
         return (query, [i[1] for i in cond])
 
+    def _create_visitor(self):
+        return None
+
     def get_input_data(self, connection):
         cursor = connection.get_cursor()
         query, vals = self._create_query()
         sdao = dao.SubmitsDAO(connection)
         for submit_row in cursor.execute(query, vals):
-            yield sdao.deep_load(submit_row, tuple(submit_row[-2:]))
+            yield sdao.deep_load(submit_row, tuple(submit_row)[-2:], tuple(submit_row)[-3])
+
+    def calc(self, data):
+        vis = self._create_visitor()
+        for submit in data:
+            vis.visit(submit)
+        self.result = vis
+
+    def as_string(self):
+        return self.result.pretty_print()
 
 
 class ProblemStatistics(Statistics):
