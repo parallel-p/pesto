@@ -4,6 +4,9 @@ from stats.max_test_cases_count import MaxTestCasesCount
 from stats.same_runs import SameRunsKirov, SameRunsACM, SameRunsBigStat
 from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
+from find_same_problems import SameProblemsFinder
+from find_similar_problems import SimilarProblemsFinder
+from case_counter import CasesCounter
 from pickle_submits import PickleWriter
 from visitor_factory import VisitorFactory
 from sharding_visitor import ShardingByContestVisitor
@@ -75,6 +78,16 @@ class StatSubmitsByTests(SubmitStatistics):
     def _create_visitor(self):
          return sharder_wrap(SubmitsOverTestCasesNumbers, 'contest')
 
+class StatCasesCount(ProblemStatistics):
+    counter_class = CasesCounter
+
+class StatSameProblems(ProblemStatistics):
+    counter_class = SameProblemsFinder
+
+class StatSimilarProblems(ProblemStatistics):
+    counter_class = SimilarProblemsFinder
+
+
 def sharder_wrap(visitor, sharders):
     sharders = list(map(str.capitalize, sharders.split()))
     visitor = ClassFactory(visitor)
@@ -97,6 +110,12 @@ def get_stat_by_preset(preset, extra):
     if preset in ['6', 'same_runs_big_stat']:  # TODO something here
         print('gg')
         exit()
+    if preset in ['7', 'cases_count']:
+        return StatCasesCount
+    if preset in ['8', 'same_problems']:
+        return StatSameProblems
+    if preset in ['9', 'similar_problems']:
+        return StatSimilarProblems
 
 def get_visitor_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['1', 'count_submits']:

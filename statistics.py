@@ -62,6 +62,8 @@ class SubmitStatistics(Statistics):
 
 class ProblemStatistics(Statistics):
 
+    counter_class = None
+
     def _create_query(self):
         query = 'SELECT {}, Contests.contest_id FROM Problems JOIN Contests ON Problems.contest_ref = Contests.id'.format(dao.ProblemsDAO.columns)
         cond = []
@@ -83,3 +85,7 @@ class ProblemStatistics(Statistics):
             prob = pdao.deep_load(row, row['contest_id'])
             logging.debug('Processing problem {} from contest {}'.format(prob.problem_id[1], prob.problem_id[0]))
             yield prob
+
+    def calc(self, data):
+        self.result = self.counter_class(data)
+
