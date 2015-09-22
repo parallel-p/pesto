@@ -16,15 +16,15 @@ class ProblemsTree:
                 problem_2_tests = set(problem_2.cases)
                 same_tests_count = len(problem_1_tests & problem_2_tests)
                 try:
-                    similarity = same_tests_count / max(len(problem_1_tests), len(problem_2_tests))
+                    similarity = same_tests_count / max(len(problem_1.cases), len(problem_2.cases))
                 except ZeroDivisionError:
                     similarity = 0.0
                 if similarity > SIMILAR_PROBLEMS_MIN_RATIO:
                     if problem_2 not in self.problem_previous or \
                                     similarity > self.problem_previous[problem_2][1] - EPS:
                         self.problem_previous[problem_2] = (problem_1, similarity, same_tests_count,
-                                                            len(problem_2_tests) - same_tests_count,
-                                                            len(problem_1_tests) - same_tests_count)
+                                                            len(problem_2.cases) - same_tests_count,
+                                                            len(problem_1.cases) - same_tests_count)
 
     def get_problems(self):
         return self.problems
