@@ -22,6 +22,7 @@ from stats.contests_grouper import ContestsGrouper
 from problems_tree import ProblemsTree
 import problems_tree_json
 from problem_generator import sqlite_contest_generator
+from tree_drawer import TreeDrawer
 
 
 def get_presets_info():
@@ -115,7 +116,28 @@ class StatBuildTree(ProblemStatistics):
         tree = ProblemsTree(problems)
         self.result = problems_tree_json.save_tree(tree, cg, 'pretty_json' in self.extra)
 
+class StatDrawTree(Statistics):
 
+    def _get_json(self):
+        saved_tree_filename = self.extra.get('tree_json')
+        if not saved_tree_filename:
+            print('Saved tree file is not specified')
+            exit()  # TODO something more clever here
+        with open(saved_tree_filename) as saved_tree_file:
+            data = result = saved_tree_file.read()
+        return data
+
+    def save_to_file(self, filename):
+        if filename is None:
+            print('Sorry, I can\'t draw tree to console')
+            return
+        tree, contests_grouper = problems_tree_json.load_tree(self._get_json())
+        drawer = TreeDrawer(tree, contests_grouper)  # TODO "saving..." when all lines are located
+        drawer.save_image_to_file(filename)
+
+class StatBuildDrawTree(StatBuildTree, StatDrawTree):  # sorry
+    def _get_json(self):
+        return self.result  # TODO do not convert json to string
 
 def sharder_wrap(visitor, sharders):
     sharders = list(map(str.capitalize, sharders.split()))
@@ -147,6 +169,10 @@ def get_stat_by_preset(preset, extra):
         return StatSimilarProblems
     if preset in ['10', 'build_tree']:
         return StatBuildTree
+    if preset in ['11', 'draw_saved_tree']:
+        return StatDrawTree
+    if preset in ['12', 'draw_tree']:
+        return StatBuildDrawTree
 
 def get_visitor_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['1', 'count_submits']:
