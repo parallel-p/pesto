@@ -18,6 +18,10 @@ from visitor import Visitor
 from os import path
 from statistics import Statistics, SubmitStatistics, ProblemStatistics
 from shard import shard
+from stats.contests_grouper import ContestsGrouper
+from problems_tree import ProblemsTree
+import problems_tree_json
+from problem_generator import sqlite_contest_generator
 
 
 def get_presets_info():
@@ -31,8 +35,8 @@ def get_presets_info():
         7. cases_count - Count cases for each problem.
         8. same_problems - Find same problems.
         9. similar_problems - Find similar problems (problems with many same tests).
-        10. draw_tree - Build tree of similar problems and draw it to file.
-        11. build_problems_tree - Build tree of similar problems and write it to json file.
+        10. build_tree - Build tree of similar problems and write it to json file.
+        11. draw_tree - Build tree of similar problems and draw it to file.
         12. draw_saved_tree - load tree from json and draw it to file.
     """
 
@@ -87,6 +91,31 @@ class StatSameProblems(ProblemStatistics):
 class StatSimilarProblems(ProblemStatistics):
     counter_class = SimilarProblemsFinder
 
+class StatBuildTree(ProblemStatistics):
+    def get_input_data(self, connection):
+        problems = list(super().get_input_data(connection))
+        contests = list(sqlite_contest_generator(connection))
+        return problems, contests
+
+
+    def calc(self, data):
+        problems, contests = data
+        cg = ContestsGrouper(contests)
+        contests = cg.get_contests_sorted()
+        contest_to_problems = dict()
+        for contest in contests:
+            contest_to_problems[contest.contest_id] = []
+        for problem in problems:
+            contest_id = problem.problem_id[0]
+            if contest_id in contest_to_problems:
+                contest_to_problems[contest_id].append(problem)
+        problems = []
+        for contest in contests:
+            problems += contest_to_problems[contest.contest_id]
+        tree = ProblemsTree(problems)
+        self.result = problems_tree_json.save_tree(tree, cg, 'pretty_json' in self.extra)
+
+
 
 def sharder_wrap(visitor, sharders):
     sharders = list(map(str.capitalize, sharders.split()))
@@ -116,6 +145,8 @@ def get_stat_by_preset(preset, extra):
         return StatSameProblems
     if preset in ['9', 'similar_problems']:
         return StatSimilarProblems
+    if preset in ['10', 'build_tree']:
+        return StatBuildTree
 
 def get_visitor_by_preset(preset, output, no_lang_sharding=False):
     if preset in ['1', 'count_submits']:

@@ -27,6 +27,8 @@ def parse_args():
     parser.add_argument('--scoring', help="contest scoring (acm, kirov)")
     parser.add_argument('--lang-sharding', help="shard by language in submits_by_signature",
                         action="store_true")
+    parser.add_argument('--pretty-json', help="prettify build_tree output",
+                        action="store_true")
     parser.add_argument('preset', help="name or number of statistics preset", nargs='?')
 
     # run_cases_stats
@@ -93,6 +95,8 @@ def get_arguments():
     extra = {}
     if args['lang_sharding']:
         extra['lang_sharding'] = True
+    if args['pretty_json']:
+        extra['pretty_json'] = True
     if args['tree_json']:
         extra['tree_json'] = args['tree_json']
     if args['clean']:
