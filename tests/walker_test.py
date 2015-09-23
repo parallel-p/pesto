@@ -1,7 +1,6 @@
 from unittest.mock import Mock, patch, MagicMock
 import unittest
 import os.path
-import pickle
 
 from pesto_testcase import PestoTestCase
 from walker import MultipleContestWalker
@@ -9,7 +8,6 @@ from walker import SingleContestWalker
 from walker import EjudgeRunsFilesWorker
 
 from walker import AllFilesWalker
-from walker import PickleWorker
 from walker import SubmitWalker
 
 
@@ -68,18 +66,6 @@ class TestAllFilesWalker(PestoTestCase):
         self.assertEqual(sorted(files), sorted(good_files))
 
 
-class TestPickleWalker(PestoTestCase):
-    def setUp(self):
-        self.walker = PickleWorker()
-
-    def test_walk(self):
-        dir = os.path.join('testdata', 'pickle_walker')
-        files = list(self.walker.walk(dir))
-        good_files = [('pickle', os.path.join('testdata', 'pickle_walker', '17', 'pickle000001.pickle')),
-                      ('pickle', os.path.join('testdata', 'pickle_walker', '17', 'pickle000001_1.pickle')),
-                      ('pickle', os.path.join('testdata', 'pickle_walker', '18', 'pickle000001.pickle')),
-                      ('pickle', os.path.join('testdata', 'pickle_walker', '18', 'pickle000001_3.pickle'))]
-        self.assertEqual(sorted(files), sorted(good_files))
 
 
 class TestSubmitWalker(PestoTestCase):
@@ -87,22 +73,6 @@ class TestSubmitWalker(PestoTestCase):
         w = SubmitWalker('7')
         self.assertEqual(w.database, '7')
         self.assertEqual(w.contest_id, 0)
-
-    @patch('builtins.open', return_value=MagicMock(__exit__=Mock(return_value=False)))
-    @patch('pickle.load', return_value=[1, 2, 3])
-    def test_submit_from_pickle(self, pk, op):
-        res = list(SubmitWalker._get_submit_from_pickle(Mock(), 'filename'))
-        op.assert_called_once_with('filename', 'rb')
-        pk.asssert_called_once_with(42)
-        self.assertEqual(res, [1, 2, 3])
-
-    @patch('builtins.open', return_value=MagicMock(__exit__=Mock(return_value=False)))
-    @patch('pickle.load', return_value=[1, 2, 3], side_effect=pickle.UnpicklingError())
-    def test_submit_from_pickle_error(self, pk, op):
-        res = list(SubmitWalker._get_submit_from_pickle(Mock(), 'filename'))
-        op.assert_called_once_with('filename', 'rb')
-        pk.asssert_called_once_with(42)
-        self.assertEqual(res, [])
 
     @patch('walker.ejudge_xml_parse', return_value=Mock(submit_id='5', submit_outcome='OK', scoring='ACM',
                                                         run_outcomes=[('2', '3', 'OK'), ('4', '5', 'WA')]))

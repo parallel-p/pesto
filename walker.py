@@ -1,7 +1,5 @@
 import os
 from gzip import open as gzip_open
-import pickle
-
 from ejudge_xml_parse import ejudge_xml_parse
 
 from model import Run
@@ -52,17 +50,6 @@ class AllFilesWalker(Walker):
                 yield ('gzip' if file.endswith('.gz') else 'xml', file_name)
 
 
-class PickleWorker(Walker):
-    def walk(self, start_dir):
-        for root, dirs, files in os.walk(start_dir):
-            for file in files:
-                if not file.endswith('.pickle'):
-                    continue
-
-                file_name = os.path.join(root, file)
-                yield ('pickle', file_name)
-
-
 class SubmitWalker(Walker):
     def __init__(self, ejudge_DB):
         self.database = ejudge_DB
@@ -72,21 +59,9 @@ class SubmitWalker(Walker):
         if file_name.endswith('.gz'):
             with gzip_open(file_name) as current_file:
                 yield self._get_submit_from_xml(current_file)
-        elif file_name.endswith('.pickle'):
-            for submit in self._get_submit_from_pickle(file_name):
-                yield submit
         else:
             with open(file_name, encoding='utf-8') as current_file:
                 yield self._get_submit_from_xml(current_file)
-
-    def _get_submit_from_pickle(self, file_name):
-        try:
-            with open(file_name, 'rb') as file:
-                arr = pickle.load(file)
-        except pickle.UnpicklingError:
-            arr = []
-        for submit in arr:
-            yield submit
 
     def _get_submit_from_xml(self, xml_file):
         if self.database == None:
