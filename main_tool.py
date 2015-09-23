@@ -8,7 +8,7 @@ from  sqlite_connector import SQLiteConnector
 import update_db
 
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 2
 
 
 def die(message):

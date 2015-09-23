@@ -1,5 +1,4 @@
-from dao_runs import DAORuns
-from model import User, Problem, Submit
+from model import User, Problem, Submit, Run
 import model
 
 
@@ -207,8 +206,8 @@ class SubmitsDAO:
     def deep_load(self, row, problem_id=None, scoring=None):
         submit = self.load(row)
         cursor = self.connector.get_cursor()
-        cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(DAORuns.columns), [row['id']])
-        runs_dao = DAORuns(self.connector)
+        cursor.execute('SELECT {} FROM Runs WHERE submit_ref = ?'.format(RunsDAO.columns), [row['id']])
+        runs_dao = RunsDAO(self.connector)
         submit.runs = runs_dao.load_all(cursor.fetchall(), row['problem_ref'])
         submit.count_results()
         if problem_id is not None:
@@ -252,3 +251,69 @@ class SubmitsDAO:
         cursor.execute('UPDATE Submits SET submit_id = :submit_id, lang_id = :lang_id, problem_ref = :problem_ref, '
                        'user_ref = :user_ref, outcome = :outcome, timestamp = :timestamp WHERE id = :id', new_def)
 
+class RunsDAO:
+    columns = 'realtime, time, outcome, submit_ref, case_ref'
+    case_cache = {}
+
+    def __init__(self, sqlite_connector):
+        self.connector = sqlite_connector
+
+    @staticmethod
+    def load(row):
+        run = Run('', '', '', row['realtime'], row['time'], row['outcome'])
+        run.submit_ref, run.case_ref = row['submit_ref'], row['case_ref']
+        return run
+
+    def deep_load(self, row):
+        run = self.load(row)
+        cursor = self.connector.get_cursor()
+        cursor.execute('SELECT case_id FROM Cases WHERE id = ?', [row['case_ref']])
+        run.case_id = cursor.fetchone()['case_id']
+        return run
+
+    def load_all(self, rows, problem_ref):
+        cursor = self.connector.get_cursor()
+        runs = []
+        if problem_ref in self.case_cache:
+            cases = self.case_cache[problem_ref]
+        else:
+            cursor.execute('SELECT id,case_id FROM Cases WHERE problem_ref=?', (problem_ref,))
+            cases = dict(cursor.fetchall())
+            self.case_cache[problem_ref] = cases
+        for row in rows:
+            run = self.load(row)
+            run.case_id = cases[row['case_ref']]
+            runs.append(run)
+        return runs
+
+
+    def define(self, submit_ref, case_ref):
+        ref = self.lookup(submit_ref, case_ref)
+        if ref is None:
+            ref = self.create(submit_ref, case_ref)
+        return ref
+
+    def lookup(self, submit_ref, case_ref):
+        cursor = self.connector.get_cursor()
+        cursor.execute('SELECT id FROM Runs WHERE submit_ref = ? AND case_ref = ?',
+                       [submit_ref, case_ref])
+        response = cursor.fetchone()
+        return response['id'] if response else None
+
+    def create(self, submit_ref, case_ref):
+        cursor = self.connector.get_cursor()
+        cursor.execute('INSERT INTO Runs (id, submit_ref, case_ref) VALUES (NULL, ?, ?)',
+                       [submit_ref, case_ref])
+        return cursor.lastrowid
+
+    def update(self, ref, update_def):
+        cursor = self.connector.get_cursor()
+        cursor.execute('SELECT {} FROM Runs WHERE id = ?'.format(self.columns), [ref])
+        old = self.load(cursor.fetchone())
+        new_def = {'submit_ref': old.submit_ref, 'case_ref': old.case_ref, 'realtime': old.real_time,
+                   'time': old.time, 'outcome': old.outcome}
+        for key, value in update_def.items():
+            new_def[key] = value
+        new_def['id'] = ref
+        cursor.execute('UPDATE Runs SET submit_ref = :submit_ref, case_ref = :case_ref, realtime = :realtime, '
+                       'time = :time, outcome = :outcome WHERE id = :id', new_def)
