@@ -1,65 +1,9 @@
 import sqlite3
-import argparse
 import logging
-import os
-
-from sqlite_connector import SQLiteConnector
 import scheme_update_funcs
-import toollib
-
-
-
-# Version in code.
-ACTUAL_SCHEMA_VERSION = 2
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="It updates pesto db schema\n"
-                                                 "You need to fill the config file first")
-    parser.add_argument('--cfg', help="Config file. By default config.ini is used",
-                        default='config.ini')
-    parser.add_argument('--log', help="Log filename. By default none file log is used",
-                        default=None)
-
-    parser.add_argument('--update_to',
-                        help='Version to which you want to update the database. Actual(code) version by default',
-                        default=ACTUAL_SCHEMA_VERSION)
-
-    return vars(parser.parse_args())
-
-
-def get_arguments():
-    args = parse_args()
-    config = None
-    log_filename = args['log']
-    config_name = args['cfg']
-    try:
-        target_schema_version = int(args['update_to'])
-    except Exception:
-        print('Shema version must be integer')
-        exit()
-
-    try:
-        config = toollib.read_config(config_name, 'update_db')
-    except KeyError:
-        print('Incorrect config filename.')
-        exit()
-
-    if config is None:
-        print('Incorrect config name, try again')
-        exit()
-
-    try:
-        db_filename = config['database']
-    except KeyError:
-        print('Wrong config file:Pesto db parameters are not specified')
-        exit()
-
-    return args, db_filename, log_filename, target_schema_version
 
 
 def get_schema_version(db_cursor):
-    logging.info('Receiving schema version')
     schema_version = 0
     try:
         db_cursor.execute('SELECT version_of_the_database_schema FROM Configuration')
@@ -71,7 +15,7 @@ def get_schema_version(db_cursor):
     except sqlite3.OperationalError:
         logging.error('Not found configuration table or version column in configuration table')
 
-    logging.info('Database schema version is {}'.format(schema_version))
+    logging.debug('Database schema version is {}'.format(schema_version))
 
     return schema_version
 
@@ -79,10 +23,11 @@ def get_schema_version(db_cursor):
 def start_update(connector, target_schema_version):
     db_cursor = connector.get_cursor()
     schema_version = get_schema_version(db_cursor)
+    if schema_version > target_schema_version:
+        logging.fatal('Database version {} is not supported'.format(schema_version))
+        exit()
 
-    logging.info('Starting update from {} to {}'.format(schema_version, target_schema_version))
-
-    while schema_version != target_schema_version:
+    while schema_version < target_schema_version:
         update_func_name = 'update_from_v{}_to_v{}'.format(schema_version, schema_version + 1)
         try:
             update_func = getattr(scheme_update_funcs, update_func_name)
@@ -102,32 +47,3 @@ def start_update(connector, target_schema_version):
             logging.info('Changes commited')
             schema_version += 1
 
-    logging.info('Update successful')
-
-
-def main():
-    args, db_filename, log_filename, target_schema_version = get_arguments()
-
-    if log_filename:
-        logging.basicConfig(filename=log_filename, format='[%(asctime)s]  %(levelname)s: %(message)s',
-                            level=logging.INFO)
-    else:
-        logging.basicConfig(format='[%(asctime)s]  %(levelname)s: %(message)s', level=logging.INFO)
-
-    if os.path.isfile(db_filename):
-        pesto_connector = SQLiteConnector()
-        pesto_connector.create_connection(db_filename)
-        logging.info('Connected to Pesto database')
-    else:
-        logging.error('Database file not found')
-        exit()
-
-    start_update(pesto_connector, target_schema_version)
-
-    logging.info('Closing connection..')
-    pesto_connector.close_connection()
-    logging.info('Connection closed')
-
-
-if __name__ == "__main__":
-    main()

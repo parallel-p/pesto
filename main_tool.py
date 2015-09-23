@@ -2,10 +2,13 @@
 
 import toollib
 import tool_config
-import sys
 from argparse import ArgumentParser
 import db_tool
 from  sqlite_connector import SQLiteConnector
+import update_db
+
+
+SCHEMA_VERSION = 3
 
 
 def die(message):
@@ -136,6 +139,10 @@ def get_arguments():
 
 def main():
     args = get_arguments()
+    connector = SQLiteConnector()
+    connector.create_connection(args[2])
+    update_db.start_update(connector, SCHEMA_VERSION)
+    connector.close_connection()
     if args[0] == 'fill':
         db_tool.fill_database(*args[1:])
     elif args[0] == 'stat':

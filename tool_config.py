@@ -1,4 +1,3 @@
-from stats.count_submits import SubmitsCounter
 from stats.eq_matrix import EqMatrix
 from stats.max_test_cases_count import MaxTestCasesCount
 from stats.same_runs import SameRunsKirov, SameRunsACM, SameRunsBigStat
@@ -7,8 +6,6 @@ from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
 from find_same_problems import SameProblemsFinder
 from find_similar_problems import SimilarProblemsFinder
 from case_counter import CasesCounter
-from pickle_submits import PickleWriter
-from visitor_factory import VisitorFactory
 from sharding_visitor import ShardingByContestVisitor
 from sharding_visitor import ShardingByProblemVisitor
 from sharding_visitor import ShardingByLangVisitor
@@ -174,25 +171,6 @@ def get_stat_by_preset(preset, extra):
     if preset in ['12', 'draw_tree']:
         return StatBuildDrawTree
 
-def get_visitor_by_preset(preset, output, no_lang_sharding=False):
-    if preset in ['1', 'count_submits']:
-        return sharder_wrap(SubmitsCounter, 'contest')
-    if preset in ['2', 'eq_matrix']:
-        return sharder_wrap(EqMatrix, 'scoring contest problem')
-    if preset in ['3', 'same_runs']:
-        return sharder_wrap(SameRuns, 'scoring contest problem')
-    if preset in ['4', 'submits_by_signature']:
-        return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem' + ('' if no_lang_sharding else ' lang'))
-    if preset in ['5', 'submits_by_tests']:
-        return sharder_wrap(SubmitsOverTestCasesNumbers, 'contest')
-    if preset in ['6', 'same_runs_big_stat']:
-        return SameRunsBigStat()  # this does not work properly, however
-    if preset in ['7', 'gen_pickles']:
-        writer = PickleWriter()
-        writer.default_path = path.join('.', output)
-        return writer
-    return None
-
 class SameRuns(Visitor):
 
     def __init__(self):
@@ -212,7 +190,7 @@ class SameRuns(Visitor):
     def pretty_print(self):
         return self.child.pretty_print()
 
-class ClassFactory(VisitorFactory):
+class ClassFactory:
     def __init__(self, klass, *params):
         self.klass = klass
         self.params = params
