@@ -1,5 +1,6 @@
 from model import User, Problem, Submit, Run
 import model
+import logging
 
 
 class UsersDAO:
@@ -213,11 +214,11 @@ class SubmitsDAO:
         if problem_id is not None:
             submit.problem_id = problem_id
         else:
-            print('problem_id is not filled, so bad')
+            logging.warning('SubmitsDAO: problem_id is not filled')
         if scoring is not None:
             submit.scoring = scoring
         else:
-            print('scoring is not filled, it makes me cry')
+            logging.warning('SubmitsDAO: scoring is not filled')
         return submit
 
     def define(self, submit_id, problem_ref):

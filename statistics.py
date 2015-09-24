@@ -83,7 +83,6 @@ class ProblemStatistics(Statistics):
         pdao = dao.ProblemsDAO(connection)
         for row in cursor.execute(query, vals):
             prob = pdao.deep_load(row, row['contest_id'])
-            logging.debug('Processing problem {} from contest {}'.format(prob.problem_id[1], prob.problem_id[0]))
             yield prob
 
     def calc(self, data):
