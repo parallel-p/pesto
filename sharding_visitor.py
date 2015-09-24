@@ -76,7 +76,7 @@ class ShardingByUserVisitor(ShardingVisitor):
         return submit.user_id
 
     def pretty_key(self, key):
-        return 'UserID #{}'.format(key)
+        return 'User #{}'.format(key)
 
 
 class ShardingByLangVisitor(ShardingVisitor):
@@ -84,7 +84,7 @@ class ShardingByLangVisitor(ShardingVisitor):
         return submit.lang_id
 
     def pretty_key(self, key):
-        return 'LangID #{}'.format(key)
+        return 'Lang #{}'.format(key)
 
 
 class ShardingByScoringVisitor(ShardingVisitor):
@@ -92,4 +92,4 @@ class ShardingByScoringVisitor(ShardingVisitor):
         return 'ACM' if submit.scoring == 'ACM' else 'kirov'
 
     def pretty_key(self, key):
-        return 'Scoring type - #{}'.format(key)
+        return 'Scoring type: {}'.format(key)

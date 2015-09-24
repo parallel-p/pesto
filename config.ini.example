@@ -1,18 +1,11 @@
-[tool]
-#If you want to use your own config, use config.ini, which is added to git ignore
+[global]
 database = my_data/database_file.db
-pickle_dir = pickle
-trash_dir = trash
-output = trash/output.txt
+#output = output.txt
+
+[stat]
 scoring = ALL
 
-[cases_stats]
-database = database.db
-base_dir = my_data
-output = trash/output.txt
-
-[db_tool]
-pickle_dir = my_data/pickle
+[fill]
 base_dir = my_data/contests
 
 # WARNING If you have any non-empty database there, it'll be overwritten
@@ -24,6 +17,8 @@ mysql_password = password
 mysql_host = 127.0.0.1
 mysql_port = 8080
 mysql_db_name = ejudge_sis
+
+
 
 [recommender_tool]
 input_db_filename = pesto.db

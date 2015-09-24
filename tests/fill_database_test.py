@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock, Mock, call
 
-from fill_database import create_submit_walker, fill_from_pickles, fill_from_xml
+from fill_database import create_submit_walker, fill_from_xml
 import fill_database as fill_database
 
 
@@ -13,21 +13,6 @@ class TestFillDatabase(unittest.TestCase):
         self.assertEqual(create_submit_walker(), 17)
         ed.assert_called_once_with(1)
 
-    @patch('fill_database.create_submit_walker')
-    @patch('fill_database.PickleWorker')
-    def test_fill_from_pickles(self, pw, sw):
-        walker = MagicMock(walk=MagicMock(return_value=[10, 20, 30]))
-        pickle_walker = MagicMock(walk=MagicMock(return_value=[(1, 'a'), (2, 'b'), (3, 'c')]))
-        pw.return_value = pickle_walker
-        sw.return_value = walker
-        fill = Mock()
-        fill_database.DBSubmitsFiller = Mock(return_value=fill)
-        fill_from_pickles('sqlite', 'pickle', 'origin')
-        self.assertEqual(fill_database.DBSubmitsFiller.mock_calls, [call('sqlite')])
-        good = ("[call(10, 'origin'),\n call(20, 'origin'),\n call(30, 'origin'),\n "
-                "call(10, 'origin'),\n call(20, 'origin'),\n call(30, 'origin'),\n "
-                "call(10, 'origin'),\n call(20, 'origin'),\n call(30, 'origin')]")
-        self.assertEqual(str(fill.fill_db_from_submit.call_args_list), good)
 
     @patch('builtins.print')
     @patch('fill_database.create_submit_walker')

@@ -5,7 +5,7 @@ import stats.contests_grouper
 import model
 
 
-def save_tree(tree, contest_grouper):
+def save_tree(tree, contest_grouper, pretty=False):
     result = ([], [])
     problem_to_index = dict()
     for index, problem in enumerate(tree.get_problems()):
@@ -21,7 +21,7 @@ def save_tree(tree, contest_grouper):
         contest_data = contest_grouper.contests[contest_id]
         result[1].append({"id": contest_id, "data": (contest_data.year, contest_data.season,
                                                      contest_data.day, contest_data.parallel)})
-    return json.dumps(result, indent=4)
+    return json.dumps(result, indent=4) if pretty else json.dumps(result)
 
 
 def load_tree(json_str):

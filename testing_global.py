@@ -1,8 +1,10 @@
+#!/usr/bin/python3
+
 import unittest
 import os
 
 
-this_dir = os.path.join(os.path.dirname(__file__) + 'tests')
+this_dir = os.path.join(os.path.dirname(__file__), 'tests')
 tests = unittest.defaultTestLoader.discover(start_dir=this_dir, pattern='*_test.py')
 base = unittest.TestResult()
 tests.run(base)

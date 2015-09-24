@@ -68,6 +68,8 @@ trash/
 config.ini
 output.txt
 tempdir/
+output.png
+profiler.py
 
 # Fonts
 fonts/
