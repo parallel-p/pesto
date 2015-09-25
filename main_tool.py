@@ -84,6 +84,8 @@ def get_arguments():
             outfile = None
     else:
         outfile = None
+    if outfile:
+        outfile = os.path.expanduser(outfile)
 
     filters = {}
     if args['filter_contest']:
