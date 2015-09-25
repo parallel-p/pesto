@@ -6,19 +6,19 @@ def shard(data, shard_by, indent=0, key=str):
     shard_by = shard_by[1:]
     sep = '\n' + '\t' * indent
     for i in data:
-        key = key_func(i)
-        result[key] = result.get(key, {})
-        result[key][i] = data[i]
+        k = key_func(i)
+        result[k] = result.get(k, {})
+        result[k][i] = data[i]
     if shard_by:
         for i in result:
             result[i] = shard(result[i], shard_by, indent+1, key)
     else:
         for i in result:
             try:
-                sorted_data=sorted(result[i].values(), key=lambda x:key(x[0]))
+                sorted_data=sorted(result[i].items(), key=lambda x:key(x[0]))
             except Exception:
-                sorted_data = sorted(result[i].values())
-            result[i] = '\n' + '\n'.join(sorted_data)
+                sorted_data = sorted(result[i].items())
+            result[i] = '\n' + '\n'.join(i[1] for i in sorted_data)
             result[i] = result[i].replace('\n', (sep + '\t'))
     try:
         keys = sorted(result, key=comparable)
