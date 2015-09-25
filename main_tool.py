@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 import db_tool
 from  sqlite_connector import SQLiteConnector
 import update_db
+import os.path
 
 
 SCHEMA_VERSION = 2
@@ -70,6 +71,7 @@ def get_arguments():
         die('Unable to parse config file')
     config = dict(config)
     database_name = args['database'] or config['global'].get('database') or die('Database not found')
+    database_name = os.path.expanduser(database_name)
 
     if action == 'stat':
         if args['console']:
