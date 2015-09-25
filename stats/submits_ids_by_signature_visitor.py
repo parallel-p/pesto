@@ -29,7 +29,8 @@ class SubmitsIdsBySignatureVisitor(Visitor):
         temp_data = list(self.get_stat_data().items())
         temp_data.sort(key=lambda x: (-len(x[0]), -x[1][0], x[1][1]))
 
-        answer = []
+        total = sum(i[1][0] for i in temp_data)
+        answer = ['Total submits: {}'.format(total)]
         for signature, sabmits_num_and_samp in temp_data:
             answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0],
                                                                                  sabmits_num_and_samp[1]))
