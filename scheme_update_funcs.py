@@ -13,3 +13,8 @@ def update_from_v0_to_v1(db_cursor):
 def update_from_v1_to_v2(db_cursor):
     db_cursor.execute('ALTER TABLE Problems ADD COLUMN  polygon_id TEXT')
     _update_scheme_version(db_cursor, 2)
+
+def update_from_v2_to_v3(db_cursor):
+    db_cursor.execute('DROP INDEX `submits_index_2`')
+    db_cursor.execute('CREATE INDEX `submits_index_2` ON `Submits` (`problem_ref`, `submit_id`)')
+    _update_scheme_version(db_cursor, 3)

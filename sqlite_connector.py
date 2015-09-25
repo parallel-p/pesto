@@ -1,4 +1,5 @@
 import sqlite3
+import logging
 
 
 class SQLiteConnector:
@@ -6,6 +7,7 @@ class SQLiteConnector:
         self.sqlite_connection = None
 
     def create_connection(self, db_dir):
+        logging.debug('Connecting to ' + db_dir)
         self.sqlite_connection = sqlite3.connect(db_dir)
         self.sqlite_connection.row_factory = sqlite3.Row
 
