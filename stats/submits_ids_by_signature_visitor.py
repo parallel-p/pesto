@@ -35,8 +35,8 @@ class SubmitsIdsBySignatureVisitor(Visitor):
         answer = ['Total submits: {}'.format(total)]
         for signature, sabmits_num_and_samp in temp_data:
             if sabmits_num_and_samp[0] >= self.min_submits:
-                answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0],
-                                                                                 sabmits_num_and_samp[1]))
+                answer.append('{} submits: {}\n  Samples: {}'.format(sabmits_num_and_samp[0], signature,
+                                                                                 ', '.join(sabmits_num_and_samp[1])))
         answer.append('')
 
         return '\n'.join(answer)
