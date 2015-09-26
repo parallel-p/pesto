@@ -30,7 +30,8 @@ def load_tree(json_str):
     tree.problems = []
     tree.problem_previous = dict()
     for problem in data[0]:
-        tree.problems.append(model.Problem(problem["id"], '', problem["name"], (None, ) * problem["cases_count"]))
+        tree.problems.append(model.Problem(problem["id"], '', problem["name"], (None, ) * problem["cases_count"],
+                                           (None, ) * problem["cases_count"]))
         relation_to_parent = problem["parent"]
         if relation_to_parent != "None":
             relation_to_parent = (tree.problems[int(relation_to_parent[0])], ) + tuple(relation_to_parent[1:])

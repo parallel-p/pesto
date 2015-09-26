@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from md5_hasher import _md5_update, get_hash
+from md5_hasher import _md5_update, get_hash_case, get_hash_file
 
 
 class TestMD5Hasher(unittest.TestCase):
@@ -15,8 +15,12 @@ class TestMD5Hasher(unittest.TestCase):
         md5.update.assert_called_once_with('contents')
 
     @patch('md5_hasher._md5_update', lambda md5, name: md5.update(name))
-    def test_get_hash(self):
-        self.assertEqual(get_hash(b'123', b'456'), 'e10adc3949ba59abbe56e057f20f883e')  # md5('123456')
+    def test_get_hash_case(self):
+        self.assertEqual(get_hash_case(b'123', b'456'), 'e10adc3949ba59abbe56e057f20f883e')  # md5('123456')
+
+    @patch('md5_hasher._md5_update', lambda md5, name: md5.update(name))
+    def test_get_hash_file(self):
+        self.assertEqual(get_hash_file(b'123456'), 'e10adc3949ba59abbe56e057f20f883e')  # md5('123456')
 
 
 if __name__ == "__main__":

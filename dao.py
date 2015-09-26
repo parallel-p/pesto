@@ -98,7 +98,10 @@ class CasesDAO:
 
     @staticmethod
     def load(row):
-        result_hash = row['io_hash']
+        if 'hash_input' in row:
+            result_hash = (row['io_hash'], (row['hash_input'], row['hash_output']))
+        else:
+            result_hash = (row['io_hash'], None)
         return result_hash
 
     def deep_load(self, row):
@@ -140,7 +143,7 @@ class ProblemsDAO:
 
     @staticmethod
     def load(row):
-        result = Problem(('', row['problem_id']), row['polygon_id'], row['name'], [])
+        result = Problem(('', row['problem_id']), row['polygon_id'], row['name'], [], [])
         result.contest_ref = row['contest_ref']
         result.db_id = row['id']  # kostil
         return result
@@ -153,12 +156,15 @@ class ProblemsDAO:
         else:
             cursor.execute('SELECT contest_id FROM Contests WHERE id = ?', [row['contest_ref']])
             result.problem_id = (cursor.fetchone()['contest_id'], row['problem_id'])
+
         cursor.execute('SELECT {} FROM Cases WHERE problem_ref = ?'.format(CasesDAO.columns), [row['id']])
         cases_row = cursor.fetchone()
         while cases_row:
-            hash = CasesDAO.load(cases_row)
+            hash, hash_io = CasesDAO.load(cases_row)
             result.cases.append(hash)
+            result.cases_io.append(hash_io)
             cases_row = cursor.fetchone()
+
         return result
 
     def define(self, contest_ref, problem_id):

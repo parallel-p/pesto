@@ -39,11 +39,12 @@ class Run:
 
 
 class Problem:
-    def __init__(self, problem_id, polygon_id, name, cases):
+    def __init__(self, problem_id, polygon_id, name, cases, cases_io):
         self.problem_id = problem_id
         self.polygon_id = polygon_id or ''
         self.name = name
         self.cases = cases
+        self.cases_io = cases_io
 
     def __str__(self):
         return 'Problem #{0} ("{1}") from contest #{2}'.format(self.problem_id[1], self.name, self.problem_id[0])

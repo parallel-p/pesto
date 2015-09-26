@@ -30,8 +30,15 @@ def update_database(path):
 
 
 def fill_cases_hashes(cursor, base_dir, origin, startfrom):
-    startfrom = startfrom
     logging.info("Filling cases starting from contest #{}".format(startfrom))
+
+    cursor.execute("PRAGMA TABLE_INFO(Cases)")
+    cases_columns = [x[1] for x in cursor.fetchall()]
+    if "hash_input" not in cases_columns:
+        logging.info("Creating columns for hashes in database".format(startfrom))
+        cursor.execute("ALTER TABLE Cases ADD COLUMN hash_input TEXT;")
+        cursor.execute("ALTER TABLE Cases ADD COLUMN hash_output TEXT;")
+
     extract_cases_to_db(MultipleContestWalker().walk(base_dir, path_only=True), cursor,
                         origin, startfrom)
 
@@ -56,6 +63,7 @@ def fill_contests_names(sqlite_cursor, contests_info_dir, origin):
         fill_db_from_contest_xml(contests_info_dir, sqlite_cursor, origin)
         logging.info('Contests names were filled')
 
+
 def fill_database(output_database, base_dir, contests_info_dir, mysql_config, origin, extra):
     if 'clean' in extra:
         connection, sqlite_cursor = create_new_database(output_database, 'tables_script.txt')
@@ -76,7 +84,7 @@ def fill_database(output_database, base_dir, contests_info_dir, mysql_config, or
             fill_cases_hashes(sqlite_cursor, base_dir, origin, extra['start_from'])
             connection.commit()
             connection.close()
-            logging.info('Case hashes were filled successfully')
+            logging.info('Cases\' hashes were filled successfully')
             logging.info('Connection closed')
             exit()
         fill_submits(sqlite_cursor, base_dir, origin, mysql_config)

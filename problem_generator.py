@@ -17,9 +17,12 @@ def problem_generator(contest_dirs):
             polygon_id = contest.get_polygon_id_by_problem_id(problem_id)
             tests_paths = contest.get_test_paths_by_problem_id(problem_id)
             tests_hashes = []
+            tests_hashes_io = []
             for test_path in tests_paths:
-                tests_hashes.append(md5_hasher.get_hash(test_path[0], test_path[1]))
-            yield model.Problem(problem_id, polygon_id, problem_name, tests_hashes)
+                tests_hashes.append(md5_hasher.get_hash_case(test_path[0], test_path[1]))
+                tests_hashes_io.append((md5_hasher.get_hash_file(test_path[0]),
+                                        md5_hasher.get_hash_file(test_path[1])))
+            yield model.Problem(problem_id, polygon_id, problem_name, tests_hashes, tests_hashes_io)
 
 
 def sqlite_problem_generator(conn):

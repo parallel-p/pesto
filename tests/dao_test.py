@@ -155,8 +155,13 @@ class CasesDAOTest(unittest.TestCase):
 
     def test_load(self):
         row = {"id": "1", "case_id": "1", "problem_ref": "1", "io_hash": "440fae04f9e3619de0b8e9319a6a5f4b"}
-        self.assertEqual(self.dao_cases.deep_load(row), "440fae04f9e3619de0b8e9319a6a5f4b")
-        self.assertEqual(CasesDAO.load(row), "440fae04f9e3619de0b8e9319a6a5f4b")
+        self.assertEqual(self.dao_cases.deep_load(row), ("440fae04f9e3619de0b8e9319a6a5f4b", None))
+        self.assertEqual(CasesDAO.load(row), ("440fae04f9e3619de0b8e9319a6a5f4b", None))
+
+        row = {"id": "1", "case_id": "1", "problem_ref": "1", "io_hash": "440fae04f9e3619de0b8e9319a6a5f4b",
+               "hash_input": "asd", "hash_output": "qwe"}
+        self.assertEqual(self.dao_cases.deep_load(row), ("440fae04f9e3619de0b8e9319a6a5f4b", ("asd", "qwe")))
+        self.assertEqual(CasesDAO.load(row), ("440fae04f9e3619de0b8e9319a6a5f4b", ("asd", "qwe")))
 
     def test_define(self):
         self.dao_cases.lookup = Mock(side_effect=[None, 2])
@@ -212,19 +217,21 @@ class ProblemsDAOTest(unittest.TestCase):
     @patch('dao.Problem', Mock())
     def test_load(self):
         res = self.dao.load(self.row)
-        self.assertEqual(dao.Problem.mock_calls, [call(('', 'problem_id'), '42', 'name', [])])
+        self.assertEqual(dao.Problem.mock_calls, [call(('', 'problem_id'), '42', 'name', [], [])])
         self.assertEqual(res.contest_ref, 1)
 
     @patch('dao.CasesDAO', columns='kek')
     def test_deep_load(self, dc):
         res = Mock()
         res.cases = []
+        res.cases_io = []
         self.dao.load = Mock(return_value=res)
         self.cursor.fetchone.side_effect = [{'contest_id': '1'}, 1, 2, None]
-        dc.load = Mock(side_effect=['hash1', 'hash2'])
+        dc.load = Mock(side_effect=[('hash1', None), ('hash2', ("qwe", "rty"))])
         self.assertEqual(self.dao.deep_load(self.row), res)
         self.assertEqual(res.problem_id, ('1', 'problem_id'))
         self.assertEqual(res.cases, ['hash1', 'hash2'])
+        self.assertEqual(res.cases_io, [None, ("qwe", "rty")])
         calls = [call.execute('SELECT contest_id FROM Contests WHERE id = ?', [1]),
                  call.fetchone(),
                  call.execute('SELECT kek FROM Cases WHERE problem_ref = ?', [2]),
@@ -236,8 +243,10 @@ class ProblemsDAOTest(unittest.TestCase):
     def test_deep_load_with_contest_id(self, dc):
         res = Mock()
         res.cases = []
+        res.cases_io = []
         self.dao.load = Mock(return_value=res)
         self.cursor.fetchone.side_effect = [1, 2, None]
+        dao.CasesDAO.load = Mock(return_value=(None, None))
         self.assertEqual(self.dao.deep_load(self.row, '42').problem_id, ('42', 'problem_id'))
 
     def test_define(self):

@@ -1,12 +1,13 @@
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, call
 
 from problem_generator import problem_generator
 import md5_hasher
 
 
 class TestProblemGenerator(unittest.TestCase):
-    @patch('md5_hasher.get_hash', Mock(return_value='hash'))
+    @patch('md5_hasher.get_hash_case', Mock(return_value='hash'))
+    @patch('md5_hasher.get_hash_file', Mock(return_value=('h1', 'h2')))
     @patch('ejudge_contest.EjudgeContest')
     def test_common(self, ec):
         ejudge_contest_object = Mock()
@@ -25,7 +26,8 @@ class TestProblemGenerator(unittest.TestCase):
         for problem in result:
             self.assertEqual(problem.name, 'a-plus-b')
             self.assertEqual(problem.cases, ['hash', 'hash'])
-        self.assertEqual(md5_hasher.get_hash.call_args_list, [(('a', 'b'),), (('c', 'd'),)] * 4)
+        self.assertEqual(md5_hasher.get_hash_case.call_args_list, [(('a', 'b'),), (('c', 'd'),)] * 4)
+        self.assertEqual(md5_hasher.get_hash_file.call_args_list, [call('a'), call('b'), call('c'), call('d')] * 4)
 
 
 """class TestSqliteProblemGenerator(unittest.TestCase):
