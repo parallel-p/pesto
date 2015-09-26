@@ -147,13 +147,13 @@ def get_arguments():
 
 def main():
     args = get_arguments()
-    connector = SQLiteConnector()
-    connector.create_connection(args[2])
-    update_db.start_update(connector, SCHEMA_VERSION)
-    connector.close_connection()
     if args[0] == 'fill':
         db_tool.fill_database(*args[1:])
     elif args[0] == 'stat':
+        connector = SQLiteConnector()
+        connector.create_connection(args[2])
+        update_db.start_update(connector, SCHEMA_VERSION)
+        connector.close_connection()
         connector = SQLiteConnector()
         connector.create_connection(args[2])
         StatClass = tool_config.get_stat_by_preset(args[1], args[5])
