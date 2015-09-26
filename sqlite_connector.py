@@ -17,3 +17,6 @@ class SQLiteConnector:
     def close_connection(self):
         self.sqlite_connection.commit()
         self.sqlite_connection.close()
+
+    def commit(self):
+        self.sqlite_connection.commit()
