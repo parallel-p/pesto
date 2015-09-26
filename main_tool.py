@@ -31,6 +31,7 @@ def parse_args():
     parser.add_argument('--scoring', help="contest scoring (acm, kirov)")
     parser.add_argument('--lang-sharding', help="shard by language in submits_by_signature",
                         action="store_true")
+    parser.add_argument('--min-submits', help="minimal submits count for submits_by_signature")
     parser.add_argument('--pretty-json', help="prettify build_tree output",
                         action="store_true")
     parser.add_argument('preset', help="name or number of statistics preset", nargs='?')
@@ -102,6 +103,8 @@ def get_arguments():
     extra = {}
     if args['lang_sharding']:
         extra['lang_sharding'] = True
+    if args['min_submits']:
+        extra['min_submits'] = int(args['min_submits'])
     if args['pretty_json']:
         extra['pretty_json'] = True
     if args['tree_json']:
@@ -117,6 +120,7 @@ def get_arguments():
     if args['contests_names']:
         extra['contests_names'] = True
     extra['start_from'] = args['start_from']
+
 
 
     if action == 'stat':

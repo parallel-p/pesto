@@ -68,11 +68,13 @@ class StatSameRuns(SubmitStatistics):
 class StatSubmitsBySignature(SubmitStatistics):
 
     def _create_visitor(self):
+        SubmitsIdsBySignatureVisitor.min_submits = self.min_submits
         return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem')
 
 class StatSubmitsBySignatureLang(SubmitStatistics):  # kostil
 
     def _create_visitor(self):
+        SubmitsIdsBySignatureVisitor.min_submits = self.min_submits
         return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem lang')
 
 class StatSubmitsByTests(SubmitStatistics):
@@ -152,7 +154,9 @@ def get_stat_by_preset(preset, extra):
     if preset in ['3', 'same_runs']:
         return StatSameRuns
     if preset in ['4', 'submits_by_signature']:
-        return StatSubmitsBySignatureLang if 'lang_sharding' in extra else StatSubmitsBySignature
+        cl =  StatSubmitsBySignatureLang if 'lang_sharding' in extra else StatSubmitsBySignature
+        cl.min_submits = extra.get('min_submits', 0)  # TODO find a better solution
+        return cl
     if preset in ['5', 'submits_by_tests']:
         return StatSubmitsByTests
     if preset in ['6', 'same_runs_big_stat']:  # TODO something here

@@ -4,6 +4,8 @@ from visitor import Visitor
 
 
 class SubmitsIdsBySignatureVisitor(Visitor):
+    min_submits = 0
+
     def __init__(self):
         self.result = dict()
         self.sample_count = 10
@@ -32,7 +34,9 @@ class SubmitsIdsBySignatureVisitor(Visitor):
         total = sum(i[1][0] for i in temp_data)
         answer = ['Total submits: {}'.format(total)]
         for signature, sabmits_num_and_samp in temp_data:
-            answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0],
+            if sabmits_num_and_samp[0] >= self.min_submits:
+                answer.append('{}: {} submits found.\nSubmits ids samples:{}'.format(signature, sabmits_num_and_samp[0],
                                                                                  sabmits_num_and_samp[1]))
+        answer.append('')
 
         return '\n'.join(answer)
