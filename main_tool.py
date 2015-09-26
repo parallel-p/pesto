@@ -153,9 +153,6 @@ def main():
         connector = SQLiteConnector()
         connector.create_connection(args[2])
         update_db.start_update(connector, SCHEMA_VERSION)
-        connector.close_connection()
-        connector = SQLiteConnector()
-        connector.create_connection(args[2])
         StatClass = tool_config.get_stat_by_preset(args[1], args[5])
         if StatClass is None:
             die(tool_config.get_presets_info())
