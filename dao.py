@@ -98,10 +98,10 @@ class CasesDAO:
 
     @staticmethod
     def load(row):
-        if 'hash_input' in row:
+        try:
             result_hash = (row['io_hash'], (row['hash_input'], row['hash_output']))
-        else:
-            result_hash = (row['io_hash'], None)
+        except IndexError:
+            result_hash = (row['io_hash'], (None, None))
         return result_hash
 
     def deep_load(self, row):
@@ -157,7 +157,7 @@ class ProblemsDAO:
             cursor.execute('SELECT contest_id FROM Contests WHERE id = ?', [row['contest_ref']])
             result.problem_id = (cursor.fetchone()['contest_id'], row['problem_id'])
 
-        cursor.execute('SELECT {} FROM Cases WHERE problem_ref = ?'.format(CasesDAO.columns), [row['id']])
+        cursor.execute('SELECT * FROM Cases WHERE problem_ref = ?', [row['id']])
         cases_row = cursor.fetchone()
         while cases_row:
             hash, hash_io = CasesDAO.load(cases_row)

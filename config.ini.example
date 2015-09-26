@@ -1,33 +1,9 @@
 [global]
-database = my_data/database_file.db
+database = my_data/test_base.db
 #output = output.txt
 
 [stat]
 scoring = ALL
-
-[fill]
-base_dir = my_data/contests
-
-# WARNING If you have any non-empty database there, it'll be overwritten
-output_database = my_data/database.db
-origin = default_origin
-contests_info_dir = my_data/contests
-mysql_user = user
-mysql_password = password
-mysql_host = 127.0.0.1
-mysql_port = 8080
-mysql_db_name = ejudge_sis
-
-
-
-[recommender_tool]
-input_db_filename = pesto.db
-
-output_db_user = user
-output_db_password = password
-output_db_host = 127.0.0.1
-output_db_port = 8080
-output_db_name = moodle
 
 [logging]
 level = info

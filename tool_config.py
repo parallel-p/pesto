@@ -5,6 +5,7 @@ from stats.submits_ids_by_signature_visitor import SubmitsIdsBySignatureVisitor
 from stats.submits_over_test_cases_numbers import SubmitsOverTestCasesNumbers
 from find_same_problems import SameProblemsFinder
 from find_similar_problems import SimilarProblemsFinder
+from find_elephants import FindElephants
 from case_counter import CasesCounter
 from sharding_visitor import ShardingByContestVisitor
 from sharding_visitor import ShardingByProblemVisitor
@@ -36,6 +37,7 @@ def get_presets_info():
         10. build_tree - Build tree of similar problems and write it to json file.
         11. draw_tree - Build tree of similar problems and draw it to file.
         12. draw_saved_tree - load tree from json and draw it to file.
+        13. find_elephants - find problems with the same inputs and outputs.
     """
 
 class StatCountSubmits(ProblemStatistics):
@@ -138,6 +140,9 @@ class StatBuildDrawTree(StatBuildTree, StatDrawTree):  # sorry
     def _get_json(self):
         return self.result  # TODO do not convert json to string
 
+class StatFindElephants(ProblemStatistics):
+    counter_class = FindElephants
+
 def sharder_wrap(visitor, sharders):
     sharders = list(map(str.capitalize, sharders.split()))
     visitor = ClassFactory(visitor)
@@ -174,6 +179,9 @@ def get_stat_by_preset(preset, extra):
         return StatDrawTree
     if preset in ['12', 'draw_tree']:
         return StatBuildDrawTree
+    if preset in ['13', 'find_elephants']:
+        return StatFindElephants
+
 
 class SameRuns(Visitor):
 
