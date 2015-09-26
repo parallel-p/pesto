@@ -38,12 +38,20 @@ class TestSubmitsIdBySingnatureVisitor(unittest.TestCase):
         self.visitor.visit(self.submit2)
         self.visitor.visit(self.submit3)
         self.visitor.visit(self.submit4)
-        good_res = '''OKWAOK: 2 submits found.
-Submits ids samples:['3', '4']
-OKOKOK: 1 submits found.
-Submits ids samples:['1']
-WAWAWA: 1 submits found.
-Submits ids samples:['2']'''
+        good_res = '''Total submits: 4
+2 submits: OKWAOK
+  Samples: 3, 4
+1 submits: OKOKOK
+  Samples: 1
+1 submits: WAWAWA
+  Samples: 2
+'''
+        self.assertEqual(self.visitor.pretty_print(), good_res)
+        self.visitor.min_submits = 2
+        good_res = '''Total submits: 4
+2 submits: OKWAOK
+  Samples: 3, 4
+'''
         self.assertEqual(self.visitor.pretty_print(), good_res)
 
 
