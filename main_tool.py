@@ -26,8 +26,7 @@ def parse_args():
     parser.add_argument('action', help='action to perform (stat, fill)')  # TODO all actions
 
     # tool
-    parser.add_argument('--filter-problem', help='process only submits for the problem selected')
-    parser.add_argument('--filter-contest', help='process only submits in the selected contest')
+    parser.add_argument('--problem', help='process only submits for the problem selected (contest:problem)')
     parser.add_argument('--scoring', help="contest scoring (acm, kirov)")
     parser.add_argument('--lang-sharding', help="shard by language in submits_by_signature",
                         action="store_true")
@@ -89,10 +88,14 @@ def get_arguments():
         outfile = os.path.expanduser(outfile)
 
     filters = {}
-    if args['filter_contest']:
-        filters['contest'] = args['filter_contest'].rjust(6, '0')
-    if args['filter_problem']:
-        filters['problem'] = args['filter_problem']
+    if args['problem']:
+        if args['problem'].count(':') != 1:
+            die('Problem filter should be specified as CONTEST:PROBLEM. You can also write CONTEST: or :PROBLEM.')
+        cf, pf = args['problem'].split(':')
+        if cf:
+            filters['contest'] = cf.rjust(6, '0')
+        if pf:
+            filters['problem'] = pf
     if args['scoring']:
         filters['scoring'] = args['scoring'].upper()
     elif config.get('stat', {}).get('scoring'):
