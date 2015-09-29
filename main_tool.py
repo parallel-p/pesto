@@ -95,7 +95,15 @@ def get_arguments():
         if cf:
             filters['contest'] = cf.rjust(6, '0')
         if pf:
-            filters['problem'] = pf
+            if pf.isdigit():
+                filters['problem'] = pf
+            elif pf.isalpha():
+                # a = 1, z = 26, aa = 27 and so on
+                val = 0
+                for i in pf.upper():
+                    val *= 26
+                    val += ord(i) - ord('A') + 1
+                filters['problem'] = str(val)
     if args['scoring']:
         filters['scoring'] = args['scoring'].upper()
     elif config.get('stat', {}).get('scoring'):
