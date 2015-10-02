@@ -26,8 +26,8 @@ def parse_args():
     parser.add_argument('action', help='action to perform (stat, fill)')  # TODO all actions
 
     # tool
-    parser.add_argument('--problem', help='process only submits for the problem selected (contest:problem)')
-    parser.add_argument('--scoring', help="contest scoring (acm, kirov)")
+    parser.add_argument('-p', '--problem', help='process only submits for the problem selected (contest:problem)')
+    parser.add_argument('-s', '--scoring', help="contest scoring (acm, kirov)")
     parser.add_argument('--lang-sharding', help="shard by language in submits_by_signature",
                         action="store_true")
     parser.add_argument('--min-submits', help="minimal submits count for submits_by_signature")
