@@ -112,6 +112,9 @@ def get_arguments():
         del filters['scoring']
 
     extra = {}
+    extra['min_submits'] = 0
+    if config.get('submits_by_signature', {}).get('min_submits') is not None:
+        extra['min_submits'] = int(config['submits_by_signature']['min_submits'])
     if args['lang_sharding']:
         extra['lang_sharding'] = True
     if args['min_submits']:

@@ -18,7 +18,8 @@ mysql_host = 127.0.0.1
 mysql_port = 8080
 mysql_db_name = ejudge_sis
 
-
+[submits_by_signature]
+min_submits = 50
 
 [recommender_tool]
 input_db_filename = pesto.db
