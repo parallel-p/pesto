@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from ejudge_database import EjudgeDatabase, EjudgeSubmitInfo
 
@@ -28,10 +28,12 @@ class TestEjudgeDatabase(unittest.TestCase):
         self.assertEqual(info.lang_id, '3')
         self.assertEqual(info.timestamp, 4)
 
-    def test_empty_response(self):
+    @patch('logging.warning')
+    def test_empty_response(self, warn):
         db = EjudgeDatabase(Mock(fetchone=Mock(return_value=None)))
         info = db.get_submit_info('ci', 'si')
         self.assertIsNone(info)
+        self.assertTrue(warn.called)
 
 
 if __name__ == "__main__":

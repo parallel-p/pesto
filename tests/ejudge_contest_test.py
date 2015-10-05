@@ -1,6 +1,6 @@
 import unittest
 import os.path
-
+from unittest.mock import patch
 from ejudge_contest import EjudgeContest
 
 
@@ -30,26 +30,34 @@ class TestEjudgeContest(unittest.TestCase):
                 'testdata\\ejudge_contest\\000002\\tests\\A\\02.a'.replace('\\', os.path.sep))
         self.assertEqual(tests[1], good)
 
-    def test_no_cases(self):
+    @patch('logging.warning')
+    def test_no_cases(self, warn):
         contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '025950'))
+        self.assertTrue(warn.called)
         self.assertEqual(contest.get_contest_id(), '25950')
         self.assertEqual(len(contest.get_problem_ids()), 1)
         self.assertEqual(contest.get_short_name_by_problem_id(('25950', '1')), 'intA')
         tests = contest.get_test_paths_by_problem_id(('1', '1'))
         self.assertFalse(tests)
 
-    def test_non_unicode(self):
+    @patch('logging.error')
+    def test_non_unicode(self, err):
         contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000003'))
+        self.assertTrue(err.called)
 
-    def test_invalid_pattern(self):
+    @patch('logging.error')
+    def test_invalid_pattern(self, err):
         contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000004'))
+        self.assertTrue(err.called)
         self.assertEqual(len(contest.get_problem_ids()), 1)
         self.assertEqual(contest.get_short_name_by_problem_id(('25950', '1')), 'intA')
         tests = contest.get_test_paths_by_problem_id(('1', '1'))
         self.assertFalse(tests)
 
-    def test_missing_fields(self):
+    @patch('logging.error')
+    def test_missing_fields(self, err):
         contest = EjudgeContest(os.path.join('testdata', 'ejudge_contest', '000005'))
+        self.assertTrue(err.called)
         self.assertFalse(contest.get_problem_ids())
 
 

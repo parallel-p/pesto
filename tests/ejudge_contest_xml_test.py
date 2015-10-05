@@ -10,17 +10,22 @@ class TextGetName(unittest.TestCase):
         self.assertEqual(ejudge_get_contest_name('nope'), 'contestname')
 
     @patch('builtins.open', mock_open(read_data='<contest><noname>contestname</noname></contest>'))
-    def test_no_name(self):
+    @patch('logging.error')
+    def test_no_name(self, err):
         self.assertIsNone(ejudge_get_contest_name('nope'))
+        self.assertTrue(err.called)
 
     @patch('builtins.open', mock_open(read_data='not_xml'))
-    def test_not_xml(self):
+    @patch('logging.error')
+    def test_not_xml(self, err):
         self.assertIsNone(ejudge_get_contest_name('nope'))
+        self.assertTrue(err.called)
 
     @patch('builtins.open', side_effect=UnicodeError)
-    def test_not_utf8(self, op):
+    @patch('logging.error')
+    def test_not_utf8(self, op, err):
         self.assertIsNone(ejudge_get_contest_name('nope'))
-
+        self.assertTrue(err.called)
 
 if __name__ == "__main__":
     unittest.main()
