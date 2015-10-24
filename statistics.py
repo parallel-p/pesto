@@ -52,8 +52,12 @@ class SubmitStatistics(Statistics):
 
     def calc(self, data):
         vis = self._create_visitor()
+        visited = False
         for submit in data:
             vis.visit(submit)
+            visited = True
+        if not visited:
+            logging.info('no submits processed')
         self.result = vis
 
     def as_string(self):
