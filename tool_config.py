@@ -20,25 +20,27 @@ from problems_tree import ProblemsTree
 import problems_tree_json
 from problem_generator import sqlite_contest_generator
 from tree_drawer import TreeDrawer
+import logging
 
+all_stats = [None,
+    'StatCountSubmits',
+    'StatEqMatrix',
+    'StatSameRuns',
+    'StatSubmitsBySignature',
+    'StatSubmitsByTests',
+    'StatCasesCount',
+    'StatSameProblems',
+    'StatSimilarProblems',
+    'StatBuildTree',
+    'StatDrawTree',
+    'StatBuildDrawTree',
+]
 
-def get_presets_info():
-    return """
-        1. count_submits - Counts number of submits for each problem.
-        2. eq_matrix - Creates matrix for each problem which contains how many times cases were launched together.
-        3. same_runs - Counts for each problem lists of runs that were launched together.
-        4. submits_by_signature - Counts submits with each outcome for each problem for each language.
-        5. submits_by_tests - Counts submits with each number of launched tests for each problem.
-        6. same_runs_big_stat - Counts for all problem lists of runs that were launched together.
-        7. cases_count - Count cases for each problem.
-        8. same_problems - Find same problems.
-        9. similar_problems - Find similar problems (problems with many same tests).
-        10. build_tree - Build tree of similar problems and write it to json file.
-        11. draw_tree - Build tree of similar problems and draw it to file.
-        12. draw_saved_tree - load tree from json and draw it to file.
-    """
 
 class StatCountSubmits(ProblemStatistics):
+
+    _name = 'count_submits'
+    _desc = 'Counts number of submits for each problem.'
 
     def get_input_data(self, connection):
         cursor = connection.get_cursor()
@@ -57,41 +59,63 @@ class StatCountSubmits(ProblemStatistics):
 
 class StatEqMatrix(SubmitStatistics):
 
+    _name = 'eq_matrix'
+    _desc = 'Creates matrix for each problem which contains how many times cases were launched together.'
+
     def _create_visitor(self):
         return sharder_wrap(EqMatrix, 'scoring contest problem')
 
 class StatSameRuns(SubmitStatistics):
+
+    _name = 'same_runs'
+    _desc = 'Counts for each problem lists of runs that were launched together.'
 
     def _create_visitor(self):
         return sharder_wrap(SameRuns, 'scoring contest problem')
 
 class StatSubmitsBySignature(SubmitStatistics):
 
-    def _create_visitor(self):
-        SubmitsIdsBySignatureVisitor.min_submits = self.min_submits
-        return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem')
-
-class StatSubmitsBySignatureLang(SubmitStatistics):  # kostil
+    _name = 'submits_by_signature'
+    _desc = 'Counts submits with each outcome for each problem (for each language).'
 
     def _create_visitor(self):
-        SubmitsIdsBySignatureVisitor.min_submits = self.min_submits
-        return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem lang')
+        SubmitsIdsBySignatureVisitor.min_submits = self.extra.get('min_submits', 0)
+        return sharder_wrap(SubmitsIdsBySignatureVisitor, 'contest problem lang' if 'lang_sharding' in self.extra else 'contest problem')
 
 class StatSubmitsByTests(SubmitStatistics):
+
+    _name = 'submits_by_tests'
+    _desc = 'Counts submits with each number of launched tests for each problem.'
 
     def _create_visitor(self):
          return sharder_wrap(SubmitsOverTestCasesNumbers, 'contest')
 
 class StatCasesCount(ProblemStatistics):
+
+    _name = 'cases_count'
+    _desc = 'Count cases for each problem.'
+
     counter_class = CasesCounter
 
 class StatSameProblems(ProblemStatistics):
+
+    _name = 'same_problems'
+    _desc = 'Find same problems.'
+
     counter_class = SameProblemsFinder
 
 class StatSimilarProblems(ProblemStatistics):
+
+    _name = 'similar_problems'
+    _desc = 'Find similar problems (problems with many same tests)'
+
     counter_class = SimilarProblemsFinder
 
 class StatBuildTree(ProblemStatistics):
+
+    _name = 'build_tree'
+    _desc = 'Build tree of similar problems and write it to json file.'
+
     def get_input_data(self, connection):
         problems = list(super().get_input_data(connection))
         contests = list(sqlite_contest_generator(connection))
@@ -117,6 +141,9 @@ class StatBuildTree(ProblemStatistics):
 
 class StatDrawTree(Statistics):
 
+    _name = 'draw_tree'
+    _desc = 'Build tree of similar problems and draw it to file.'
+
     def _get_json(self):
         saved_tree_filename = self.extra.get('tree_json')
         if not saved_tree_filename:
@@ -135,6 +162,10 @@ class StatDrawTree(Statistics):
         drawer.save_image_to_file(filename)
 
 class StatBuildDrawTree(StatBuildTree, StatDrawTree):  # sorry
+
+    _name = 'draw_saved_tree'
+    _desc = 'Load tree from json and draw it to file.'
+
     def _get_json(self):
         return self.result  # TODO do not convert json to string
 
@@ -146,34 +177,33 @@ def sharder_wrap(visitor, sharders):
         visitor = ClassFactory(sharder_class, visitor)
     return visitor.create()
 
-def get_stat_by_preset(preset, extra):
-    if preset in ['1', 'count_submits']:
-        return StatCountSubmits
-    if preset in ['2', 'eq_matrix']:
-        return StatEqMatrix
-    if preset in ['3', 'same_runs']:
-        return StatSameRuns
-    if preset in ['4', 'submits_by_signature']:
-        cl =  StatSubmitsBySignatureLang if 'lang_sharding' in extra else StatSubmitsBySignature
-        cl.min_submits = extra.get('min_submits', 0)  # TODO find a better solution
-        return cl
-    if preset in ['5', 'submits_by_tests']:
-        return StatSubmitsByTests
-    if preset in ['6', 'same_runs_big_stat']:  # TODO something here
-        print('gg')
-        exit()
-    if preset in ['7', 'cases_count']:
-        return StatCasesCount
-    if preset in ['8', 'same_problems']:
-        return StatSameProblems
-    if preset in ['9', 'similar_problems']:
-        return StatSimilarProblems
-    if preset in ['10', 'build_tree']:
-        return StatBuildTree
-    if preset in ['11', 'draw_saved_tree']:
-        return StatDrawTree
-    if preset in ['12', 'draw_tree']:
-        return StatBuildDrawTree
+
+def get_presets_info():
+    res = []
+    for i, stat in enumerate(all_stats):
+        if not stat:
+            continue
+        stat_class = globals().get(stat)
+        if not stat_class:
+            logging.error('Invalid statistics: ' + stat)
+            continue
+        res.append('{}. {} - {}'.format(i, stat_class._name, stat_class._desc))
+    return '\n'.join(res)
+
+def get_stat_by_preset(preset):
+    preset = str(preset).strip().lower()
+    if preset.isdigit():
+        try:
+            return globals()[all_stats[int(preset)]]
+        except Exception:
+            return None
+    for stat in all_stats:
+        if not stat:
+            continue
+        stat_class = globals().get(stat)
+        if stat_class._name == preset:
+            return stat_class
+    return None
 
 class SameRuns(Visitor):
 

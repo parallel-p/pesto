@@ -167,8 +167,9 @@ def main():
         connector = SQLiteConnector()
         connector.create_connection(args[2])
         update_db.start_update(connector, SCHEMA_VERSION)
-        StatClass = tool_config.get_stat_by_preset(args[1], args[5])
+        StatClass = tool_config.get_stat_by_preset(args[1])
         if StatClass is None:
+            print('No such statistics')
             die(tool_config.get_presets_info())
         stat = StatClass(connector, args[4], args[5])
         stat.save_to_file(args[3])

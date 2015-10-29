@@ -2,6 +2,10 @@ import dao
 import logging
 
 class Statistics:
+
+    _name = None
+    _desc = None
+
     def __init__(self, connection, filters={}, extra={}):
         self.filters = filters
         self.extra = extra
