@@ -112,7 +112,7 @@ class StatSimilarProblems(ProblemStatistics):
 
 class StatBuildTree(ProblemStatistics):
 
-    _name = 'build_tree'
+    _name = 'build_tree_json'
     _desc = 'Build tree of similar problems and write it to json file.'
 
     def get_input_data(self, connection):
@@ -139,8 +139,9 @@ class StatBuildTree(ProblemStatistics):
         self.result = problems_tree_json.save_tree(tree, cg, 'pretty_json' in self.extra)
 
 class StatDrawTree(Statistics):
-    _name = 'draw_tree'
-    _desc = 'Build tree of similar problems and draw it to file.'
+
+    _name = 'draw_saved_tree'
+    _desc = 'Load tree from json and draw it to file.'
 
     def _get_json(self):
         saved_tree_filename = self.extra.get('tree_json')
@@ -162,8 +163,8 @@ class StatDrawTree(Statistics):
 
 class StatBuildDrawTree(StatBuildTree, StatDrawTree):  # sorry
 
-    _name = 'draw_saved_tree'
-    _desc = 'Load tree from json and draw it to file.'
+    _name = 'draw_tree'
+    _desc = 'Build tree of similar problems and draw it to file.'
 
     def _get_json(self):
         return self.result  # TODO do not convert json to string
