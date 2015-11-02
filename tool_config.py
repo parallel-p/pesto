@@ -187,8 +187,13 @@ def get_presets_info():
         if not stat_class:
             logging.error('Invalid statistics: ' + stat)
             continue
-        res.append('{}. {} - {}'.format(i, stat_class._name, stat_class._desc))
-    return '\n'.join(res)
+        res.append((str(i).rjust(2), stat_class._name, stat_class._desc))
+    max_width = max(len(i[1]) for i in res)
+    pretty_res = ['']
+    for i in res:
+        pretty_res.append('{}. {} - {}'.format(i[0], i[1].ljust(max_width), i[2]))
+    pretty_res.append('')
+    return '\n'.join(pretty_res)
 
 def get_stat_by_preset(preset):
     preset = str(preset).strip().lower()
