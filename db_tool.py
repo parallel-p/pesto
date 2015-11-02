@@ -3,7 +3,6 @@ import logging
 from extract_cases_to_db import extract_cases_to_db
 from walker import MultipleContestWalker
 from fill_db_from_contest_xml import fill_db_from_contest_xml
-from mysql_connector import MySQLConnector
 from fill_database import fill_from_xml
 import update_db
 from sqlite_connector import SQLiteConnector
@@ -45,6 +44,7 @@ def fill_submits(sqlite_cursor, base_dir, origin, mysql_config):
         logging.error('MySQL parameters are not specified')
         exit()
     logging.info('Now connecting to MySQL')
+    from mysql_connector import MySQLConnector
     mysql_connector = MySQLConnector()
     mysql_connector.create_connection(mysql_config)
     logging.info('Connected to MySQL database')

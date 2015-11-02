@@ -19,7 +19,6 @@ from stats.contests_grouper import ContestsGrouper
 from problems_tree import ProblemsTree
 import problems_tree_json
 from problem_generator import sqlite_contest_generator
-from tree_drawer import TreeDrawer
 import logging
 
 all_stats = [None,
@@ -140,7 +139,6 @@ class StatBuildTree(ProblemStatistics):
         self.result = problems_tree_json.save_tree(tree, cg, 'pretty_json' in self.extra)
 
 class StatDrawTree(Statistics):
-
     _name = 'draw_tree'
     _desc = 'Build tree of similar problems and draw it to file.'
 
@@ -158,6 +156,7 @@ class StatDrawTree(Statistics):
             print('Sorry, I can\'t draw tree to console')
             return
         tree, contests_grouper = problems_tree_json.load_tree(self._get_json())
+        from tree_drawer import TreeDrawer
         drawer = TreeDrawer(tree, contests_grouper)  # TODO "saving..." when all lines are located
         drawer.save_image_to_file(filename)
 
